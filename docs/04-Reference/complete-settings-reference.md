@@ -701,7 +701,7 @@ Configures the behavior of the homing cycle.
 | **1** | 0 | **Enable Homing Cycle:** This is the master switch. It must be enabled to allow the `$H` command to run. |
 | **2** | 1 | **Enable Single Axis Homing Commands:** Allows using `G28.1`/`G30.1` on individual axes. |
 | **4** | 2 | **Homing on Startup Required:** Forces the user to run a homing cycle before any G-code motion is allowed. A key safety feature. |
-| **8** | 3 | **Set Machine Origin to 0:** After homing, sets the machine position at the switch trigger point to `0`. If disabled, it's set to the max travel (`$13x`). |
+| **8** | 3 | **Set Machine Origin to 0:** After homing, sets the machine position at the switch trigger point to `0`. If disabled, it's set to the axis maximas |
 | **16**| 4 | **Two Switches Share One Input:** Informs grblHAL that two homing switches are wired in parallel to a single input pin. |
 | **32**| 5 | **Allow Manual Homing:** Enables manual homing commands. |
 | **64**| 6 | **Override Locks:** Allows jogging motion even when the machine is in an alarm state that normally requires homing. |

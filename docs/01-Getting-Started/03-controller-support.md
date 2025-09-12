@@ -2,7 +2,7 @@
 title: "Hardware Selection"
 ---
 
-# Hardware Selection
+# Controller Support
 
 This page provides a list of grblHAL-supported controllers, links to the appropriate drivers, and the Web Builer tool for building the firmware
 
