@@ -1607,539 +1607,200 @@ Configures advanced options for probing cycles (`G38.x`).
 
 #### Tips & Tricks
 - Most users can leave `$65=0` for simple probing cycles.  
-- Enable soft limits during probing if your workpiece is near the edge of the machine to prevent accidental crashes.  
+- Disable soft limits during probing can be helpful where you are probing unknown distances which may require a command that exceeds the max travel in Z for example, but you do know the probe will make contact before it actually reaches end of travel
 - Use Auto Select Toolsetter only if your machine has a compatible toolsetter configured.
 
 
 ---
 
-## `$100` – X-Axis Travel Resolution (steps/mm)
-Defines the number of motor steps required to move the **X-axis** by exactly 1 millimeter.
+## `$100` – `$105` – Axis Travel Resolution
+
+Defines the number of motor steps required to move an axis by **1 mm** (for linear axes) or **1 degree** (for rotary axes).  
+
+- `$100` → X-axis  
+- `$101` → Y-axis  
+- `$102` → Z-axis  
+- `$103` → A-axis  
+- `$104` → B-axis  
+- `$105` → C-axis  
 
 :::info Context
-- This is the most important setting for the dimensional accuracy of the X-axis.
-- The value is calculated based on your specific motor, driver, and mechanical setup.
-- It is related to `$110` (Max Rate) and `$120` (Acceleration), which control the motion dynamics of the axis.
+- This is the most important setting for dimensional accuracy.  
+- The value depends on your motor, driver microstepping, and mechanical transmission (belt, leadscrew, ballscrew, or rotary gear reduction).  
+- A/B/C axes can be configured as **linear** or **rotary** with `$376`.  
+- Related settings:  
+  - `$110`–`$115` (Max Rate)  
+  - `$120`–`$125` (Acceleration)  
 :::
 
-#### Calculation Formula
-`steps_per_mm = (Motor Steps Per Revolution * Driver Microsteps) / Millimeters Per Revolution`
+---
 
-| Drive Type | `Millimeters Per Revolution` |
-|:-----------|:-----------------------------|
-| **Lead Screw** | Screw Pitch (e.g., 2mm pitch = 2) |
-| **Multi-Start Screw** | Screw Pitch * Number of Starts (e.g., 2mm pitch, 4 starts = 8) |
-| **Belt Drive** | Pulley Teeth * Belt Pitch (e.g., 20 teeth * 2mm GT2 pitch = 40) |
+#### Formulae
 
-#### Common Examples
-*   **Lead Screw (2mm pitch, 1.8° motor, 1/8 microstepping):**
-    *   `steps_per_mm = (200 * 8) / 2` → `$100=800`
-*   **Belt Drive (20T GT2 pulley, 1.8° motor, 1/16 microstepping):**
-    *   `steps_per_mm = (200 * 16) / (20 * 2)` → `$100=80`
+- **Linear axes (steps/mm):**  
+  - steps_per_mm = (Motor Steps/Rev × Microsteps) / Lead
+  - *Lead = distance moved per motor revolution*  
+  - For belts: `Lead = Pulley Teeth × Belt Pitch`  
+  - For screws: `Lead = screw lead (mm/rev)`  
+
+- **Rotary axes (steps/deg):**  
+  - steps_per_deg = (Motor Steps/Rev × Microsteps × Gear Ratio) / 360
+
+#### Common Linear Motion Values
+
+| Transmission | Lead (mm/rev) | 8 µsteps | 16 µsteps | 32 µsteps |
+|--------------|---------------|----------|-----------|-----------|
+| **Belts (GT2) 16T Pulley** | 32 | 50 | 100 | 200 |
+| **Belts (GT2) 20T Pulley** | 40 | 40 | 80 | 160 |
+| **Belts (GT2) 32T Pulley** | 64 | 25 | 50 | 100 |
+| **Belts (GT3) 20T Pulley** | 60 | 26.67 | 53.33 | 106.67 |
+| **Belts (HTD5) 20T Pulley** | 100 | 16 | 32 | 64 |
+| **Lead screw TR8x2** | 2 | 800 | 1600 | 3200 |
+| **Lead screw TR8x4** | 4 | 400 | 800 | 1600 |
+| **Lead screw TR8x8** | 8 | 200 | 400 | 800 |
+| **Lead screw TR10x10** | 10 | 160 | 320 | 640 |
+| **Ballscrew 1204** | 4 | 400 | 800 | 1600 |
+| **Ballscrew 1605** | 5 | 320 | 640 | 1280 |
+| **Ballscrew 1610** | 10 | 160 | 320 | 640 |
+
+---
+
+#### Common Rotary Motion Values
+
+| Motor | Gear Ratio | 8 µsteps | 16 µsteps | 32 µsteps |
+|-------|------------|----------|-----------|-----------|
+| 1.8° (200 steps) | 1:1 (direct) | 4.44 | 8.89 | 17.78 |
+| 1.8° (200 steps) | 6:1 | 26.67 | 53.33 | 106.67 |
+| 1.8° (200 steps) | 10:1 | 44.44 | 88.89 | 177.78 |
+| 1.8° (200 steps) | 18:1 | 80 | 160 | 320 |
+| 1.8° (200 steps) | 72:1 | 320 | 640 | 1280 |
+| 0.9° (400 steps) | 1:1 (direct) | 8.89 | 17.78 | 35.56 |
+| 0.9° (400 steps) | 50:1 | 444.44 | 888.89 | 1777.78 |
+
+---
 
 #### Tips & Tricks
-- Always perform a calibration test after setting this value: command a long move (e.g., `G91 G1 X100 F500`), measure the actual distance moved, and adjust `$100` proportionally.
-- See our detailed guide: [**Calibrating Steps per mm**](../Machine-Calibration/calibrating-steps).
+- Always verify by commanding a long move (`G91 G1 X100 F500` or similar) and measuring actual distance or angle.  
+- Adjust `$100`–`$105` proportionally based on the error. See [**Calibrating Steps per mm**](../Machine-Calibration/calibrating-steps).
+- For rotary axes, ensure `$376` is set correctly to mark the axis as **rotary** (steps/deg) or **linear** (steps/mm).  
 
 ---
 
-## `$101` – Y-Axis Travel Resolution (steps/mm)
-Defines the number of motor steps required to move the **Y-axis** by exactly 1 millimeter.
+## `$110` – `$115` – Axis Maximum Rate
+
+Sets the maximum speed for each axis in **mm/min** (linear) or **degrees/min** (rotary).
+
+- `$110` → X-axis
+- `$111` → Y-axis
+- `$112` → Z-axis
+- `$113` → A-axis
+- `$114` → B-axis
+- `$115` → C-axis
 
 :::info Context
-- This is the most important setting for the dimensional accuracy of the Y-axis.
-- The value is calculated based on your specific motor, driver, and mechanical setup.
-- It is related to `$111` (Max Rate) and `$121` (Acceleration), which control the motion dynamics of the axis.
+- This acts as a hard speed limit for each motor to prevent it from stalling due to lost torque at high speeds.
+- The value should be determined through testing to find the highest *reliable* speed.
+- This is related to `$120`–`$125` (Acceleration). An axis can often reach a higher max rate if the acceleration is not too aggressive.
 :::
 
-#### Calculation Formula
-`steps_per_mm = (Motor Steps Per Revolution * Driver Microsteps) / Millimeters Per Revolution`
+#### Typical Value Ranges
 
-| Drive Type | `Millimeters Per Revolution` |
-|:-----------|:-----------------------------|
-| **Lead Screw** | Screw Pitch (e.g., 2mm pitch = 2) |
-| **Multi-Start Screw** | Screw Pitch * Number of Starts (e.g., 2mm pitch, 4 starts = 8) |
-| **Belt Drive** | Pulley Teeth * Belt Pitch (e.g., 20 teeth * 2mm GT2 pitch = 40) |
-
-#### Common Examples
-*   **Lead Screw (2mm pitch, 1.8° motor, 1/8 microstepping):**
-    *   `steps_per_mm = (200 * 8) / 2` → `$101=800`
-*   **Belt Drive (20T GT2 pulley, 1.8° motor, 1/16 microstepping):**
-    *   `steps_per_mm = (200 * 16) / (20 * 2)` → `$101=80`
-
-#### Tips & Tricks
-- On many machines, the Y-axis mechanics are identical to the X-axis, so `$101` will be the same as `$100`.
-- For gantry machines with dual Y-axis motors, this setting applies to both motors.
-
----
-
-## `$102` – Z-Axis Travel Resolution (steps/mm)
-Defines the number of motor steps required to move the **Z-axis** by exactly 1 millimeter.
-
-:::info Context
-- This is the most important setting for the dimensional accuracy of the Z-axis, affecting depth of cut and surface finish.
-- The Z-axis often has different mechanical components (like a finer-pitch lead screw) than the X and Y axes.
-- It is related to `$112` (Max Rate) and `$122` (Acceleration).
-:::
-
-#### Calculation Formula
-`steps_per_mm = (Motor Steps Per Revolution * Driver Microsteps) / Millimeters Per Revolution`
-
-| Drive Type | `Millimeters Per Revolution` |
-|:-----------|:-----------------------------|
-| **Lead Screw** | Screw Pitch (e.g., 2mm pitch = 2) |
-| **Multi-Start Screw** | Screw Pitch * Number of Starts (e.g., 2mm pitch, 4 starts = 8) |
+| Axis Type | Machine Type | Typical Max Rate (mm/min or deg/min) |
+|:----------|:-------------|:-------------------------------------|
+| **Linear**| Hobby Screw-Drive | 500 - 3000 |
+| **Linear**| Hobby Belt-Drive | 2000 - 10000+ |
+| **Linear (Z)**| Screw-Drive | 500 - 2000 (Usually much lower than X/Y) |
+| **Rotary**| Hobby 4th-Axis | 1000 - 10000 (3600 = 10 RPM) |
 
 #### Common Examples
-*   **T8 Lead Screw (4-start, 2mm pitch, 8mm lead):**
-    *   `Millimeters Per Revolution` = 8mm
-    *   With a 1.8° motor and 1/8 microstepping: `(200 * 8) / 8` → `$102=200`
-*   **Fine-Pitch ACME Screw (2.5mm pitch, single-start):**
-    *   `Millimeters Per Revolution` = 2.5mm
-    *   With a 1.8° motor and 1/8 microstepping: `(200 * 8) / 2.5` → `$102=640`
-
-#### Tips & Tricks
-- The Z-axis is often the most critical for precision. Take extra care when calibrating this value.
-- Because Z-axis screws are often finer, this value is frequently different from `$100` and `$101`.
-
----
-
-## `$103` – A-Axis Travel Resolution (steps/deg)
-Defines the number of motor steps required to move the **A-axis** (rotary) by exactly 1 degree.
-
-:::info Context
-- This setting is for a 4th or 5th axis.
-- The calculation depends on the motor, microstepping, and any gear reduction between the motor and the rotary chuck.
-- This axis must be enabled as "rotary" in `$376`.
-:::
-
-#### Calculation Formula
-`steps_per_degree = (Motor Steps Per Revolution * Driver Microsteps * Gear Ratio) / 360`
-
-#### Common Examples
-*   **Direct Drive (1.8° motor, 1/8 microstepping):**
-    *   `steps_per_degree = (200 * 8 * 1) / 360` → `$103=4.444`
-*   **6:1 Gear Reduction (1.8° motor, 1/8 microstepping):**
-    *   `steps_per_degree = (200 * 8 * 6) / 360` → `$103=26.667`
-
-#### Tips & Tricks
-- The `Gear Ratio` is `(driven_gear_teeth / drive_gear_teeth)`. For a 36-tooth gear on the chuck and a 6-tooth gear on the motor, the ratio is `36 / 6 = 6`.
-- High-precision rotary axes often have high gear ratios (e.g., 90:1 harmonic drives).
-
----
-
----
-
-## `$104` – B-Axis Travel Resolution (steps/deg)
-Defines the number of motor steps required to move the **B-axis** (rotary) by exactly 1 degree.
-
-:::info Context
-- This setting is for a 5th axis that rotates around the Y-axis.
-- The calculation depends on the motor, microstepping, and any gear reduction between the motor and the rotary table.
-- This axis must be enabled as "rotary" in `$376`.
-:::
-
-#### Calculation Formula
-`steps_per_degree = (Motor Steps Per Revolution * Driver Microsteps * Gear Ratio) / 360`
-
-#### Common Examples
-*   **Direct Drive (1.8° motor, 1/16 microstepping):**
-    *   `steps_per_degree = (200 * 16 * 1) / 360` → `$104=8.889`
-*   **10:1 Gear Reduction (1.8° motor, 1/16 microstepping):**
-    *   `steps_per_degree = (200 * 16 * 10) / 360` → `$104=88.889`
-
-#### Tips & Tricks
-- The B-axis is less common than A or C, but the calculation principles are identical.
-- Ensure your machine's kinematics are correctly configured if you are using a B-axis in a trunnion table setup.
-
----
-
-## `$105` – C-Axis Travel Resolution (steps/deg)
-Defines the number of motor steps required to move the **C-axis** (rotary) by exactly 1 degree.
-
-:::info Context
-- This setting is for a rotary axis that rotates around the Z-axis (like a rotary platter on a mill bed).
-- The calculation depends on the motor, microstepping, and any gear reduction.
-- This axis must be enabled as "rotary" in `$376`.
-:::
-
-#### Calculation Formula
-`steps_per_degree = (Motor Steps Per Revolution * Driver Microsteps * Gear Ratio) / 360`
-
-#### Common Examples
-*   **Direct Drive (0.9° motor, 1/8 microstepping):**
-    *   `steps_per_degree = (400 * 8 * 1) / 360` → `$105=8.889`
-*   **72:1 Gear Reduction (1.8° motor, 1/8 microstepping):**
-    *   `steps_per_degree = (200 * 8 * 72) / 360` → `$105=320`
-
-#### Tips & Tricks
-- A C-axis is common on 5-axis machines and CNC lathes (where it represents the spindle's angular position).
-- For lathe threading (`G33`), this value must be extremely accurate.
-
----
-
-## `$110` – X-Axis Maximum Rate (mm/min)
-Sets the maximum speed at which the **X-axis** is allowed to move during a rapid (`G0`) or feed (`G1`) move.
-
-:::info Context
-- This acts as a hard speed limit for the X-axis motor to prevent it from stalling.
-- The value should be determined through testing to find the highest reliable speed.
-- This is related to `$120` (X-Axis Acceleration). A motor can reach a higher max rate if the acceleration is not too aggressive.
-:::
-
-| Value (mm/min) | Meaning |
-|:--------------:|:--------|
-| 500 - 2000     | Safe starting values for many screw-driven hobby machines. |
-| 2000 - 10000+  | Typical for belt-driven or high-performance machines. |
-
-#### Common Examples
-*   **Hobby CNC Router:**
+*   **Hobby CNC Router (X, Y, Z):**
     *   `$110=5000`
-*   **Large, Heavy Gantry:**
-    *   `$110=8000`
+    *   `$111=5000`
+    *   `$112=1500`
+*   **Small Rotary Table (A-axis):**
+    *   `$113=3600` (10 RPM)
 
 #### Tips & Tricks
-- To find the true maximum, start low and incrementally increase the value, commanding long rapid moves (e.g., `G0 X100`). Listen for the motor stalling (a loud buzzing/grinding sound), then back the value off by 20-30% for a safety margin.
+- To find the true maximum, start low and incrementally increase the value, commanding long rapid moves (e.g., `G0 X200`). Listen for the motor stalling (a loud buzzing/grinding sound), then back the value off by 20-30% for a safety margin.
+- The effective speed of a diagonal (`XY`) move is limited by the lower of the two axes' max rate settings.
 - See our detailed guide: [**Tuning Motion**](../Machine-Calibration/tuning-motion).
 
 ---
 
-## `$111` – Y-Axis Maximum Rate (mm/min)
-Sets the maximum speed at which the **Y-axis** is allowed to move.
+## `$120` – `$125` – Axis Acceleration
+
+Sets how quickly each axis can change its speed, in **mm/s²** (linear) or **degrees/s²** (rotary).
+
+- `$120` → X-axis
+- `$121` → Y-axis
+- `$122` → Z-axis
+- `$123` → A-axis
+- `$124` → B-axis
+- `$125` → C-axis
 
 :::info Context
-- This acts as a hard speed limit for the Y-axis motor to prevent it from stalling.
-- On many machines, the Y-axis carries the gantry and may be heavier than the X-axis, potentially requiring a lower max rate.
-- This is related to `$121` (Y-Axis Acceleration).
+- This is one of the most important settings for balancing performance and reliability.
+- Low acceleration is "soft" and reliable. High acceleration is "snappy" but requires significantly more motor torque.
+- If set too high, motors will lose steps on direction changes or short, fast moves, causing positional errors.
 :::
 
-| Value (mm/min) | Meaning |
-|:--------------:|:--------|
-| 500 - 2000     | Safe starting values for many screw-driven hobby machines. |
-| 2000 - 10000+  | Typical for belt-driven or high-performance machines. |
+#### Typical Value Ranges
+
+| Axis Type | Machine Type | Typical Acceleration (mm/s² or deg/s²) |
+|:----------|:-------------|:---------------------------------------|
+| **Linear (X/Y)**| Light, Rigid Machine | 250 - 1000+ |
+| **Linear (X/Y)**| Heavy Gantry | 50 - 200 |
+| **Linear (Z)**| Standard Spindle | 50 - 150 (Usually much lower than X/Y) |
+| **Rotary**| Hobby 4th-Axis | 100 - 500 |
 
 #### Common Examples
-*   **Hobby CNC Router (Y-axis carries gantry):**
-    *   May be slightly lower than X.
-    *   `$111=4500`
-*   **Machine with Identical X/Y Mechanics:**
-    *   `$111=5000` (same as `$110`)
-
-#### Tips & Tricks
-- The effective speed of a diagonal (`XY`) move is limited by the lower of the `$110` and `$111` settings.
-- Test the Y-axis independently to find its true maximum reliable speed.
-
----
-
-## `$112` – Z-Axis Maximum Rate (mm/min)
-Sets the maximum speed at which the **Z-axis** is allowed to move.
-
-:::info Context
-- This acts as a hard speed limit for the Z-axis motor.
-- The Z-axis often has a finer-pitch screw and must lift the weight of the spindle, so its max rate is usually **much lower** than the X and Y axes.
-- This is related to `$122` (Z-Axis Acceleration).
-:::
-
-| Value (mm/min) | Meaning |
-|:--------------:|:--------|
-| 500 - 1500     | Typical for many lead-screw driven Z-axes. |
-| 1500 - 3000+   | Possible for machines with powerful motors or counterbalance systems. |
-
-#### Common Examples
-*   **Standard Hobby CNC:**
-    *   `$112=1000`
-*   **Heavy Spindle:**
-    *   `$112=800`
-
-#### Tips & Tricks
-- Setting this value too high is a common cause of lost Z-steps, leading to incorrect cutting depths. Be conservative with this setting.
-- Test this by commanding rapid up-and-down moves (`G0 Z-10`, `G0 Z0`) over a long distance.
-
----
-
-## `$113` – A-Axis Maximum Rate (deg/min)
-Sets the maximum rotational speed at which the **A-axis** is allowed to move.
-
-:::info Context
-- This is the speed limit for your 4th axis, measured in degrees per minute.
-- Setting this too high can cause the rotary motor to stall, especially with a heavy workpiece.
-- This is related to `$123` (A-Axis Acceleration).
-:::
-
-| Value (deg/min) | Meaning |
-|:---------------:|:--------|
-| 1000 - 5000     | Typical for hobby-grade rotary axes. |
-| 5000 - 20000+   | For high-performance rotary axes with strong motors and drivers. |
-
-#### Common Examples
-*   **Small Rotary Table:**
-    *   3600 deg/min = 10 RPM.
-    *   `$113=3600`
-*   **Fast, Geared Rotary Axis:**
-    *   `$113=10800` (30 RPM)
-
-#### Tips & Tricks
-- Remember that the surface speed of your workpiece increases with its diameter. A high rotational speed on a large-diameter part can be very fast!
-- The linear feed rate in G-code (`F` word) is combined with this rotational speed in coordinated moves.
-
----
-
-## `$114` – B-Axis Maximum Rate (deg/min)
-Sets the maximum rotational speed at which the **B-axis** is allowed to move.
-
-:::info Context
-- This is the speed limit for your 5th axis (rotating around Y), measured in degrees per minute.
-- This is related to `$124` (B-Axis Acceleration).
-:::
-
-#### Common Examples
-*   **Trunnion Table B-Axis:**
-    *   `$114=5400` (15 RPM)
-
----
-
-## `$115` – C-Axis Maximum Rate (deg/min)
-Sets the maximum rotational speed at which the **C-axis** is allowed to move.
-
-:::info Context
-- This is the speed limit for a rotary axis around Z, measured in degrees per minute.
-- This is related to `$125` (C-Axis Acceleration).
-:::
-
-#### Common Examples
-*   **Rotary Platter on a Mill:**
-    *   `$115=7200` (20 RPM)
-
----
-
-
----
-
-## `$120` – X-Axis Acceleration (mm/s²)
-Sets how quickly the **X-axis** can change its speed.
-
-:::info Context
-- This is a critical setting for performance and reliability.
-- Low acceleration is "soft" and reliable. High acceleration is "snappy" but requires much more motor torque.
-- If set too high, the motor will lose steps (lose position) on direction changes or short, fast moves.
-- Works together with `$110` (X-Axis Maximum Rate).
-:::
-
-| Value (mm/s²) | Meaning |
-|:-------------:|:--------|
-| 50 - 250      | Safe, conservative values for most machines. |
-| 250 - 1000+   | For well-tuned, rigid machines with strong motors. |
-
-#### Common Examples
-*   **Heavy Gantry Machine:**
-    *   Requires lower acceleration to manage inertia.
-    *   `$120=150`
-*   **Light, Rigid Machine:**
-    *   Can handle much faster direction changes.
+*   **Hobby CNC Router (X, Y, Z):**
     *   `$120=500`
-
-#### Tips & Tricks
-- A "jerk test" is the best way to tune this. Command many short, rapid, back-and-forth moves (e.g., `G0 X1`, `G0 X0` in a loop). Increase acceleration until the motor stalls, then back the value off by 20-30% for a safety margin.
-- See our detailed guide: [**Tuning Motion**](../Machine-Calibration/tuning-motion).
-
----
-
-## `$121` – Y-Axis Acceleration (mm/s²)
-Sets how quickly the **Y-axis** can change its speed.
-
-:::info Context
-- Affects performance and reliability for the Y-axis.
-- On many machines, the Y-axis carries the gantry and has more mass than the X-axis, often requiring a lower acceleration value.
-- Works together with `$111` (Y-Axis Maximum Rate).
-:::
-
-| Value (mm/s²) | Meaning |
-|:-------------:|:--------|
-| 50 - 250      | Safe, conservative values for most machines. |
-| 250 - 1000+   | For well-tuned, rigid machines with strong motors. |
-
-#### Common Examples
-*   **Heavy Gantry Machine:**
-    *   `$121=120` (Potentially lower than `$120`)
-*   **Machine with Identical X/Y Mechanics:**
-    *   `$121=500` (Same as `$120`)
-
-#### Tips & Tricks
-- Tune acceleration for each axis independently to find the optimal values for your specific machine's mechanics.
-
----
-
-## `$122` – Z-Axis Acceleration (mm/s²)
-Sets how quickly the **Z-axis** can change its speed.
-
-:::info Context
-- The Z-axis is often fighting gravity and carrying the weight of the spindle.
-- For this reason, Z-axis acceleration is almost always set more conservatively (lower) than X and Y.
-- Works together with `$112` (Z-Axis Maximum Rate).
-:::
-
-| Value (mm/s²) | Meaning |
-|:-------------:|:--------|
-| 50 - 150      | Typical for many hobbyist machines. |
-| 150 - 500+    | For machines with powerful motors, brakes, or counterbalance systems. |
-
-#### Common Examples
-*   **Standard Hobby CNC with a heavy spindle:**
+    *   `$121=400` (Y-gantry is heavier)
     *   `$122=100`
-*   **Lightweight Z-axis (e.g., for a laser):**
-    *   `$122=250`
-
-#### Tips & Tricks
-- Setting Z-acceleration too high is a primary cause of lost steps, leading to the Z-axis "drifting" up or down during a job and ruining cuts. Be conservative here.
-
----
-
-## `$123` – A-Axis Acceleration (deg/s²)
-Sets how quickly the **A-axis** (rotary) can change its rotational speed.
-
-:::info Context
-- High acceleration on a rotary axis can be very demanding on the motor, especially with a heavy or large-diameter workpiece which has high inertia.
-- Works together with `$113` (A-Axis Maximum Rate).
-:::
-
-| Value (deg/s²) | Meaning |
-|:--------------:|:--------|
-| 100 - 500      | Safe values for most rotary setups. |
-| 500 - 2000+    | For high-performance rotary axes. |
-
-#### Common Examples
 *   **Standard 4th-Axis Add-on:**
     *   `$123=300`
 
 #### Tips & Tricks
-- If your rotary axis stalls when doing rapid indexing (fast direction changes), your acceleration is likely too high.
+- A "jerk test" is the best way to tune this. Command many short, rapid, back-and-forth moves (e.g., `G0 X1`, `G0 X0` in a loop). Increase acceleration until the motor stalls, then back the value off by 20-30%.
+- Setting Z-acceleration too high is a primary cause of lost steps, leading to incorrect cutting depths. Be conservative.
 
 ---
 
-## `$124` – B-Axis Acceleration (deg/s²)
-Sets how quickly the **B-axis** (rotary) can change its rotational speed.
+## `$130` – `$135` – Axis Maximum Travel
+
+Defines the total travel distance for each axis in **mm** (linear) or **degrees** (rotary).
+
+- `$130` → X-axis
+- `$131` → Y-axis
+- `$132` → Z-axis
+- `$133` → A-axis
+- `$134` → B-axis
+- `$135` → C-axis
 
 :::info Context
-- Acceleration limit for a rotary axis that pivots around the Y-axis.
-- Works together with `$114` (B-Axis Maximum Rate).
-:::
-
----
-
-## `$125` – C-Axis Acceleration (deg/s²)
-Sets how quickly the **C-axis** (rotary) can change its rotational speed.
-
-:::info Context
-- Acceleration limit for a rotary axis that pivots around the Z-axis.
-- Works together with `$115` (C-Axis Maximum Rate).
-:::
-
----
-
-## `$130` – X-Axis Maximum Travel (mm)
-Defines the total travel distance for the **X-axis**.
-
-:::info Context
-- This value is the size of your machine's work envelope in the X direction.
+- This value defines the size of your machine's work envelope.
 - It is measured from the point where the homing switch triggers (`MPos:0`) to the opposite end of physical travel.
-- This setting is **essential** for the **Soft Limits (`$20`)** feature to work.
+- This setting is **essential** for the **Soft Limits (`$20`)** feature to work correctly.
 :::
 
-| Value (mm) | Description |
-|:----------:|:------------|
-| 1 - N      | The maximum travel distance of the axis. |
-
 #### Common Examples
-*   **Shapeoko 3 XXL:**
-    *   `$130=850`
-
-#### Tips & Tricks
-- To set this accurately, home the machine (`$H`). Then, jog the X-axis to its furthest physical limit. The machine position (`MPos`) displayed is the value to enter for this setting.
-- Always set this value slightly less than the absolute maximum physical travel to provide a safety margin.
-
----
-
-## `$131` – Y-Axis Maximum Travel (mm)
-Defines the total travel distance for the **Y-axis**.
-
-:::info Context
-- The size of your machine's work envelope in the Y direction.
-- Measured from the homing switch trigger point.
-- Essential for **Soft Limits (`$20`)**.
-:::
-
-| Value (mm) | Description |
-|:----------:|:------------|
-| 1 - N      | The maximum travel distance of the axis. |
-
-#### Common Examples
-*   **Shapeoko 3 XXL:**
-    *   `$131=850`
-
----
-
-## `$132` – Z-Axis Maximum Travel (mm)
-Defines the total travel distance for the **Z-axis**.
-
-:::info Context
-- The size of your machine's work envelope in the Z direction.
-- Measured from the homing switch trigger point.
-- Essential for **Soft Limits (`$20`)**.
-:::
-
-| Value (mm) | Description |
-|:----------:|:------------|
-| 1 - N      | The maximum travel distance of the axis. |
-
-#### Common Examples
-*   **Shapeoko 3 XXL:**
-    *   `$132=80`
-
-#### Tips & Tricks
-- The value is typically negative if you home the Z-axis at the top, since all motion from there is in the negative direction. For example, `$132=-80.000`.
-
----
-
-## `$133` – A-Axis Maximum Travel (deg)
-Defines the total travel distance for the **A-axis**.
-
-:::info Context
-- For a rotary axis that can rotate continuously, this value can be set to a very large number.
-- For a rotary axis with limited travel, set this to the actual limit.
-- Essential for **Soft Limits (`$20`)** on the A-axis.
-:::
-
-| Value (deg) | Description |
-|:-----------:|:------------|
-| 1 - N       | The maximum travel of the axis. |
-
-#### Common Examples
+*   **300x400x80mm CNC:**
+    *   `$130=300`
+    *   `$131=400`
+    *   `$132=80` (or `-80` if Z homes at the top)
 *   **Continuously Rotating 4th Axis:**
-    *   `$133=3600000.0` (Ten thousand full rotations)
+    *   Set to a 0 to allow unlimited rotations.
+    *   `$133=0`
+*   **Limited Trunnion (B-axis, 0-110°):**
+    *   `$134=110.0`
+
+#### Tips & Tricks
+- To set this accurately, home the machine (`$H`). Then, jog an axis to its furthest physical limit. The machine position (`MPos`) displayed is the value to enter for that axis.
+- Always set the value slightly less than the absolute maximum physical travel to provide a safety margin.
+
 
 ---
-
-## `$134` – B-Axis Maximum Travel (deg)
-Defines the total travel distance for the **B-axis**.
-
-:::info Context
-- The travel limit for a rotary axis around Y.
-- For a trunnion table that can only tilt from 0 to 110 degrees, this value would be 110.
-- Essential for **Soft Limits (`$20`)**.
-:::
-
----
-
-## `$135` – C-Axis Maximum Travel (deg)
-Defines the total travel distance for the **C-axis**.
-
-:::info Context
-- The travel limit for a rotary axis around Z.
-- Essential for **Soft Limits (`$20`)**.
-:::
-
----
-
 ## `$140` - `$142` – X, Y, Z-axis Motor Current
 A placeholder setting for motor current on some drivers.
 
@@ -2478,19 +2139,20 @@ Selects the method the controller uses to obtain an IP address.
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Static | You must manually set the IP (`$302`), Gateway (`$303`), and Netmask (`$304`). |
-| -1    | DHCP   | The controller asks your router for an IP address. (Recommended) |
-| -2    | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
+| 1    | DHCP   | The controller asks your router for an IP address. (Recommended) |
+| 2    | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
 
 #### Common Examples
 *   **Home/Office Network with a Router:**
     *   This is the easiest and most reliable option.
-    *   `$301=-1`
-*   **Direct Connection to a PC (no router):**
+    *   `$301=1`
+*   **Direct Connection to a PC (with or without router):**
     *   You must assign a permanent, non-conflicting address.
+    *   You configure another IP in the same range on the PC (either as primary or secondary IP)
     *   `$301=0`
 
 #### Tips & Tricks
-- Always use DHCP (`-1`) unless you have a specific reason not to.
+- Always use DHCP (`1`) unless you have a specific reason not to.
 - If you select Static mode, you are responsible for providing correct and non-conflicting network information in the following settings.
 
 ---
@@ -2558,7 +2220,7 @@ Manually sets the Subnet Mask for the controller.
     *   `$304=255.255.255.0`
 
 #### Tips & Tricks
-- An incorrect Netmask can prevent the controller from communicating with other devices, even on the local network. When in doubt, use DHCP (`$301=-1`).
+- An incorrect Netmask can prevent the controller from communicating with other devices, even on the local network. When in doubt, use DHCP (`$301=1`).
 
 ---
 
@@ -2579,7 +2241,7 @@ Configures the network port for the Telnet service.
     *   `$305=23`
 
 #### Tips & Tricks
-- Do not change this port unless you have a specific reason, such as a port conflict on your network or a security requirement.
+- Usually there is no need to change this port unless you have a specific reason
 - You will need this port number to configure your G-code sender if it uses Telnet.
 
 ---
@@ -2588,8 +2250,8 @@ Configures the network port for the Telnet service.
 Configures the network port for the HTTP service.
 
 :::info Context
-- This setting is largely historical/reserved.
-- Modern web interfaces for grblHAL typically use the WebSocket service (`$307`) for communication.
+- The HTTP service provides a web server running on the controller, for loading the WebUI.
+- Modern web interfaces for grblHAL typically also use the WebSocket service (`$307`) for communication.
 :::
 
 | Value | Meaning | Description |
@@ -2600,14 +2262,17 @@ Configures the network port for the HTTP service.
 *   **Default HTTP Port:**
     *   `$306=80`
 
+#### Tips & Tricks
+  - This port is often used for the WebUI. For example, you might connect by typing `http://<your-ip>:<your http port>` into a browser.
+
 ---
 
 ## `$307` – WebSocket Port
 Configures the network port for the WebSocket service.
 
 :::info Context
-- The WebSocket service provides a fast, modern, and efficient way for web-based user interfaces (like the ioSender WebUI) to communicate with the controller.
-- This is the key service for most modern network-based G-code senders.
+- The WebSocket service provides a fast, modern, and efficient way for web-based user interfaces to communicate with the controller.
+- This, (along with Telnet `$305`) are the key services for most modern network-based G-code senders.
 :::
 
 | Value | Meaning | Description |
@@ -2619,8 +2284,7 @@ Configures the network port for the WebSocket service.
     *   `$307=81`
 
 #### Tips & Tricks
-- This port is often used for the WebUI. For example, you might connect by typing `http://<your-ip>:81` into a browser.
-- If you cannot connect with a web-based sender, ensure this port is not being blocked by a firewall.
+- This port is often used for the WebUI as well.
 
 ---
 
@@ -2646,15 +2310,12 @@ Configures the network port for the FTP (File Transfer Protocol) service.
 
 ---
 
----
-
 ## `$330` – Admin Password
 Sets the password for the `admin` account.
 
 :::info Context
 - The `admin` account has full privileges, including uploading/deleting files via FTP and changing settings.
 - This password is required for secure network services.
-- For security, the password is not displayed when you list settings with `$$`; it will show as `(masked)`.
 :::
 
 | Value | Meaning | Description |
@@ -2669,7 +2330,7 @@ Sets the password for the `admin` account.
 
 #### Tips & Tricks
 - It is highly recommended to set a secure `admin` password if your machine is on a shared or untrusted network.
-- The default password may be blank or a simple value like `admin`.
+- The default password may be blank
 
 ---
 
@@ -2679,7 +2340,6 @@ Sets the password for the `user` account.
 :::info Context
 - The `user` account may have restricted privileges compared to the `admin` account (e.g., read-only access).
 - This is useful for providing limited access to the machine's network services.
-- This password is also masked when listing settings.
 :::
 
 | Value | Meaning | Description |
@@ -2689,6 +2349,8 @@ Sets the password for the `user` account.
 #### Common Examples
 *   **Set a new user password:**
     *   `$331=Guest123`
+*   **Clear the password:**
+    *   `$331=` (with no value after the equals sign)
 
 ---
 
@@ -2842,6 +2504,15 @@ The tolerance used for the "spindle at speed" input signal.
 *   **A 5% Tolerance:**
     *   If you command `S10000`, the spindle is considered "at speed" between 9500 and 10500 RPM.
     *   `$340=5`
+
+*   **Disable Tolerance:**
+    *   Ignore spindle at speed, use Spindle Delay instead.
+    *   `$340=0`
+
+:::danger Error 14
+You may get **"Error 14"** errors if spindle is either unable to reach or stay within tolerance, or if communication is not working (Incorrect Modbus settings for example)
+:::
+
 
 ---
 
@@ -3018,6 +2689,7 @@ Sets the default Modbus address for the spindle VFD.
 #### Common Examples
 *   **Controlling a Single VFD:**
     *   VFDs often ship with a default address of 1.
+    *   Check your VFDs manual, or go into the VFD settings and check what the Modbus address is set to
     *   `$360=1`
 
 #### Tips & Tricks
@@ -3196,6 +2868,10 @@ Configures the serial communication speed for the built-in Modbus RTU interface.
 *   **Faster communication:**
     *   `$374=1` (for 19200 baud)
 
+#### Tips & Tricks
+  *   Check your VFDs manual, or go into the VFD settings and check what the Modbus Baud Rate is set to
+
+
 ---
 
 ## `$375` – ModBus RX Timeout (ms)
@@ -3229,22 +2905,20 @@ Identifies which axes are rotary axes, as opposed to linear axes.
 
 | Bit | Value | Axis is Rotary |
 |:---:|:-----:|:---------------|
-| 3   | 8     | A-Axis |
-| 4   | 16    | B-Axis |
-| 5   | 32    | C-Axis |
+| 0   | 1     | A-Axis |
+| 1   | 2    | B-Axis |
+| 2   | 4    | C-Axis |
 
 #### Common Examples
 *   **Standard 3-Axis Mill (No Rotary):**
     *   `$376=0`
 *   **4-Axis Mill with a Rotary A-Axis:**
-    *   `$376=8`
+    *   `$376=1`
 *   **5-Axis Mill with A and C Rotary Axes:**
-    *   `8` (A) + `32` (C) → `$376=40`
+    *   `1` (A) + `4` (C) → `$376=5`
 
 #### Tips & Tricks
 - The first three axes (X, Y, Z) are always assumed to be linear and cannot be set as rotary.
-
----
 
 ---
 
@@ -3326,7 +3000,7 @@ Selects the default spindle to be used if not otherwise specified by a command.
 
 | Value | Meaning |
 |:-----:|:--------|
-| 0     | Spindle 0 (Primary PWM) |
+| 0     | Spindle 0 |
 | 1     | Spindle 1 |
 | ...   | ... |
 
@@ -3405,8 +3079,8 @@ Sets the Counts Per Revolution (CPR) of the Encoder 0 hardware.
 
 ---
 
-## `$450` – User Defined Slot 0
-The first of ten general-purpose "slots" that are not used by the core grblHAL firmware.
+## `$450 - $459` – User Defined Slots
+Ten general-purpose "slots" that are not used by the core grblHAL firmware.
 
 :::info Context
 - These settings (`$450`-`$459`) are provided as persistent storage for your own custom data.
@@ -3619,22 +3293,33 @@ A safety feature that requires an explicit unlock command after an E-stop has be
     *   `$484=1`
 
 ---
+---
 
-## `$534` – Output NGC Debug Messages
-Enables or disables verbose debugging messages from the G-code interpreter.
+## `$534` – Output RS274/NGC Debug Messages
+Enables debugging messages from the RS274/NGC Expressions inside Macros.
 
 :::info Context
-- This is a diagnostic tool for developers and advanced users.
-- When enabled, the interpreter will output detailed information about how it is parsing G-code lines.
-- It should be left disabled during normal operation as it creates a large amount of serial traffic and can slow down execution.
+- This is a diagnostic tool for developers and advanced users writing Macros that uses **RS274/NGC expressions**.
+- The RS274/NGC interpreter is what enables powerful features like `O-words` (macros/subroutines), variables (e.g., `#100`), mathematical expressions, and flow control (`IF/ELSE`, `WHILE`).
+- When enabled, this setting allows you to use `(debug, ...)` logs from within your macros
+- It should be **disabled** during normal operation as it creates a large amount of serial traffic and can slow down execution.
 :::
 
-| Value | Meaning |
-|:-----:|:--------|
-| 0     | Disabled |
-| 1     | Enabled |
+| Value | Meaning | Description |
+|:-----:|:--------|:------------|
+| 0     | Disabled| Standard operation. No debug messages are sent. (Default) |
+| 1     | Enabled | Debugging messages for the RS274/NGC interpreter are sent to the console. |
 
----
+#### Common Examples
+*   **Normal Operation:**
+    *   This should be the setting for all regular jobs.
+    *   `$534=0`
+*   **Debugging a Complex Macro:**
+    *   You are writing a tool-change macro with `IF` statements and want to see your `(debug, ...)` logs
+    *   `$534=1`
+
+#### Tips & Tricks
+- This setting is your best friend when trying to figure out why a complex macro or `O-word` subroutine isn't working as expected.
 
 ## `$538` – Fast Rotary "Go to G28" Behaviour
 Controls the behavior of rotary axes when a `G28` command is issued.
