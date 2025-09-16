@@ -166,17 +166,14 @@ If an axis moves in the opposite direction than expected, invert it here instead
 
 ---
 
-## `$4` – Invert Stepper Enable (boolean/mask)
+## `$4` – Invert Stepper Enable (mask)
 
 Controls the polarity of the **enable signal** for stepper drivers.  
 Some drivers expect an **active-low** enable, while others expect **active-high**.  
 This setting lets you match the signal to what your driver requires.
 
 :::info Context
-- In grblHAL, `$4` may be applied as a **mask per axis** (X, Y, Z, A, B, C).  
-- Expressed as either:  
-  - A **boolean** (classic behavior, all axes together).  
-  - A **bitmask** (per-axis inversion, newer grblHAL builds).  
+- Applied as a **mask per axis** (X, Y, Z, A, B, C).  
 - Related settings:  
   - `$2` – Step Pulse Invert (mask)  
   - `$3` – Direction Invert (mask)  
@@ -203,6 +200,7 @@ This setting lets you match the signal to what your driver requires.
 
 #### Tips & Tricks
 - If your motors **never engage** (drivers always disabled), try toggling this.  
+- If `$4` is set incorrectly, and `$1` is less than 25
 - Some driver boards **share a single enable line** — in that case, all axes must match.  
 - On multi-axis boards with **independent enables**, masking per axis can help if different driver types are used together.  
 
@@ -228,10 +226,13 @@ If your limit switches trigger in reverse (always “on” when idle, “off” 
 | C    | 32        | Invert C limit input |
 
 #### Common Examples
-* **Default (normally-open switches):**  
+* **Default (normally-closed switches):**  
   `$5=0`
 
-* **Normally-closed switches on all axes:**  
+* **Normally-open switches on all X, Y and Z:**  
+  `$5=7`
+
+* **Normally-open switches on all axes:**  
   `$5=63`
 
 * **Invert Z only:**  
@@ -245,7 +246,7 @@ If your limit switches trigger in reverse (always “on” when idle, “off” 
 ## `$6` – Invert Probe Input (boolean/mask)
 
 Controls the polarity of the **probe input pin(s)**.  
-If your probe shows **triggered when not connected**, invert it here.
+If your probe shows **triggered when it's not making contact**, invert it here.
 
 :::info Context
 - In most builds: `$6` is a simple **boolean** (0=normal, 1=invert).  
@@ -281,7 +282,6 @@ If your probe shows **triggered when not connected**, invert it here.
 
 #### Tips & Tricks
 - If `$6` is wrong, probing will either **alarm immediately** or **never trigger**.  
-- For safety, test with a continuity meter or status reports (`?`) before running a probing cycle.  
 - Multi-probe configs are common in **toolsetter + touch plate** setups.  
 
 ---
@@ -303,12 +303,12 @@ Not all builds use `$7`; its function depends on the driver or plugin.
 
 ## `$8` – Ganged Axes Direction Invert (mask)
 
-Controls the polarity of the **secondary motor** in a ganged (dual-motor) axis.  
-For example, on a dual-Y gantry machine, you may need one motor to spin in the opposite direction.
+Controls the direction of the **secondary motor** in a ganged (dual-motor) axis.  
+For example, on a dual-Y gantry machine, you may need one motor to spin in the opposite direction in a belted configuration.
 
 :::info Context
 - Only applies if you have **ganged axes** (e.g., dual-Y or dual-Z).  
-- Expressed as a bitmask like `$3`.  
+- Expressed as a bitmask **per axis**  
 :::
 
 | Axis | Bit Value | Description |
@@ -328,8 +328,10 @@ For example, on a dual-Y gantry machine, you may need one motor to spin in the o
   `$8=4`
 
 #### Tips & Tricks
+- Use this setting if the machine tries running the ganged motors in opposite directions to each other.
 - Always check squaring after changing this.  
-- Combine with `$23` (Homing Direction Invert) for proper dual-axis homing.  
+
+
 ---
 
 ## `$9` – PWM Spindle Options (mask)
@@ -351,43 +353,49 @@ These options vary by build, but typically include enabling certain behaviors or
 
 ---
 
-## `$10` – Status Report Options (mask)
+## `$10` – Status Report Options (bitmask)
 
 Configures what information is included in the **real-time status reports** (`?` command).  
 This allows you to customize what grblHAL streams back to the host.
 
 :::info Context
-- Expressed as a **bitmask**.  
-- More flags may appear in grblHAL than in classic Grbl.  
-- Frequent use: `$10=511` (full report) or a reduced set for performance.  
+- Expressed as a **bitmask** (sum of values).  
+- grblHAL extends this beyond classic Grbl.  
+- Common usage: enable only the fields your GUI needs.  
 :::
 
 | Bit | Value | Option |
 |-----|-------|--------|
-| 0   | 1     | Machine Position (MPos) |
-| 1   | 2     | Work Position (WPos) |
-| 2   | 4     | Planner buffer usage |
-| 3   | 8     | RX buffer usage |
-| 4   | 16    | Limit pin state |
-| 5   | 32    | Work coordinate offset |
-| 6   | 64    | Overriding feed, spindle, rapid |
-| 7   | 128   | Probe pin state |
-| 8   | 256   | Spindle speed |
-| 9   | 512   | Accessory states (coolant, mist, etc.) |
+| 0   | 1     | Position in **machine coordinates** (MPos) |
+| 1   | 2     | **Buffer state** (planner / RX) |
+| 2   | 4     | **Line numbers** |
+| 3   | 8     | **Feed & speed** |
+| 4   | 16    | **Pin state** (limit, probe, etc.) |
+| 5   | 32    | **Work coordinate offset** (WCO) |
+| 6   | 64    | **Overrides** (feed, spindle, rapid) |
+| 7   | 128   | **Probe coordinates** |
+| 8   | 256   | **Buffer sync on WCO change** |
+| 9   | 512   | **Parser state** (sent separately, only on changes) |
+| 10  | 1024  | **Alarm substatus** |
+| 11  | 2048  | **Run substatus** (can help with simple probe protection) |
+| 12  | 4096  | **Enable during homing** (report also sent while homing) |
 
 #### Common Examples
-* **Minimal (positions only):**  
-  `$10=3` (MPos + WPos)
+* **Minimal (just position + buffer):**  
+  `$10=3` (MPos + buffer state)
 
 * **Classic Grbl behavior:**  
-  `$10=255`
+  `$10=255` (first 8 flags)
 
 * **Full report (all flags):**  
-  `$10=511`
+  `$10=8191`
 
-#### Tips & Tricks
-- More info = more **serial traffic**. Tune for your controller + sender.  
-- If your GUI shows wrong or missing data, check `$10`.  
+#### Tips and Trick
+- Enabling more fields = more **serial traffic**.  
+- Some GUIs may rely on specific fields (e.g. offsets, parser state).  
+- `Parser state` is not included inline, but sent separately on changes.  
+- `Run substatus` can be used as a simple **probe protection** indicator.  
+
 ---
 
 ## `$11` – Junction Deviation
@@ -397,23 +405,16 @@ It affects **cornering speed** and **smoothness**.
 
 :::info Context
 - Units: millimeters.  
-- Smaller values = more accurate corners, but slower.  
-- Larger values = faster, smoother motion, but less accurate corners.  
 :::
 
 #### Common Examples
-* **Standard CNC routing:**  
-  `$11=0.01`
+* **Default:**  
+  `$11=0.010`
 
-* **High precision machining:**  
-  `$11=0.002`
-
-* **Fast plasma/laser cutting:**  
-  `$11=0.05`
 
 #### Tips & Tricks
-- This is an advanced tuning parameter — defaults are usually fine.  
-- Lowering too much can cause **jerky motion** or stalls.  
+- This is an advanced tuning parameter — defaults are perfectly fine.  Please do not change these values unless specifically requested to do so
+
 ---
 
 ## `$12` – Arc Tolerance
@@ -427,15 +428,13 @@ Smaller values = more precise arcs, but more segments.
 :::
 
 #### Common Examples
-* **General CNC routing:**  
+* **Default:**  
   `$12=0.002`
 
-* **High-speed laser/plasma:**  
-  `$12=0.01`
 
 #### Tips & Tricks
-- If arcs appear “choppy,” reduce `$12`.  
-- Too low wastes CPU time on excessive segmentation.  
+- This is an advanced tuning parameter — defaults are perfectly fine.  Please do not change these values unless specifically requested to do so
+
 ---
 
 ## `$13` – Report in Inches (boolean)
@@ -461,7 +460,7 @@ Does **not** affect G-code commands.
   `$13=1`
 
 #### Tips & Tricks
-- Leave at `0` unless your sender specifically requires inches.  
+- Leave at `0` unless your sender specifically requires inches.  Most G-code senders prefer the reports to be in metric, and handle imperial conversions locally
 ---
 
 ## `$14` – Invert Control Inputs (mask)
@@ -644,7 +643,7 @@ Enables a safety feature that prevents the machine from moving beyond its config
 | 1     | Enabled | grblHAL will throw an error if a move exceeds the max travel for any axis. |
 
 #### Common Examples
-*   **Machine Not Yet Homed/Calibrated:**
+*   **Machine Unable to Home / New Uncalibrated setup:**
     *   Keep soft limits off until homing is working perfectly.
     *   `$20=0`
 *   **Production Use (Highly Recommended):**
@@ -653,37 +652,45 @@ Enables a safety feature that prevents the machine from moving beyond its config
 
 ##### Tips & Tricks
 - Always enable soft limits once your machine is properly configured. It's free insurance against typos in G-code or jogging mistakes.
-- If you get a "soft limit" error, it means your G-code is trying to move outside the machine's work area defined by `$130`+.
+- If you get a "soft limit" error, it means your G-code is trying to move outside the machine's work area defined by `$130-$135`.  It usually means you either forgot to home, Homing isn't working correctly, or your job/jog move really does exceed the machine's working envelope
 
 ---
 
-## `$21` – Hard Limits Enable (boolean)
+---
+
+## `$21` – Hard Limits Enable (mask)
 Enables a safety feature that uses the physical limit switches to stop the machine instantly in an emergency.
 
 :::info Context
 - This is a **hardware** check. If any limit switch is triggered *during* a move, grblHAL will immediately halt all axes and enter an alarm state.
 - This is your last line of defense against a crash if soft limits fail or are not active.
-- It requires physical switches to be wired to the limit input pins.
+- It is a **bitmask**: add together the values of the options you want to enable. The "Enable" bit (value 1) must be set for any of the other options to work.
 :::
 
-| Value | Meaning | Description |
-|:-----:|:--------|:------------|
-| 0     | Disabled| Limit switch triggers are ignored during motion. |
-| 1     | Enabled | A limit switch trigger will cause an immediate alarm and stop. |
+| Bit | Value | Meaning | Description |
+|:---:|:-----:|:--------|:------------|
+| 0   | 1     | Enable  | The master switch to turn on hard limit detection. |
+| 1   | 2     | Strict Mode | When a switch is engaged, only a homing cycle is allowed to clear the state. Jogging away is disabled. |
+| 2   | 4     | Disable for Rotary | Hard limits will be ignored for rotary axes (A, B, C), but remain active for linear axes (X, Y, Z). |
 
 #### Common Examples
-*   **No Limit Switches Installed:**
+*   **No Limit Switches Installed (or Disabled):**
     *   You must keep this disabled.
     *   `$21=0`
-*   **Production Use (Highly Recommended):**
-    *   Enable hard limits for maximum safety.
-    *   `$21=1`
+*   **Standard Hard Limits (Recommended):**
+    *   Enables hard limits for all axes.
+    *   `1` → `$21=1`
+*   **Strict Mode Enabled:**
+    *   For maximum safety, forcing a re-home after a limit trigger.
+    *   `1` (Enable) + `2` (Strict) → `$21=3`
+*   **Hard Limits for Linear Axes Only:**
+    *   Useful if your rotary axis has no limit switches or is designed to rotate continuously.
+    *   `1` (Enable) + `4` (Disable Rotary) → `$21=5`
 
-##### Tips & Tricks
+#### Tips & Tricks
 - Hard limits can sometimes be triggered by electrical noise. If you get false alarms, check the shielding on your limit switch wires and consider adding a small capacitor (e.g., 0.1uF) across the switch input pins.
+- In "Strict Mode," you cannot simply jog off a triggered switch. You must reset and perform a homing cycle, which is safer as it re-establishes the machine's true position.
 - When hard limits are enabled, the switches are **only** active during motion. They are ignored when the machine is idle to prevent accidental alarms.
-
----
 
 ---
 
@@ -701,7 +708,7 @@ Configures the behavior of the homing cycle.
 | **1** | 0 | **Enable Homing Cycle:** This is the master switch. It must be enabled to allow the `$H` command to run. |
 | **2** | 1 | **Enable Single Axis Homing Commands:** Allows using `G28.1`/`G30.1` on individual axes. |
 | **4** | 2 | **Homing on Startup Required:** Forces the user to run a homing cycle before any G-code motion is allowed. A key safety feature. |
-| **8** | 3 | **Set Machine Origin to 0:** After homing, sets the machine position at the switch trigger point to `0`. If disabled, it's set to the axis maximas |
+| **8** | 3 | **Set Machine Origin to 0:** After homing, sets the machine position at the switch trigger point to `0`. If disabled, it's set to the axis maximas - also known as  HOMING_FORCE_SET_ORIGIN|
 | **16**| 4 | **Two Switches Share One Input:** Informs grblHAL that two homing switches are wired in parallel to a single input pin. |
 | **32**| 5 | **Allow Manual Homing:** Enables manual homing commands. |
 | **64**| 6 | **Override Locks:** Allows jogging motion even when the machine is in an alarm state that normally requires homing. |
@@ -711,54 +718,53 @@ Configures the behavior of the homing cycle.
 
 #### Common Examples
 *   **Simple Homing Enabled:**
-    *   Enables the `$H` command and nothing else.
+    *   Enables the `$H` command only, standard homing setup
     *   `1` → `$22=1`
-*   **Safe & Standard Homing:**
-    *   A typical setup that requires homing on startup and uses the switches as limits for safety.
-    *   `1` (Enable) + `4` (Homing Required) + `256` (Use Limits) → `$22=261`
 
 ##### Tips & Tricks
-- Homing is one of the most important features to configure for a reliable machine.
-- For a new machine, start with just `$22=1` and then add more options like `4` and `256` once you have confirmed the basic cycle works.
+- Homing is one of the most important features to configure for a reliable machine.  All offsets and coordinate systems depends on a reliably established Machine coordinate system.  Without homing several features will feel like they don't work quite correctly.
+- For a new machine, start with just `$22=1` and then add more options once you have confirmed the basic cycle works.
+
+---
 
 ---
 
 ## `$23` – Homing Direction Invert (mask)
-Controls the initial direction of movement for each axis during a homing cycle.
+Defines the location of the homing switch for each axis, which in turn determines the direction of travel during a homing cycle.
 
 :::info Context
+- By default, grblHAL assumes all homing switches are located at the **maximum** (`+`) end of each axis's travel. The default homing cycle therefore moves in the positive direction.
+- This setting is a **bitmask** used to override that default assumption. Setting a bit for an axis tells grblHAL its switch is at the **minimum** (`-`) end of travel instead.
 - This setting is **only** for the homing cycle (`$H`). It does not affect normal jogging or G-code motion.
-- Use this if an axis moves **away** from its limit switch when you start the homing cycle.
-- This is a **bitmask**: add together the values of the axes you want to invert.
 :::
 
-| Value | Axis | Description |
-|:-----:|:-----|:------------|
-| 1     | X    | Invert Homing Direction for X-Axis |
-| 2     | Y    | Invert Homing Direction for Y-Axis |
-| 4     | Z    | Invert Homing Direction for Z-Axis |
-| 8     | A    | Invert Homing Direction for A-Axis |
-| 16    | B    | Invert Homing Direction for B-Axis |
-| 32    | C    | Invert Homing Direction for C-Axis |
+| Value | Axis | Switch Location Assumed |
+|:-----:|:-----|:------------------------|
+| 1     | X    | Invert to assume switch is at X-minimum (left). |
+| 2     | Y    | Invert to assume switch is at Y-minimum (front). |
+| 4     | Z    | Invert to assume switch is at Z-minimum (bottom, rare, bad-practice). |
+| 8     | A    | Invert to assume switch is at A-minimum. |
+| 16    | B    | Invert to assume switch is at B-minimum. |
+| 32    | C    | Invert to assume switch is at C-minimum. |
 
 #### Common Examples
-*   **Default (All axes home towards positive):**
+*   **Default (Switches at X, Y, Z maxima):**
+    *   The machine will home to the back-right-top corner.
     *   `$23=0`
-*   **Z-Axis Homes Up (Negative Direction):**
-    *   Most common configuration. The Z-axis moves up towards its switch.
-    *   `4` → `$23=4`
-*   **X and Y Home Towards Negative:**
-    *   Common for machines where the origin (0,0) is the front-left corner.
-    *   `1` (X) + `2` (Y) → `$23=3`
+*   **Switches at X-min and Y-min (front-left homing location):**
+    *   A very common setup for machines that home to the front-left.
+    *   `1` (X-min) + `2` (Y-min) → `$23=3`
 
-##### Tips & Tricks
-- Do not confuse this with `$3` (Direction Invert). `$3` flips the direction for **all** motion, while `$23` **only** flips it for the homing search.
-- If an axis moves the correct way during jogging but the wrong way during homing, `$23` is the setting to change.
+#### Tips & Tricks
+- The primary symptom of an incorrect `$23` setting is an axis moving **away** from its switch during the `$H` command.
+- Do not confuse this with `$3` (Direction Invert). `$3` flips the direction for **all** motion to match your motor wiring. `$23` flips the homing direction to match your **switch location**.
+- Set this mask to match the **physical location** of your switches relative to the desired machine origin.
+- Note: Unless HOMING_FORCE_ORIGIN is used, the position of the switch does change the machine origin (Not recommended)
 
 ---
 
 ## `$24` – Homing Locate Rate (mm/min)
-Sets the slower feed rate used to precisely locate the switch trigger point.
+Sets the slower feed rate used to precisely locate the switch trigger point on the 2nd approach
 
 :::info Context
 - After the initial fast search (`$25`) finds the switch, the machine backs off (`$27`) and then re-approaches slowly at this rate.
@@ -774,7 +780,7 @@ Sets the slower feed rate used to precisely locate the switch trigger point.
 *   **High-Precision Machine:**
     *   `$24=25`
 *   **Standard Hobby CNC:**
-    *   `$24=50`
+    *   `$24=100`
 
 ##### Tips & Tricks
 - This value should always be significantly slower than your `$25` search rate.
@@ -783,7 +789,7 @@ Sets the slower feed rate used to precisely locate the switch trigger point.
 ---
 
 ## `$25` – Homing Search Rate (mm/min)
-Sets the faster feed rate used to initially find the homing switches.
+Sets the faster feed rate used to initially find the homing switches during the 1st approach
 
 :::info Context
 - This is the speed the machine moves at the start of the homing cycle (`$H`).
@@ -803,7 +809,7 @@ Sets the faster feed rate used to initially find the homing switches.
 
 ##### Tips & Tricks
 - This rate should never be higher than the axis maximum rate (`$110` - `$115`). A value of 50-70% of the maximum rate is a good starting point.
-- If the motor stalls during the homing search, this value is too high.
+- If the motor slams violently into the limit switches during the homing search, this value is too high.
 
 ---
 
@@ -823,12 +829,9 @@ Sets a delay to filter electrical noise from the homing switches.
 #### Common Examples
 *   **Standard Setup:**
     *   `$26=25`
-*   **Noisy Environment:**
-    *   `$26=75`
 
 ##### Tips & Tricks
 - Setting this value too high will cause a small inaccuracy in the homed position, as the machine will travel slightly further before the trigger is registered.
-- If homing fails randomly, increasing this value slightly is a good troubleshooting step.
 
 ---
 
@@ -853,7 +856,7 @@ Sets the distance each axis moves *away* from the limit switches after they have
 
 ##### Tips & Tricks
 - This value must be large enough to fully release your mechanical switches.
-- After homing, the machine position will be `MPos:-2.0` (or whatever value you set), which is correct. The switch itself is at Machine Zero.
+- The switch's trigger point itself is used to calculate Machine Zero, not where the machine comes to rest after homing
 
 ---
 
@@ -909,7 +912,7 @@ Sets the spindle speed that corresponds to the maximum PWM output signal (100% d
 
 :::info Context
 - This setting is the key to scaling your spindle speed. It links a G-code `S` value to the analog/PWM output.
-- For example, if `$30=10000`, then an `S10000` command will result in 100% PWM, and an `S5000` command will result in 50% PWM.
+- For example, if `$30=24000`, then an `S24000` command will result in 100% PWM, and an `S12000` command will result in 50% PWM.
 - This works together with `$31` (Minimum Spindle Speed) and the PWM range (`$34`-`$36`).
 :::
 
@@ -954,7 +957,8 @@ Sets the minimum spindle speed that can be commanded.
 
 ##### Tips & Tricks
 - This setting is crucial for preventing VFD faults or spindle stalls at low RPMs. Check your spindle's datasheet.
-- If you use a router (like a Makita), which is not designed for low-speed operation, setting a minimum can prevent accidentally running it too slowly.
+- Minimum spindle speed, can be overridden by spindle plugins.
+- When set `> 0` then `$35 (PWM min value)` may have to be set to get the configured RPM to work correctly, otherwise the scale will be incorrect.
 
 ---
 
@@ -984,38 +988,44 @@ Enables or disables Laser Mode, which fundamentally changes motion control to su
 
 ---
 
+---
+
 ## `$33` – Spindle PWM Frequency (Hz)
-Sets the frequency of the PWM signal used for spindle speed control.
+Sets the frequency of the PWM signal used for spindle, laser, or servo control.
 
 :::info Context
-- The correct frequency depends entirely on what the receiving device (VFD, laser driver, spindle controller) expects.
-- An incorrect frequency can lead to poor speed control, audible whining, or the controller not responding at all.
+- The correct frequency depends entirely on what the receiving device expects. An incorrect value can lead to poor control or no response.
+- **VFDs/Lasers:** Use a high frequency for smooth power delivery.
+- **R/C Servos:** Require a very specific low frequency (usually 50Hz) to match their internal refresh rate.
 :::
 
 | Value (Hz) | Common Use Case |
 |:----------:|:----------------|
+| **50**     | **Standard R/C Servos** |
 | ~1000      | Many laser diode drivers. |
 | 5000       | Often recommended for VFD analog inputs (0-10V conversion). |
 | 10000+     | Some CO2 laser power supplies. |
 
 #### Common Examples
-*   **Typical Hobby Laser Driver:**
-    *   `$33=1000`
-*   **Huanyang VFD (via PWM-to-Analog converter):**
+*   **VFD (via PWM-to-Analog converter):**
     *   `$33=5000`
+*   **Controlling an R/C Servo:**
+    *   This sets the 20ms period (`1 / 50Hz = 0.02s`) that servos expect.
+    *   `$33=50`
 
-##### Tips & Tricks
-- **Always** check the documentation for your specific VFD or laser driver. There is no "universal" correct value.
-- If your spindle speed is erratic, this is one of the first settings to verify.
+#### Tips & Tricks
+- **Always** check the documentation for your specific VFD, laser driver, or servo.
+- If your spindle speed is erratic or a servo jitters, this is one of the first settings to verify.
 
 ---
 
 ## `$34` – Spindle PWM Off Value
-The raw PWM value (0-255) to be output when the spindle is off (`M5`).
+The raw PWM value (0-1000+) to be output when the spindle is off (`M5`).
 
 :::info Context
-- This value corresponds to 0% duty cycle, which should be `0` for almost all applications.
-- In rare cases, a controller might need a slight offset to register as fully "off."
+- This setting is part of a group (`$34`, `$35`, `$36`) that maps the `S0` to `S-max` range to a raw PWM output range. The size of this range is driver-dependent but is often 0-1000.
+- This value corresponds to 0% duty cycle, which should be `0` for most VFD/laser applications.
+- For R/C servos, this value can be used to set the pulse width for the `S0` (off) command.
 :::
 
 | Value | Meaning |
@@ -1023,68 +1033,73 @@ The raw PWM value (0-255) to be output when the spindle is off (`M5`).
 | 0     | 0% Duty Cycle. The output pin is held low. |
 
 #### Common Examples
-*   **Universal Default:**
+*   **VFD/Laser (Universal Default):**
     *   `$34=0`
+*   **R/C Servo (part of servo setup):**
+    *   See the combined servo example under `$36`.
 
-##### Tips & Tricks
-- You should not need to change this setting from `0`.
+#### Tips & Tricks
+- For VFDs and lasers, you should not need to change this setting from `0`.
 
 ---
 
 ## `$35` – Spindle PWM Min Value
-The raw PWM value (0-255) corresponding to the minimum spindle speed (`$31`).
+The raw PWM value corresponding to the minimum spindle speed (`$31`).
 
 :::info Context
 - This sets the lower limit of the PWM duty cycle range.
-- For example, if your VFD's 0-10V input doesn't start responding until it receives 1.2V, you would set this value to provide a 12% minimum duty cycle.
+- **For VFDs/Lasers:** It linearizes the output for controllers that have a "dead zone" at the low end.
+- **For R/C Servos:** This value is used to create the **minimum pulse width** (typically 1.0ms) which corresponds to the 0° position.
 :::
 
 | Value | Meaning |
 |:-----:|:--------|
-| 0-255 | The 8-bit PWM value for the minimum duty cycle (e.g., `25` is ~10%). |
+| 0-N   | The raw PWM value for the minimum duty cycle. |
 
 #### Common Examples
-*   **Full Range (0-100%):**
-    *   Your controller has a linear response starting from 0.
-    *   `$35=0`
 *   **VFD Ignores Low Voltages:**
-    *   Your spindle doesn't start until 15% power.
-    *   15% of 255 is ~38.
-    *   `$35=38`
+    *   Your spindle doesn't start until 15% power. On a 0-1000 scale, this is `150`.
+    *   `$35=150`
+*   **R/C Servo (part of servo setup):**
+    *   See the combined servo example under `$36`.
 
-##### Tips & Tricks
-- This helps linearize the output for controllers that have a "dead zone" at the low end.
-- To tune this, find the lowest `S` command that makes your spindle turn reliably, then adjust `$35` until that `S` value just starts to register.
+#### Tips & Tricks
+- To tune this for a VFD, find the lowest `S` command that makes your spindle turn reliably, then adjust `$35` until that `S` value just starts to register.
 
 ---
 
 ## `$36` – Spindle PWM Max Value
-The raw PWM value (0-255) corresponding to the maximum spindle speed (`$30`).
+The raw PWM value corresponding to the maximum spindle speed (`$30`).
 
 :::info Context
 - This sets the upper limit of the PWM duty cycle range.
-- For almost all applications, this should be `255` to allow for 100% power output.
-- You might lower it if your spindle controller reaches its maximum input voltage *before* the PWM signal reaches 100% duty cycle.
+- **For VFDs/Lasers:** For almost all applications, this should be set to the maximum value of the range (e.g., 1000) to allow for 100% power output.
+- **For R/C Servos:** This value is used to create the **maximum pulse width** (typically 2.0ms) which corresponds to the maximum angle (e.g., 180°).
 :::
 
 | Value | Meaning |
 |:-----:|:--------|
-| 0-255 | The 8-bit PWM value for the maximum duty cycle (e.g., `255` is 100%). |
+| 0-N   | The raw PWM value for the maximum duty cycle. |
 
 #### Common Examples
-*   **Universal Default:**
-    *   Allows the full 0-100% duty cycle range.
-    *   `$36=255`
-*   **Limit Max Voltage:**
-    *   Your 0-10V converter outputs 10V at 95% duty cycle.
-    *   95% of 255 is ~242.
-    *   `$36=242`
+*   **VFD/Laser (Universal Default):**
+    *   Assuming a 0-1000 PWM range.
+    *   `$36=1000`
+*   **R/C Servo Control (0-180°):**
+    *   This is a combined example for settings `$30` through `$36`.
+    *   **Goal:** Map `S0` to a 1ms pulse and `S180` to a 2ms pulse, inside a 20ms window (50Hz). The PWM range is 0-1000.
+    *   A 1ms pulse is 5% of a 20ms period (`1 / 20 * 1000 = 50`).
+    *   A 2ms pulse is 10% of a 20ms period (`2 / 20 * 1000 = 100`).
+    *   `$30=180` (Map `S` commands from 0-180)
+    *   `$31=0` (Allow S0)
+    *   `$33=50` (Set 50Hz for the 20ms period)
+    *   `$34=50` (Set the PWM value for S0 to `50` for a 1ms pulse)
+    *   `$35=50` (Also set min value to `50` for the 1ms pulse)
+    *   `$36=100` (Set the PWM value for S180 to `100` for a 2ms pulse)
 
-##### Tips & Tricks
-- Unless you have a specific reason and have measured your controller's output, leave this at `255`.
-- Incorrectly lowering this value will prevent you from ever reaching your spindle's maximum speed.
-
----
+#### Tips & Tricks
+- Controlling servos requires setting the entire block of spindle settings correctly to generate the precise pulse widths they need.
+- For VFDs, unless you have a specific reason to limit the output, `$36` should match the maximum value of your driver's PWM range.
 
 ---
 
@@ -1113,8 +1128,6 @@ Specifies which axes should ignore the `$1` idle delay and remain energized at a
 *   **Keep Z-Axis Enabled:**
     *   Prevents the Z-axis from dropping under gravity when idle. X and Y will disable as normal.
     *   `4` → `$37=4`
-*   **Keep Z and a Heavy Rotary A-Axis Enabled:**
-    *   `4` (Z) + `8` (A) → `$37=12`
 
 ##### Tips & Tricks
 - This setting is an **override**. If `$1=255` (always enabled), this setting has no effect.
@@ -1128,7 +1141,7 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
 :::info Context
 - This is an advanced feature required for **spindle-synchronized motion**, such as G33 rigid tapping and lathe threading.
 - It does **not** control spindle speed; it provides high-resolution positional feedback of the spindle's rotation.
-- It requires a physical encoder (often with A, B, and Index pulses) mounted to the spindle.
+- It requires a physical encoder mounted to the spindle.
 :::
 
 | Value | Meaning | Description |
@@ -1139,7 +1152,7 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
 #### Common Examples
 *   **Feature Disabled (Default):**
     *   `$38=0`
-*   **Using a 1024-line Encoder:**
+*   **Using a 1024-PPR Encoder:**
     *   `$38=1024`
 
 ##### Tips & Tricks
@@ -1148,7 +1161,7 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
 
 ---
 
-## `$39` – Enable Legacy RT Commands (boolean)
+## `$39` – Enable Legacy Realtime Commands (boolean)
 Enables compatibility for older G-code senders that use legacy, single-byte real-time commands.
 
 :::info Context
@@ -1163,14 +1176,12 @@ Enables compatibility for older G-code senders that use legacy, single-byte real
 | 1     | Enabled | Both modern and legacy single-byte commands are accepted. |
 
 #### Common Examples
-*   **Using a Modern Sender (ioSender, UGS, CNCjs):**
-    *   `$39=0`
-*   **Using an Old or Custom Sender:**
-    *   If your sender fails to get status or control overrides, try enabling this.
+*   **Default:**
+    *   Maintain compatibility with older senders.
     *   `$39=1`
 
 ##### Tips & Tricks
-- For 99% of users with up-to-date software, this setting should be left disabled (`0`).
+- For most users with up-to-date software, this setting can be set to disabled (`0`).
 - Enabling this can sometimes cause issues if serial data corruption occurs, as a random byte might be misinterpreted as a legacy command.
 
 ---
@@ -1197,110 +1208,107 @@ Prevents jogging moves from exceeding the machine's software travel limits (`$13
 
 ##### Tips & Tricks
 - It is highly recommended to enable this (`$40=1`) along with Soft Limits (`$20=1`) to prevent accidental crashes while jogging.
-- If this is enabled but the machine has not been homed, it will have no effect.
 
 ---
 
 ## `$41` – Parking Cycle (mask)
-Configures the behavior of the `G28.1` parking command, which moves the spindle to a predefined safe location.
+Configures and enables the single-axis parking motion.
 
 :::info Context
-- This is a grblHAL-specific feature for moving the machine to a convenient spot (e.g., for a tool change) with a single command.
-- The destination coordinates are set by `$58`. This setting controls *how* the machine gets there.
-- This is a **bitmask**: add together the values of the options you want to enable.
+- **Important:** The parking feature in grblHAL is a **single-axis motion** that retracts one axis to a predefined safe location.  
+- The axis to move is selected with **`$42`**.  
+- **How it’s triggered:** Parking motion is executed automatically when certain events occur:  
+  - Feed hold (`!` realtime command)  
+  - Safety door open (if configured)  
+  - When the Event Plugin calls a Park Event
+- If bit 2 is set, you can use **M56** to enable/disable parking override control at runtime.  
+- This is a **bitmask**: add together the values of the options you want to enable.  
 :::
 
 | Bit | Value | Option |
 |:---:|:-----:|:-------|
-| 0   | 1     | Enable Parking Motion |
-| 1   | 2     | Retract First |
-| 2   | 4     | Move XY Axes First |
-| 3   | 8     | On Hold |
+| 0   | 1     | Enable parking motion |
+| 1   | 2     | Deactivate upon init |
+| 2   | 4     | Enable parking override control (via M56) |
 
 #### Common Examples
-*   **Simple Parking Enabled:**
-    *   Moves all axes directly to the park position.
-    *   `1` → `$41=1`
-*   **Safe Parking (Retract Z First):**
-    *   The Z-axis (or parking axis `$42`) first retracts, then the other axes move. This prevents dragging the tool across the workpiece.
-    *   `1` (Enable) + `2` (Retract First) → `$41=3`
+* **Enable parking (simple):**  
+  `$41=1`
 
-##### Tips & Tricks
-- The "Retract First" option is the safest and most common way to use the parking motion.
-- "Move XY Axes First" is an alternative for specialized machine kinematics.
+* **Enable parking with M56 override control:**  
+  `$41=5` (1 + 4)
+
+#### Tips & Tricks
+- For most users, `$41=1` is sufficient: parking will automatically retract the tool on feed hold or door open.  
+- Use `$41=5` if you want to toggle parking on/off dynamically with M56.  
 
 ---
 
 ## `$42` – Parking Axis
-Selects the axis to be used for the initial "retract" move in a parking cycle.
+Selects which single axis will be moved during a parking cycle.
 
 :::info Context
-- This setting only has an effect if the "Retract First" option (Bit 1) is enabled in `$41`.
-- It defines which axis should be moved to its park position before the other axes begin to move.
+- This setting determines which axis executes the pull-out/plunge and fast move when parking is triggered.  
+- For most machines, Z-axis (`2`) is used to retract the spindle/tool safely upward.  
 :::
 
-| Value | Axis to Retract First |
-|:-----:|:----------------------|
-| 0     | X-Axis |
-| 1     | Y-Axis |
-| 2     | Z-Axis |
-| 3     | A-Axis |
-| 4     | B-Axis |
-| 5     | C-Axis |
+| Value | Axis to Park |
+|:-----:|:-------------|
+| 0     | X-axis |
+| 1     | Y-axis |
+| 2     | Z-axis |
+| 3     | A-axis |
+| 4     | B-axis |
+| 5     | C-axis |
 
 #### Common Examples
-*   **Standard CNC (Retract Z-axis up):**
-    *   This lifts the tool clear of the workpiece before moving to the parking location.
-    *   `$42=2`
+* **Standard CNC (Retract Z-axis up):**  
+  `$42=2`
 
-##### Tips & Tricks
-- For virtually all standard CNC mills and routers, this should be set to `2` to retract the Z-axis.
-- Ensure the parking position for this axis in `$58` is a safe retract position.
+#### Tips & Tricks
+- The entire parking config (`$56` through `$59`) applies **only** to the axis selected here.  
 
----
 
 ## `$43` – Homing Passes
-Defines how many distinct, sequential homing sequences (passes) to run during a full homing cycle (`$H`).
+Configures the number of homing passes to perform during the homing cycle.
 
 :::info Context
-- This powerful grblHAL feature allows you to home different groups of axes in a specific order.
-- It works with `$44` through `$49`, where each of those settings defines which axes move in a given pass.
-- For example, you can ensure the Z-axis is fully retracted before the X and Y axes begin to home.
+- **Purpose:** The `$43` setting determines how many times each axis will move during the homing cycle. This is particularly useful for machines with mechanical backlash or for ensuring precise homing.
+- **Default Value:** The default value is typically `1`, meaning each axis will only home one cycle during the homing cycle.
 :::
 
-| Value | Meaning | Description |
-|:-----:|:--------|:------------|
-| 1     | Single Pass | All axes defined in `$44` will home simultaneously. |
-| 2     | Two Passes | Axes in `$44` home first, then axes in `$45` home second. |
-| ...   | ...     | Up to 6 passes can be defined. |
+| Value | Description |
+|:-----:|:-----------|
+| 0     | Disable homing |
+| 1     | Perform one homing pass |
+| 2     | Perform two homing passes |
+| 3     | Perform three homing passes |
+| 4     | Up to a maximum of 4 passes |
 
 #### Common Examples
-*   **Simple 3-Axis (All at Once):**
-    *   X, Y, and Z will all start moving at the same time.
-    *   `$43=1` (and `$44=7` for X,Y,Z)
-*   **Safe 3-Axis (Z First, then XY):**
-    *   The Z-axis will home first. After it finishes, the X and Y axes will home together.
-    *   `$43=2` (and `$44=4` for Z, `$45=3` for XY)
+* **Standard Homing:**
+  * `$43=1` → Each axis moves once during the homing cycle.
+* **Enhanced Precision:**
+  * `$43=2` → Each axis moves twice during the homing cycle, useful for machines with backlash.
+* **Maximum Precision:**
+  * `$43=3` → Each axis moves three times during the homing cycle, for machines requiring the highest precision.
 
-##### Tips & Tricks
-- Homing Z first is the safest configuration for most machines, as it prevents the tool from dragging across clamps or the workpiece.
-- When squaring a gantry with two switches, you might home both motors in one pass, then use a second pass to "back off" and re-approach the switches slowly for higher precision.
+#### Tips & Tricks
+- **Backlash Compensation:** Increasing the number of homing passes can help compensate for mechanical backlash, leading to more accurate homing positions.
+- **Machine Type Considerations:** Machines with high precision requirements or those that experience mechanical flexing may benefit from additional homing passes.
+- **Performance Impact:** More homing passes will increase the time it takes to complete the homing cycle; balance the need for precision with the desired homing speed.
 
 ---
 
----
-
-## `$44` – Axes Homing - Pass 1 (mask)
-Defines which axes will move during the **first pass** of the homing cycle.
+## `$44–$47` – Axes Homing Phases (mask)
+Defines which axes move during each pass of the homing cycle. You can have up to 4 separate phases in your homing cycle.
 
 :::info Context
-- This setting is used in conjunction with `$43` (Homing Passes).
-- This is a **bitmask**: add together the values of the axes you want to home simultaneously in this pass.
-- If `$43=1`, this is the only pass that will be executed.
+- Each setting is a **bitmask**: add together the values of the axes you want to move **simultaneously** in that pass.
 :::
 
-| Bit | Value | Axis to Home in Pass 1 |
-|:---:|:-----:|:-----------------------|
+| Bit | Value | Axis |
+|:---:|:-----:|:----|
 | 0   | 1     | X-Axis |
 | 1   | 2     | Y-Axis |
 | 2   | 4     | Z-Axis |
@@ -1309,143 +1317,124 @@ Defines which axes will move during the **first pass** of the homing cycle.
 | 5   | 32    | C-Axis |
 
 #### Common Examples
-*   **Simple 3-Axis (All at Once):**
-    *   Set `$43=1`.
-    *   `1` (X) + `2` (Y) + `4` (Z) → `$44=7`
-*   **Safe 3-Axis (Z First, then XY):**
-    *   Set `$43=2`. This pass will only home the Z-axis.
-    *   `4` → `$44=4` (The XY axes will be defined in `$45`).
+* **Standard 3-Axis CNC (Z first, then XY):**  
+  - `$44=4` → Pass 1: Home Z only.  
+  - `$45=3` → Pass 2: Home X and Y together.  
 
-##### Tips & Tricks
-- Plan your entire homing sequence before setting these values. Decide the safest order for your machine to find its home position.
-- For a gantry with two motors and two switches (auto-squaring), you would typically home both at the same time. For a dual-Y setup, this would be `$44=2` (if Y is the only axis in this pass).
+* **XY-only machines (lasers, plotters):**  
+  - `$44=3` → Home X and Y together.
 
----
+* **Optional third axis (A-axis) as a separate pass:**  
+  - `$44=4` → Pass 1: Home Z.  
+  - `$45=3` → Pass 2: Home X and Y.  
+  - `$46=8` → Pass 3: Home A-axis.  
 
-## `$45` – `$49` – Axes Homing - Pass 2 to 6 (mask)
-Defines which axes will move during subsequent passes of the homing cycle.
-
-:::info Context
-- These settings work exactly like `$44`, but for the second, third, fourth, fifth, and sixth homing passes.
-- A pass will only be executed if `$43` is set to a high enough number. For example, `$46` is only used if `$43` is `3` or greater.
-:::
-
-| Bit | Value | Axis to Home in this Pass |
-|:---:|:-----:|:--------------------------|
-| 0   | 1     | X-Axis |
-| 1   | 2     | Y-Axis |
-| 2   | 4     | Z-Axis |
-| 3   | 8     | A-Axis |
-| 4   | 16    | B-Axis |
-| 5   | 32    | C-Axis |
-
-#### Common Examples
-*   **Safe 3-Axis (Z First, then XY):**
-    *   Set `$43=2`, `$44=4`.
-    *   This setting defines the second pass, where X and Y move together.
-    *   `1` (X) + `2` (Y) → `$45=3`
-*   **Three Separate Passes for X, Y, Z:**
-    *   Set `$43=3`.
-    *   `$44=1` (Home X first)
-    *   `$45=2` (Home Y second)
-    *   `$46=4` (Home Z third)
-
-##### Tips & Tricks
-- Using multiple passes is the key to creating a safe and reliable homing sequence for complex machines.
-- You can use later passes to re-home an axis slowly for higher precision after the initial fast homing is complete.
+#### Tips & Tricks
+- Homing Z first is recommended for most machines to prevent the tool from dragging across clamps or the workpiece.
+- Plan your homing sequence carefully, especially on multi-axis machines, to avoid collisions or mechanical stress.
 
 ---
 
-## `$56` – Parking Pull-out Distance (mm)
-Sets the distance for the initial pull-out move of a parking cycle.
+## `$56` – Parking Pull-out / Plunge Distance
+Sets an incremental distance for a pull-out move when parking, and a corresponding plunge move when resuming.
 
 :::info Context
-- This setting is not commonly used. It provides an optional initial move before the main parking motion begins.
-- Its behavior depends on the options configured in `$41`.
+- This setting defines a two-part motion used with the parking cycle.
+- **When Parking is triggered:**  
+  1. The selected parking axis (`$42`) first **retracts slowly** by this incremental distance, at the feed rate defined by `$57`.  
+  2. Then it **moves quickly** at the parking rate (`$59`) to the machine coordinate defined in `$58`.  
+- **When Resuming (Cycle Start):**  
+  1. The axis **rapids quickly** back from the parked coordinate to the plunge height (the retracted offset defined by `$56`).  
+  2. It then **plunges slowly** by this same distance at the pull-out/plunge rate (`$57`) to return to the original depth before resuming motion.  
 :::
 
 | Value (mm) | Meaning |
 |:----------:|:--------|
-| 0.0 - N    | The distance for the pull-out move. |
+| -N to +N   | The incremental distance for the pull-out and plunge moves. |
 
 #### Common Examples
-*   **Default (Disabled):**
-    *   `$56=0.0`
+* **No Pull-out/Plunge (Default):**  
+  `$56=0.0` → parking goes directly to the target (`$58`), resuming goes directly back without any slow retract/plunge.
 
-##### Tips & Tricks
-- For most users, leaving this at `0` is recommended. The standard "Retract First" behavior configured in `$41` is more intuitive.
+* **Gentle 2mm Lift for Tool Change:**  
+  `$56=2.0` (assuming Z+ is up) → when parking is triggered, Z lifts 2mm slowly, then rapids to the parking coordinate. On resume it rapids back near the work, then slowly plunges down 2mm to resume cutting.
+
+#### Tips & Tricks
+- This is ideal for safely disengaging and re-engaging the tool without gouging.  
+- The pull-out happens *before* the main parking rapid, the plunge happens *after* the return rapid.  
 
 ---
 
-## `$57` – Parking Pull-out Rate (mm/min)
-Sets the feed rate for the initial parking pull-out move (`$56`).
+## `$57` – Parking Pull-out / Plunge Rate
+Sets the feed rate for both the initial pull-out move and the final plunge move.
 
 :::info Context
-- This feed rate applies only to the initial pull-out move defined by `$56`.
-- The main parking move uses the rates defined in `$58` and `$59`.
+- This rate applies only to the **incremental retract and plunge distance** set in `$56`.  
+- It ensures the tool leaves and re-enters the work zone under controlled, slow conditions.  
 :::
 
 | Value (mm/min) | Meaning |
 |:--------------:|:--------|
-| 1 - N          | The feed rate for the pull-out move. |
+| 1 - N          | Feed rate for the pull-out and plunge moves. |
 
 #### Common Examples
-*   **Default:**
-    *   `$57=600.0`
+* **Slow, Careful Move:**  
+  `$57=100`
+
+#### Tips & Tricks
+- Should be safe for moving out of (or back into) material contact.  
 
 ---
 
-## `$58` – Parking Target
-Sets the absolute machine coordinates for the parking position.
+## `$58` – Parking Axis Target
+Sets the absolute machine coordinate for the final parking position.
 
 :::info Context
-- This is the destination for the `G28.1` parking command.
-- The coordinates are in **machine position** (G53), not work position.
-- You must enter the coordinates for all axes supported by your controller, typically in `X,Y,Z,A,B,C` order.
+- This is the **final machine coordinate** the parking axis will rapid to after the slow pull-out.  
+- Defined in machine coordinates (`MPos` / G53 system).  
+- Typically set to a clear, safe height (for Z) or retracted position (for another axis).  
 :::
 
-| Value Format | Description |
-|:-------------|:------------|
-| `X,Y,Z...`   | A comma-separated list of the target coordinates for each axis. |
+| Value | Meaning |
+|:------|:--------|
+| -N to 0 | Target machine coordinate for the selected axis. |
 
 #### Common Examples
-*   **Park at Front-Left, Z-Axis Up on a 300x300x80 machine:**
-    *   Assumes homing is at the back-right-top (X:300, Y:300, Z:0).
-    *   Target is a safe position just inside the machine zero corner.
-    *   `$58=-2.000,-2.000,-2.000` (assuming `$27` pull-off is 2mm, machine zero is at X=-2, Y=-2, Z=-2)
-*   **Park at a Tool Change Position:**
-    *   Move to the middle of the X-axis and all the way to the front for easy access.
-    *   `$58=150.000,-2.000,-10.000`
+* **Park Z-Axis at Safe Height:**  
+  `$58=-5.0` → Z goes to 5mm below home.
 
-##### Tips & Tricks
-- To find the right coordinates, home the machine (`$H`), then manually jog to the position where you want it to park.
-- Send a `?` command to see the `MPos` (Machine Position) values. Use those values for this setting.
+* **Fully Retract Z-Axis:**  
+  `$58=-2.0` (with `$27=2.0` pull-off) → Z goes all the way up, just off the switch.  
+
+#### Tips & Tricks
+- Jog to the desired machine position, check `MPos`, and copy it into `$58`.  
 
 ---
 
-## `$59` – Parking Fast Rate (mm/min)
-Sets the feed rate for the main parking motion.
+## `$59` – Parking Fast Rate
+Sets the feed rate for the main fast move to and from the parking coordinate.
 
 :::info Context
-- This is the speed at which the machine moves to the parking target coordinates defined in `$58`.
-- It acts like a G1 feed rate for the parking cycle.
+- **Parking:** After the slow pull-out (`$56/$57`), the axis moves at this speed to the parking target (`$58`).  
+- **Resuming:** The axis rapids back at this speed from the parked coordinate to the plunge height.  
+- This is the "fast" portion of the parking cycle.  
 :::
 
 | Value (mm/min) | Meaning |
 |:--------------:|:--------|
-| 1 - N          | The feed rate for the main parking move. |
+| 1 - N          | Feed rate for the main rapid to/from the park position. |
 
 #### Common Examples
-*   **A Safe, Moderate Speed:**
-    *   `$59=1200.0`
-*   **A Faster Speed for a Large Machine:**
-    *   `$59=3000.0`
+* **Moderate Speed:**  
+  `$59=800.0`
 
-##### Tips & Tricks
-- This value should not exceed the maximum rate of your slowest axis (`$110`+).
-- This setting does **not** control the rapid (`G0`) rate for the parking cycle; some parking moves may use the machine's default rapid rate.
+* **High Speed (tuned Z):**  
+  `$59=1500.0`
 
----
+#### Tips & Tricks
+- Do not exceed the axis’ maximum rate (`$112` if Z).  
+- This setting affects only the long travel, not the careful pull-out or plunge.  
+
 
 ---
 
@@ -1455,7 +1444,7 @@ Controls whether feed, rapid, and spindle overrides are restored to their previo
 :::info Context
 - Overrides allow you to adjust speeds and feeds in real-time (e.g., with a pendant or GUI slider).
 - If this setting is enabled, the override values you set during a job will be remembered for the next job.
-- If disabled, all overrides are reset to 100% (`M50 P0`) after a program (`M2`/`M30`) finishes.
+- If disabled, all overrides are reset to 100% after a program (`M2`/`M30`) finishes.
 :::
 
 | Value | Meaning | Description |
@@ -1466,60 +1455,64 @@ Controls whether feed, rapid, and spindle overrides are restored to their previo
 #### Common Examples
 *   **Safety First (Default):**
     *   Ensures every new job starts at the programmed feed and speed.
-    *   `$60=0`
+    *   `$60=1`
 *   **Production Use with Consistent Setups:**
     *   Useful if you always run a certain material at 80% feed, for example.
-    *   `$60=1`
+    *   `$60=0`
 
 ##### Tips & Tricks
-- For beginners, it is highly recommended to leave this disabled (`$60=0`) to avoid surprise-fast or surprise-slow movements at the start of a new job.
+- For beginners, it is highly recommended to leave this enabled (`$60=1`) to avoid surprise-fast or surprise-slow movements at the start of a new job.
 - If you find your jobs are always starting slower or faster than programmed, check if this setting has been enabled.
 
 ---
 
 ## `$61` – Safety Door Options (mask)
-Configures the behavior of the safety door input pin.
+Configures runtime behaviour for the safety-door input.
 
 :::info Context
-- This is a safety feature that monitors a switch on the machine's enclosure door.
-- It can be configured to either pause the job (Feed Hold) or immediately halt and retract (Door Open).
-- This is a **bitmask**: add together the values of the options you want.
+- This is a small **bitmask** that controls how grblHAL treats the safety-door input.  
+- **Note:** the safety-door *input itself* is a compile-time / board-map feature (it must be enabled and wired in the driver/board map). `$61` only controls run-time behaviour *once* the door input exists. :contentReference[oaicite:0]{index=0}
+- Typical behaviour when the door opens: grblHAL enters a DOOR/hold state (pauses the job and optionally runs the parking sequence). `$61` does **not** enable/disable the door input — it only modifies how door events are handled. Use `$41` (parking) and `$63` (hold actions) to control parking/hold behaviour. :contentReference[oaicite:1]{index=1}
 :::
 
-| Bit | Value | Option | Description |
-|:---:|:-----:|:-------|:------------|
-| 0   | 1     | Enable Safety Door | Master switch to enable the feature. |
-| 1   | 2     | Door Open Retract | When the door is opened, retract the Z-axis by the `$28` distance. |
-| 2   | 4     | Abort on Open | Aborts the job completely instead of pausing. |
-| 3   | 8     | On Hold | An additional option for behavior when in a hold state. |
+| Bit | Value |  Description |
+|:---:|:-----:|:------------|
+| 0   | 1     | When set, **ignore** door-open events while the controller is in **IDLE**. Useful so you can open the enclosure for jogging/setup when the controller isn't running. |
+| 1   | 2     | When set, do **not** turn off coolant outputs when the door opens — preserve the current coolant/spindle state across the door event. |
 
 #### Common Examples
-*   **Pause Job When Door Opens (Default Safe Behavior):**
-    *   When the door opens, the machine will decelerate to a stop (Feed Hold). It will resume when the door is closed and Cycle Start is pressed.
-    *   `1` (Enable) → `$61=1`
-*   **Pause and Retract Z-Axis:**
-    *   When the door opens, the machine will stop and retract the Z-axis to prevent the tool from damaging the workpiece.
-    *   `1` (Enable) + `2` (Retract) → `$61=3`
+* **Default (door active):**  
+  `$61=0` → Door-open events are handled normally (door will trigger DOOR/hold actions).
 
-##### Tips & Tricks
-- The "Pause and Retract" option (`$61=3`) is the most useful and safest configuration for most CNC machines.
-- The door input pin must be configured in your board's compile-time options for this feature to be available.
+* **Allow opening the door while IDLE (for jogging/setup):**  
+  `$61=1` → Door-open is ignored when the controller is IDLE (but still acts when running).
+
+* **Keep coolant/spindle state across door events:**  
+  `$61=2` → Do not turn off coolant when the door opens.
+
+* **Both behaviours:**  
+  `$61=3` → Ignore door when IDLE *and* keep coolant state on open.
+
+#### Tips & Tricks
+- **Retract / park / abort behaviour is not set by `$61`.** Use the parking settings (`$41` … `$60`) and feed-hold actions (`$63`) to control whether the machine performs a pull-out/park, power-down, or abort when the door opens.
+- **Delays for restarting spindle/coolant after a door event** are controlled by the door delay settings (e.g. `$392` / `$393`).
+
 
 ---
 
 ## `$62` – Sleep Enable (boolean)
-Enables the `SLP` command, which allows the controller to enter a low-power sleep state.
+Enables the `$SLP` command, which allows the controller to enter a low-power sleep state.
 
 :::info Context
 - This is an advanced power-saving feature.
-- When the `SLP` command is received, grblHAL will shut down most peripherals and disable stepper motors.
-- A reset or a specific wake-up signal is required to bring the controller back online.
+- When the `$SLP` command is received, grblHAL will shut down most peripherals and disable stepper motors.
+- A reset is required to bring the controller back online.
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 0     | Disabled| The `SLP` command is ignored. |
-| 1     | Enabled | The `SLP` command will put the controller to sleep. |
+| 0     | Disabled| The `$SLP` command is ignored. |
+| 1     | Enabled | The `$SLP` command will put the controller to sleep. |
 
 #### Common Examples
 *   **Default for most machines:**
@@ -1532,34 +1525,33 @@ Enables the `SLP` command, which allows the controller to enter a low-power slee
 ---
 
 ## `$63` – Feed Hold Actions (mask)
-Configures additional actions to be taken when a Feed Hold is initiated.
+Configures additional actions that occur during a Feed Hold and on resume.
 
 :::info Context
-- A standard Feed Hold (`!`) smoothly decelerates motion and pauses the G-code program.
-- This setting allows you to add extra actions, such as retracting the Z-axis or turning off the spindle, when a hold occurs.
-- This is a **bitmask**: add together the values of the options you want.
+- A standard Feed Hold (`!`) smoothly decelerates the machine and pauses the G-code program.
+- `$63` allows you to modify how the **laser or spindle/coolant** behaves during the hold and when resuming.
+- This is a **bitmask**: add together the values of the options you want to enable.
 :::
 
-| Bit | Value | Action on Feed Hold |
-|:---:|:-----:|:--------------------|
-| 0   | 1     | Spindle Stop |
-| 1   | 2     | Coolant Off |
-| 2   | 4     | Z-Axis Retract |
-| 3   | 8     | Park |
+| Bit | Value | Action |
+|:---:|:-----:|:------|
+| 0   | 1     | Disable laser (or spindle) during feed hold |
+| 1   | 2     | Restore spindle and coolant state on resume |
 
 #### Common Examples
-*   **Default (Pause Motion Only):**
-    *   `$63=0`
-*   **Pause and Stop Spindle:**
-    *   A useful safety feature to stop the cutter from spinning while paused.
-    *   `1` → `$63=1`
-*   **Pause, Stop Spindle, and Retract Z:**
-    *   Stops the spindle and lifts the tool away from the workpiece.
-    *   `1` (Spindle) + `4` (Retract) → `$63=5`
+* **Default: Disable laser during hold, restore on resume**  
+  `$63=3` → Laser/spindle is disabled during feed hold, and restored automatically when resuming.  
 
-##### Tips & Tricks
-- The "Pause, Stop Spindle, and Retract Z" (`$63=5`) option is a very powerful feature for preventing the spinning tool from burning the material during a pause.
-- When Cycle Start is pressed to resume, the spindle will be turned back on and the Z-axis will be lowered before motion continues.
+* **Disable laser only, do not restore automatically**  
+  `$63=1` → Laser/spindle stops during feed hold, but the previous state is not restored on resume.
+
+* **Restore spindle/coolant on resume without disabling during hold**  
+  `$63=2` → Laser/spindle continues running during hold, and previous states are restored when resuming.  
+
+#### Tips & Tricks
+- `$63` is primarily used for **laser or spindle setups** where you want controlled behavior during pauses.  
+- For CNC mills, the Z-axis, parking, or coolant behavior is controlled separately (e.g., `$41–$60` for parking, `$7X` for coolant control).  
+- Always test the behavior on your machine to avoid unexpected motion or spindle/laser state changes during feed hold.
 
 ---
 
@@ -1593,49 +1585,31 @@ Configures advanced options for probing cycles (`G38.x`).
 
 :::info Context
 - This setting fine-tunes the behavior of probing operations.
-- This is a **bitmask**: add together the values of the options you want.
+- This is a **bitmask**: add together the values of the options you want to enable.
+- Options mainly control **feed override during probing**, **soft-limit enforcement**, and **automatic toolsetter selection**.
 :::
 
 | Bit | Value | Option | Description |
 |:---:|:-----:|:-------|:------------|
-| 0   | 1     | Latch backoff | On G38.3, the retract move will be the same distance as the initial probing move. |
-| 1   | 2     | On error | Determines the behavior when the probe fails to make contact. |
-| 2   | 4     | Fast probe | Allows for a faster initial probing move. |
+| 0   | 1     | Allow Feed Override | Permits feed override (`F` adjustment) during probing commands. |
+| 1   | 2     | Apply Soft Limits | Enforces soft-limit boundaries during probing to prevent leaving the machine workspace. |
+| 3   | 8     | Auto Select Toolsetter | Automatically selects a toolsetter if one is configured for the probe operation. |
 
 #### Common Examples
-*   **Default Behavior:**
-    *   `$65=0`
+* **Default:**  
+  `$65=0` → No feed override, soft limits not applied, auto toolsetter disabled.
 
-##### Tips & Tricks
-- These are advanced settings for users who need to customize probing cycles for specific applications, such as high-speed probing or custom tool setters.
-- For most users, the default setting is sufficient.
+* **Allow feed override and soft-limit enforcement:**  
+  `$65=3` → Bits 0 + 1 set; feed can be overridden, and probe stays within workspace.
 
----
+* **Enable all options:**  
+  `$65=11` → Bits 0 + 1 + 3; feed override allowed, soft limits applied, auto toolsetter selected.
 
+#### Tips & Tricks
+- Most users can leave `$65=0` for simple probing cycles.  
+- Enable soft limits during probing if your workpiece is near the edge of the machine to prevent accidental crashes.  
+- Use Auto Select Toolsetter only if your machine has a compatible toolsetter configured.
 
-## `$65` – Probing Options (mask)
-Configures advanced options for probing cycles (`G38.x`).
-
-:::info Context
-- This setting fine-tunes the behavior of probing operations.
-- This is a **bitmask**: add together the values of the options you want.
-:::
-
-| Bit | Value | Option | Description |
-|:---:|:-----:|:-------|:------------|
-| 0   | 1     | Latch backoff | On G38.3, the retract move will be the same distance as the initial probing move. |
-| 1   | 2     | On error | Determines the behavior when the probe fails to make contact. |
-| 2   | 4     | Fast probe | Allows for a faster initial probing move. |
-
-#### Common Examples
-*   **Default Behavior:**
-    *   `$65=0`
-
-##### Tips & Tricks
-- These are advanced settings for users who need to customize probing cycles for specific applications, such as high-speed probing or custom tool setters.
-- For most users, the default setting is sufficient.
-
----
 
 ---
 
