@@ -39,7 +39,7 @@ If too short, drivers may **miss steps**. If too long, it can **limit maximum st
 #### Tips & Tricks
 - Always start **low** (e.g. 2 µs) and only increase if you see reliability issues.  
 - A higher value reduces maximum achievable step frequency.  
-- If `$29` (Pulse Delay) is used, the **effective pulse width** is `$0 + $29`.  
+- If `$29` (Pulse Delay) is used, the **effective pulse width** is `$29 (Pulse Delay) + $0 (Pulse on time) + $0 (Pulse off time)`.  
 
 ---
 
@@ -51,13 +51,18 @@ This affects whether motors **hold position** when idle or are allowed to releas
 :::info Context
 - Applies to **all axes**.  
 - The delay starts counting **after the last motion command finishes**.  
-- A value of `255` keeps steppers always enabled.  
+- A value of `255` keeps steppers always enabled.  (Maintains compatibility with legacy Grbl)
+:::
+
+:::warning
+If you do require motors to be disabled - it may be better to use `$37` - as it allows per-axis control over which motors are enabled/disabled during Idle state. This allows you to keep Z enabled for example, which may drop under the mass of a heavy spindle, but still allows disabling of X and Y for example.
+
 :::
 
 | Value (ms) | Effect |
 |------------|--------|
 | **0**      | Disable motors immediately when motion stops. |
-| **1–254**  | Keep motors energized for the given time, then disable. |
+| **1–65535**  | Keep motors energized for the given time, then disable. |
 | **255**    | Keep motors **always enabled** (no timeout). |
 
 #### Common Examples
@@ -189,10 +194,10 @@ This setting lets you match the signal to what your driver requires.
 | C    | 32        | Invert C enable signal |
 
 #### Common Examples
-* **Default (active-low, all axes same):**  
+* **Default (active-high, all axes same):**  
   `$4=0`
 
-* **Invert all axes (active-high enable):**  
+* **Invert all axes (active-low enable):**  
   `$4=255` (or `$4=63` if only 6 axes are defined)
 
 * **Invert Z only:**  
@@ -200,9 +205,9 @@ This setting lets you match the signal to what your driver requires.
 
 #### Tips & Tricks
 - If your motors **never engage** (drivers always disabled), try toggling this.  
-- If `$4` is set incorrectly, and `$1` is less than 25
-- Some driver boards **share a single enable line** — in that case, all axes must match.  
+- Some driver boards **share a single enable line** — use `$4=0` or `$4=1`
 - On multi-axis boards with **independent enables**, masking per axis can help if different driver types are used together.  
+- If `$4` is set incorrectly, and `$1` is not set to 255 you may notice a thumping noise coming from the motors when you try to jog, but no movement. That is a good troubleshooting indicator that `$4` is set incorrectly.
 
 ---
 
@@ -239,8 +244,7 @@ If your limit switches trigger in reverse (always “on” when idle, “off” 
   `$5=4`
 
 #### Tips & Tricks
-- Normally-closed (NC) switches are safer (detect wire breaks).  
-- Always test each axis with `$C` (Check Mode) before running a job.  
+- Normally-closed (NC) switches are safer (detect wire breaks) and more EMI resistant, so ideally try to use Normally Closed switches.  
 ---
 
 ## `$6` – Invert Probe Input (boolean/mask)
@@ -265,7 +269,6 @@ If your probe shows **triggered when it's not making contact**, invert it here.
 | Probe 1 | 1   | Invert Probe 1 input |
 | Probe 2 | 2   | Invert Probe 2 input |
 | Probe 3 | 4   | Invert Probe 3 input |
-| Probe 4 | 8   | Invert Probe 4 input |
 
 #### Common Examples
 * **Default wiring (NO probe):**  
@@ -284,21 +287,7 @@ If your probe shows **triggered when it's not making contact**, invert it here.
 - If `$6` is wrong, probing will either **alarm immediately** or **never trigger**.  
 - Multi-probe configs are common in **toolsetter + touch plate** setups.  
 
----
 
-## `$7` – Spindle PWM Behavior (implementation-dependent)
-
-Defines special behavior for the **spindle PWM output**.  
-Not all builds use `$7`; its function depends on the driver or plugin.
-
-:::info Context
-- May control whether spindle PWM starts at minimum duty, clamps, or scales differently.  
-- Exact behavior is **driver/plugin-specific**.  
-:::
-
-#### Tips & Tricks
-- Check your driver or plugin docs if `$7` is available.  
-- If unused in your build, `$7` may not appear at all.  
 ---
 
 ## `$8` – Ganged Axes Direction Invert (mask)
@@ -309,6 +298,7 @@ For example, on a dual-Y gantry machine, you may need one motor to spin in the o
 :::info Context
 - Only applies if you have **ganged axes** (e.g., dual-Y or dual-Z).  
 - Expressed as a bitmask **per axis**  
+- Only **X**, **Y** and **Z** can be ganged
 :::
 
 | Axis | Bit Value | Description |
@@ -316,9 +306,6 @@ For example, on a dual-Y gantry machine, you may need one motor to spin in the o
 | X    | 1         | Invert secondary X motor direction |
 | Y    | 2         | Invert secondary Y motor direction |
 | Z    | 4         | Invert secondary Z motor direction |
-| A    | 8         | Invert secondary A motor direction |
-| B    | 16        | Invert secondary B motor direction |
-| C    | 32        | Invert secondary C motor direction |
 
 #### Common Examples
 * **Dual-Y axis, invert second Y motor:**  
@@ -334,22 +321,36 @@ For example, on a dual-Y gantry machine, you may need one motor to spin in the o
 
 ---
 
-## `$9` – PWM Spindle Options (mask)
+## `$9` – PWM Spindle Options (Primary)
 
-Configures extra options for the **PWM spindle output**.  
-These options vary by build, but typically include enabling certain behaviors or safety features.
+Controls behavior for the **primary PWM spindle** if available (spindle type 11 or 12).  
 
 :::info Context
+- Only applies if you have a **PWM spindle**.  
 - Expressed as a **bitmask**.  
-- Options are **driver/plugin-specific**, common flags include:  
-  - Invert PWM output  
-  - Enable spindle off clamp  
-  - Allow “at speed” tolerance checks  
+- Bit values can be combined to enable multiple behaviors.
+- Related settings:  
+  - `$709` – PWM Spindle Options (Secondary)
 :::
 
+| Bit | Value | Description |
+|-----|-------|-------------|
+| 0   | 1     | Disable PWM output entirely |
+| 1   | 2     | Let RPM control spindle **on/off** signal (S0 disables spindle, S>0 enables) |
+| 2   | 4     | Disable laser capability. In multi-spindle setups, this allows $32 (laser mode) to remain permanently on while selecting a non-laser spindle. |
+
+#### Common Examples
+* **Enable PWM output with RPM controlling spindle enable:**  
+  `$9=3` (bit 0 + bit 1)
+
+* **Enable PWM, RPM control, and disable laser mode:**  
+  `$9=7` (bits 0, 1, 2)
+
 #### Tips & Tricks
-- Always check your board’s documentation for exact bit meanings.  
-- Used in combination with `$30–$36` (spindle speed & PWM range).  
+- If you use **M3 or M4 with S0**, the spindle enable output will follow `$9` bit 1 if set.  
+- Useful for CO2 laser engraving: `$9` bit 1 can allow "overdriving" the PWM signal for short pulses or pixels.  (See https://github.com/grblHAL/core/issues/721#issuecomment-2776210888)
+- **Laser mode management:** `$9` bit 2 prevents Laser Mode from being active while using this spindle. This allows $32 (laser mode) to stay permanently on for dual-spindle/laser machines, Laser Mode activates dynamically based on whether the PWM spindle or the PWM Laser is the current tool.
+- Switching between spindles/toolheads can be done using `M104 Qx` where `x` is the index of the spindle in a `$spindles` output
 
 ---
 
@@ -379,10 +380,12 @@ This allows you to customize what grblHAL streams back to the host.
 | 10  | 1024  | **Alarm substatus** |
 | 11  | 2048  | **Run substatus** (can help with simple probe protection) |
 | 12  | 4096  | **Enable during homing** (report also sent while homing) |
+| 13  | 8192  | **Distance to Go**
 
 #### Common Examples
-* **Minimal (just position + buffer):**  
-  `$10=3` (MPos + buffer state)
+
+* **Default:**  
+  `$10=511`
 
 * **Classic Grbl behavior:**  
   `$10=255` (first 8 flags)
@@ -460,34 +463,52 @@ Does **not** affect G-code commands.
   `$13=1`
 
 #### Tips & Tricks
-- Leave at `0` unless your sender specifically requires inches.  Most G-code senders prefer the reports to be in metric, and handle imperial conversions locally
+- Leave at `0` unless your sender specifically requires inches.  Most G-code senders prefer the reports to be in metric, and handle imperial conversions locally, as most of grblHAL is metric in nature
+---
+
 ---
 
 ## `$14` – Invert Control Inputs (mask)
-
-Controls polarity of **control inputs** (Cycle Start, Feed Hold, Reset, Safety Door).  
-Useful if buttons are wired **normally closed (NC)** instead of **normally open (NO)**.
+Controls the polarity of the various control input signals. Use this to match the controller to your button or sensor wiring, such as Normally Open (NO) vs. Normally Closed (NC).
 
 :::info Context
-- Expressed as a **bitmask**:  
-  - Bit 0 = Cycle Start  
-  - Bit 1 = Feed Hold  
-  - Bit 2 = Reset  
-  - Bit 3 = Safety Door  
+- This is a **bitmask**: add together the values of the inputs you want to invert.
+- This setting is crucial for correctly wiring physical control buttons and safety signals like E-Stop and Safety Door.
+- It is related to `$17` (Pull-up Disable Control Inputs), which controls the electrical state of the pins.
 :::
 
+| Bit | Value | Input to Invert | Common Use |
+|:---:|:-----:|:----------------|:-----------|
+| 0   | 1     | Reset | A button that triggers a soft-reset. |
+| 1   | 2     | Feed Hold | A button or switch to pause the current job. |
+| 2   | 4     | Cycle Start | A button to start or resume a G-code program. |
+| 3   | 8     | Safety Door | A switch on the enclosure door that pauses the job when opened. |
+| 4   | 16    | Block Delete | A switch to enable the block delete (`/`) G-code function. |
+| 5   | 32    | Optional Stop | A switch to enable the optional stop (`M1`) G-code command. |
+| 6   | 64    | E-Stop | A dedicated emergency stop button. **Must be wired NC.** |
+| 7   | 128   | Probe Connected | A signal indicating that a detachable probe is connected. |
+| 8   | 256   | Motor Fault | An input from external drivers indicating a motor or driver fault. |
+| 9   | 512   | Motor Warning | An input from external drivers indicating a non-critical warning. |
+| 10  | 1024  | Limits Override | A switch to temporarily disable hard limits for jogging off a switch. |
+| 11  | 2048  | Single Step Blocks | A switch to enable single-block execution mode. |
+
 #### Common Examples
-* **Default (NO buttons):**  
-  `$14=0`
-
-* **All buttons wired NC:**  
-  `$14=15`
-
-* **Invert Feed Hold only:**  
-  `$14=2`
+*   **Default (All inputs wired NO - Normally Open):**
+    *   This is the default electrical configuration.
+    *   `$14=0`
+*   **Safety Switches Wired NC (Recommended):**
+    *   Inverting Feed Hold, Safety Door, and E-Stop buttons which are wired Normally Closed for safety.
+    *   `2` (Feed Hold) + `8` (Safety Door) + `64` (E-Stop) → `$14=74`
+*   **All Common Buttons Wired NC:**
+    *   Inverting Reset, Feed Hold, Cycle Start, and Safety Door.
+    *   `1` (Reset) + `2` (Feed Hold) + `4` (Start) + `8` (Door) → `$14=15`
 
 #### Tips & Tricks
-- Safer to use **NC buttons** → system detects broken wires.  
+- It is highly recommended to use **Normally Closed (NC) switches** for all safety-critical inputs like E-Stop, Safety Door, and Feed Hold. This is a failsafe design, as a broken or disconnected wire will immediately trigger the alarm, just like pressing the button would.
+- If a button seems to be "stuck on," it almost certainly needs to have its logic inverted with this setting.
+- Use the real-time status report (`?`) to check the state of some of these inputs for easier debugging.
+- E-Stop instead of Reset is default for many boards. Currently no boards can have both enabled at the same time
+
 ---
 
 ## `$15` – Invert Coolant Outputs (mask)
@@ -515,16 +536,19 @@ Some relays expect an active-low signal.
 - If coolant relays **toggle backwards**, change this instead of rewiring.  
 ---
 
-## `$16` – Invert Spindle Outputs (mask)
+## `$16` – Invert Primary Spindle Outputs (mask)
 
 Controls polarity of the **spindle control outputs** (PWM, enable, direction).  
 Some spindle drivers expect inverted logic.
 
 :::info Context
+- For spindle types 11, 12 and 13
 - Expressed as a **mask**:  
   - Bit 0 = Spindle Enable  
   - Bit 1 = Spindle Direction  
   - Bit 2 = Spindle PWM  
+- Related settings:  
+  - `$716` – Invert Secondary Spindle Outputs (mask)
 :::
 
 #### Common Examples
@@ -543,8 +567,6 @@ Some spindle drivers expect inverted logic.
 
 ---
 
----
-
 ## `$17` – Pull-up Disable Control Inputs (mask)
 Disables the internal pull-up resistors on the control input pins (Cycle Start, Feed Hold, Reset).
 
@@ -553,11 +575,20 @@ Disables the internal pull-up resistors on the control input pins (Cycle Start, 
 - Disabling this is only necessary if you have **external pull-up resistors** or are using **active drivers** for these inputs.
 :::
 
-| Bit | Value | Input |
-|:---:|:-----:|:------|
-| 0   | 1     | Cycle Start |
-| 1   | 2     | Feed Hold |
-| 2   | 4     | Reset |
+| Bit | Value | Input to Invert | Common Use |
+|:---:|:-----:|:----------------|:-----------|
+| 0   | 1     | Reset | A button that triggers a soft-reset. |
+| 1   | 2     | Feed Hold | A button or switch to pause the current job. |
+| 2   | 4     | Cycle Start | A button to start or resume a G-code program. |
+| 3   | 8     | Safety Door | A switch on the enclosure door that pauses the job when opened. |
+| 4   | 16    | Block Delete | A switch to enable the block delete (`/`) G-code function. |
+| 5   | 32    | Optional Stop | A switch to enable the optional stop (`M1`) G-code command. |
+| 6   | 64    | E-Stop | A dedicated emergency stop button. **Must be wired NC.** |
+| 7   | 128   | Probe Connected | A signal indicating that a detachable probe is connected. |
+| 8   | 256   | Motor Fault | An input from external drivers indicating a motor or driver fault. |
+| 9   | 512   | Motor Warning | An input from external drivers indicating a non-critical warning. |
+| 10  | 1024  | Limits Override | A switch to temporarily disable hard limits for jogging off a switch. |
+| 11  | 2048  | Single Step Blocks | A switch to enable single-block execution mode. |
 
 #### Common Examples
 *   **Default (Internal Pull-ups Enabled):**
@@ -570,7 +601,7 @@ Disables the internal pull-up resistors on the control input pins (Cycle Start, 
 ##### Tips & Tricks
 - If a control input seems "stuck" or doesn't respond, do **not** change this setting first. Check your wiring and the `$14` (Invert Control Inputs) setting.
 - For most hobbyist setups, you should never need to change this from `0`.
-
+- Note: For boards with proper signal conditioning and onboard physical pullups, this feature is slated for removal
 ---
 
 ## `$18` – Pull-up Disable Limit Inputs (mask)
@@ -598,7 +629,7 @@ Disables the internal pull-up resistors on the limit switch input pins.
 ##### Tips & Tricks
 - Only disable this if your limit switches are part of an active circuit (e.g., a buffer board) that provides its own pull-ups.
 - Disabling this with standard switches will cause the inputs to "float," leading to random limit triggers.
-
+- Note: For boards with proper signal conditioning and onboard physical pullups, this feature is slated for removal
 ---
 
 ## `$19` – Pull-up Disable Probe Inputs (mask)
@@ -606,13 +637,14 @@ Disables the internal pull-up resistors on the probe input pins.
 
 :::info Context
 - This works exactly like `$17`, but applies to the probe inputs.
-- You might disable this if you are using an optically-isolated probe or a powered probe interface that provides its own clean signal.
+- You might disable this if you are using an optically-isolated probe or a powered probe interface that provides its own clean signal, or you are using a board that has proper signal conditioning and does not rely on MCU pullups
 :::
 
 | Bit | Value | Input |
 |:---:|:-----:|:------|
 | 0   | 1     | Primary Probe (PRB) |
-| 1   | 2     | Toolsetter Probe (TLS) |
+| 1   | 2     | Secondary Probe / Toolsetter (TLS) |
+| 1   | 2     | Third Probe |
 
 #### Common Examples
 *   **Default (Internal Pull-ups Enabled):**
@@ -625,7 +657,7 @@ Disables the internal pull-up resistors on the probe input pins.
 ##### Tips & Tricks
 - If your probe input seems noisy or unreliable, ensuring the pull-up is **enabled** (`$19=0`) is the first step.
 - Disabling the pull-up for a passive switch/touch plate will make probing completely non-functional.
-
+- Note: For boards with proper signal conditioning and onboard physical pullups, this feature is slated for removal
 ---
 
 ## `$20` – Soft Limits Enable (boolean)
@@ -640,7 +672,7 @@ Enables a safety feature that prevents the machine from moving beyond its config
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| No software travel limits are enforced. |
-| 1     | Enabled | grblHAL will throw an error if a move exceeds the max travel for any axis. |
+| 1     | Enabled | grblHAL will throw an error if a move exceeds the max travel for a homed axis. |
 
 #### Common Examples
 *   **Machine Unable to Home / New Uncalibrated setup:**
@@ -652,6 +684,7 @@ Enables a safety feature that prevents the machine from moving beyond its config
 
 ##### Tips & Tricks
 - Always enable soft limits once your machine is properly configured. It's free insurance against typos in G-code or jogging mistakes.
+- Avoid jogging mistakes by also setting `$40=1` - this will limit jogging commands to remain within the working area
 - If you get a "soft limit" error, it means your G-code is trying to move outside the machine's work area defined by `$130-$135`.  It usually means you either forgot to home, Homing isn't working correctly, or your job/jog move really does exceed the machine's working envelope
 
 ---
@@ -690,7 +723,7 @@ Enables a safety feature that uses the physical limit switches to stop the machi
 #### Tips & Tricks
 - Hard limits can sometimes be triggered by electrical noise. If you get false alarms, check the shielding on your limit switch wires and consider adding a small capacitor (e.g., 0.1uF) across the switch input pins.
 - In "Strict Mode," you cannot simply jog off a triggered switch. You must reset and perform a homing cycle, which is safer as it re-establishes the machine's true position.
-- When hard limits are enabled, the switches are **only** active during motion. They are ignored when the machine is idle to prevent accidental alarms.
+- Normally-closed (NC) switches are safer (detect wire breaks) and more EMI resistant, so ideally try to use Normally Closed switches.  
 
 ---
 
@@ -706,11 +739,11 @@ Configures the behavior of the homing cycle.
 | Value | Bit | Option Description |
 | :--- | :--- | :--- |
 | **1** | 0 | **Enable Homing Cycle:** This is the master switch. It must be enabled to allow the `$H` command to run. |
-| **2** | 1 | **Enable Single Axis Homing Commands:** Allows using `G28.1`/`G30.1` on individual axes. |
+| **2** | 1 | **Enable Single Axis Homing Commands:** Allows use of single-axis homing commands like ``$HX``, ``$HY`` or ``$HA`` etc |
 | **4** | 2 | **Homing on Startup Required:** Forces the user to run a homing cycle before any G-code motion is allowed. A key safety feature. |
 | **8** | 3 | **Set Machine Origin to 0:** After homing, sets the machine position at the switch trigger point to `0`. If disabled, it's set to the axis maximas - also known as  HOMING_FORCE_SET_ORIGIN|
 | **16**| 4 | **Two Switches Share One Input:** Informs grblHAL that two homing switches are wired in parallel to a single input pin. |
-| **32**| 5 | **Allow Manual Homing:** Enables manual homing commands. |
+| **32**| 5 | **Allow Manual Homing:** Allows homing (via single axis commands like ``$HX``, ``$HY`` or ``$HA``) for axes not part of homing sequences (`$44-$47`) |
 | **64**| 6 | **Override Locks:** Allows jogging motion even when the machine is in an alarm state that normally requires homing. |
 | **256**| 8 | **Use Limit Switches:** Allows homing switches to also function as hard limit switches when the homing cycle is not active. |
 | **512**| 9 | **Per-Axis Feedrates:** Allows using separate feed rates for each axis during homing. |
@@ -724,8 +757,7 @@ Configures the behavior of the homing cycle.
 ##### Tips & Tricks
 - Homing is one of the most important features to configure for a reliable machine.  All offsets and coordinate systems depends on a reliably established Machine coordinate system.  Without homing several features will feel like they don't work quite correctly.
 - For a new machine, start with just `$22=1` and then add more options once you have confirmed the basic cycle works.
-
----
+- The machine can be homed **without homing switches** by setting bit 0, 1 and 5 and setting all homing sequences to 0. Jog to the home position and send $H. Operations relying on axes homed (soft limits, …) will now work as if the machine has been homed
 
 ---
 
@@ -784,7 +816,7 @@ Sets the slower feed rate used to precisely locate the switch trigger point on t
 
 ##### Tips & Tricks
 - This value should always be significantly slower than your `$25` search rate.
-- If your homing position is inconsistent between cycles, try lowering this value.
+- If your homing position is inconsistent between cycles, try lowering this value, or add homing passes with `$43`
 
 ---
 
@@ -813,27 +845,34 @@ Sets the faster feed rate used to initially find the homing switches during the 
 
 ---
 
+---
+
 ## `$26` – Homing Switch Debounce Delay (ms)
-Sets a delay to filter electrical noise from the homing switches.
+Sets a delay *after* a homing switch is triggered and released to prevent mechanical switch bounce from causing a false re-trigger.
 
 :::info Context
-- Mechanical switches can "bounce" when they make contact, causing multiple rapid triggers. Electrical noise can also cause false triggers.
-- This setting tells grblHAL to wait a few milliseconds to ensure the switch signal is stable before accepting it as a valid trigger.
+- **Legacy Misconception:** In classic Grbl, this was often described as a "debounce" filter. In grblHAL, it functions differently and more accurately as a "settling" delay.
+- **How it Works:** Most grblHAL boards use hardware interrupts to detect the switch press instantly. After the initial trigger is processed and the machine backs off the switch (`$27`), the controller will wait for this delay time (`$26`) before it is allowed to sense the switch again.
+- This prevents the mechanical "bounce" that occurs when the switch physically settles from immediately causing a false second trigger.
 :::
 
 | Value (ms) | Meaning | Description |
 |:----------:|:--------|:------------|
-| 10-50      | Standard | Sufficient for most mechanical switches and setups with moderate noise. |
-| 50-100     | High Noise | Use if you are getting false limit triggers in a noisy environment (e.g., near a plasma torch or VFD). |
+| 1-5       | Low Bounce | For high-quality microswitches or electronic switches with clean signals. |
+| 10-50     | Standard Bounce | A safe value for typical mechanical limit switches. |
 
 #### Common Examples
-*   **Standard Setup:**
+*   **Typical Mechanical Switches (Default):**
+    *   A good starting point that provides enough settling time for most switches.
     *   `$26=25`
+*   **High-Quality Optical/Inductive Switches:**
+    *   Optical switches have no mechanical bounce, so a minimal delay can be used.
+    *   `$26=1`
 
-##### Tips & Tricks
-- Setting this value too high will cause a small inaccuracy in the homed position, as the machine will travel slightly further before the trigger is registered.
-
----
+#### Tips & Tricks
+- If your homing cycle fails intermittently, or an axis immediately alarms after backing off the switch, it is likely due to switch bounce. Increasing this value is the correct fix.
+- Unlike a traditional debounce filter, this setting does **not** cause an inaccuracy in the homed position, because the delay happens *after* the initial position has already been latched by the interrupt.
+- Setting this value too high will simply make the homing cycle take slightly longer, but it is otherwise safe.
 
 ## `$27` – Homing Pull-off Distance (mm)
 Sets the distance each axis moves *away* from the limit switches after they have been triggered.
@@ -905,43 +944,46 @@ Adds an extra delay between the direction pin being set and the step pulse being
 
 ---
 
----
 
 ## `$30` – Maximum Spindle Speed (RPM)
 Sets the spindle speed that corresponds to the maximum PWM output signal (100% duty cycle).
 
 :::info Context
-- This setting is the key to scaling your spindle speed. It links a G-code `S` value to the analog/PWM output.
+- This setting is for the **primary PWM spindle** (or devices controlled by a PWM signal, such as a 0-10V converter for a VFD).
+- It is the key to scaling your spindle speed. It links a G-code `S` value to the PWM output.
 - For example, if `$30=24000`, then an `S24000` command will result in 100% PWM, and an `S12000` command will result in 50% PWM.
-- This works together with `$31` (Minimum Spindle Speed) and the PWM range (`$34`-`$36`).
+- **Note:** For most **Modbus-controlled VFDs**, this setting is ignored, as the min/max RPM is read directly from the VFD's parameters.
+- Related settings:  
+  - `$730`
+
 :::
 
 | Value (RPM) | Meaning | Description |
 |:-----------:|:--------|:------------|
-| 1 - 100000+ | Max RPM | The maximum rated speed of your spindle or the max speed your VFD is configured for. |
+| 1 - 100000+ | Max RPM | The maximum rated speed of your spindle. |
 
 #### Common Examples
-*   **10,000 RPM Spindle:**
-    *   `$30=10000`
-*   **24,000 RPM Spindle:**
+*   **24,000 RPM Spindle with 0-10V Control:**
     *   `$30=24000`
-*   **Laser Engraver:**
+*   **Laser Engraver (0-1000 Power Scale):**
     *   A common convention is to treat power as a percentage from 0-1000.
     *   `$30=1000` (Now `S500` means 50% power).
 
-##### Tips & Tricks
-- This value should match the `Max RPM` setting in your VFD or spindle controller for accurate speed control.
+#### Tips & Tricks
+- For a VFD using a 0-10V converter, this value should match the max frequency/RPM setting in your VFD for accurate speed control.
 - If you command `S` values higher than `$30`, the PWM output will simply be clamped to 100%.
 
 ---
 
 ## `$31` – Minimum Spindle Speed (RPM)
-Sets the minimum spindle speed that can be commanded.
+Sets the minimum spindle speed that can be commanded for a PWM-controlled spindle.
 
 :::info Context
-- Many spindles, especially on VFDs, have a minimum speed below which they may stall or overheat. This setting prevents `S` commands from going below that safe limit.
-- If a G-code command requests a speed lower than this value (but not zero), the PWM output will be set to the minimum value defined by `$35`.
-- A value of `0` disables this feature.
+- For VFDs controlled by a 0-10V signal, this setting prevents `S` commands from going below a safe limit where the spindle might stall or overheat.
+- If a G-code command requests a speed lower than this value (but not zero), the PWM output will be set to the minimum value defined by `$35`. A value of `0` disables this feature.
+- **Note:** For most **Modbus-controlled VFDs**, this setting is ignored, as the min RPM is read directly from the VFD.
+- Related settings:  
+  - `$731`
 :::
 
 | Value (RPM) | Meaning | Description |
@@ -952,13 +994,12 @@ Sets the minimum spindle speed that can be commanded.
 #### Common Examples
 *   **Laser Engraver (where S0 is valid):**
     *   `$31=0`
-*   **VFD-controlled Spindle with 6000 RPM Min Speed:**
+*   **VFD-controlled Spindle (0-10V) with 6000 RPM Min Speed:**
     *   `$31=6000`
 
-##### Tips & Tricks
-- This setting is crucial for preventing VFD faults or spindle stalls at low RPMs. Check your spindle's datasheet.
-- Minimum spindle speed, can be overridden by spindle plugins.
-- When set `> 0` then `$35 (PWM min value)` may have to be set to get the configured RPM to work correctly, otherwise the scale will be incorrect.
+#### Tips & Tricks
+- This setting is crucial for preventing VFD faults at low RPMs when using 0-10V control.
+- If `$31` is set to a value greater than `0`, it is important to also set `$35` (PWM Min Value) correctly to ensure the RPM-to-PWM scale is accurate.
 
 ---
 
@@ -966,9 +1007,8 @@ Sets the minimum spindle speed that can be commanded.
 Enables or disables Laser Mode, which fundamentally changes motion control to suit laser cutting and engraving.
 
 :::info Context
-- This is one of the most important settings for laser users.
-- When enabled, it eliminates spindle "spin-up" delays (`M3`/`M5`), allowing power to be changed instantly with motion.
-- It also automatically adjusts laser power (`S` value) to compensate for feed rate overrides, ensuring consistent burn depth.
+- This is a **global setting**. When enabled, it affects the currently active tool unless overridden by the tool-specific settings (`$9` and `$709`).
+- When enabled (`1`), it eliminates spindle "spin-up" delays and automatically scales laser power with feed rate overrides to ensure consistent burn intensity.
 :::
 
 | Value | Meaning | Description |
@@ -977,129 +1017,97 @@ Enables or disables Laser Mode, which fundamentally changes motion control to su
 | 1     | Enabled | Optimized for lasers. Motion is continuous, and power scales with speed. |
 
 #### Common Examples
-*   **CNC Mill or Router:**
+*   **Spindle-Only Machine:**
     *   `$32=0`
-*   **Laser Engraver or Cutter:**
+*   **Laser-Only Machine:**
     *   `$32=1`
+*   **Dual Spindle/Laser Machine:**
+    *   `$32=1` (and use `$9=4` on the spindle to disable laser capability for that tool).
 
-##### Tips & Tricks
-- **Never** enable Laser Mode (`$32=1`) when using a physical spindle. The machine will not pause for the spindle to get up to speed, which is dangerous and will damage your workpiece and tools.
-- When Laser Mode is on, use the `M4` (Dynamic Power) command in your G-code for the best engraving results.
-
----
+#### Tips & Tricks
+- **Never** use a physical spindle when laser mode is active for that tool. The machine will not pause for the spindle to get up to speed, which is dangerous. Use the `$9` and `$709` settings to manage this safely on dual-purpose machines.
 
 ---
 
 ## `$33` – Spindle PWM Frequency (Hz)
-Sets the frequency of the PWM signal used for spindle, laser, or servo control.
+Sets the frequency of the **primary** PWM signal, used for spindle, laser, or servo control.
 
 :::info Context
-- The correct frequency depends entirely on what the receiving device expects. An incorrect value can lead to poor control or no response.
-- **VFDs/Lasers:** Use a high frequency for smooth power delivery.
-- **R/C Servos:** Require a very specific low frequency (usually 50Hz) to match their internal refresh rate.
+- The correct frequency depends entirely on the receiving device (VFD converter, laser driver, or servo). An incorrect value can lead to poor control or no response.
+- Related settings:  
+  - `$733`
 :::
 
 | Value (Hz) | Common Use Case |
 |:----------:|:----------------|
 | **50**     | **Standard R/C Servos** |
 | ~1000      | Many laser diode drivers. |
-| 5000       | Often recommended for VFD analog inputs (0-10V conversion). |
-| 10000+     | Some CO2 laser power supplies. |
-
-#### Common Examples
-*   **VFD (via PWM-to-Analog converter):**
-    *   `$33=5000`
-*   **Controlling an R/C Servo:**
-    *   This sets the 20ms period (`1 / 50Hz = 0.02s`) that servos expect.
-    *   `$33=50`
+| 5000       | Often recommended for VFD 0-10V PWM-to-analog converters. |
 
 #### Tips & Tricks
-- **Always** check the documentation for your specific VFD, laser driver, or servo.
+- **Always** check the documentation for your specific hardware. There is no "universal" correct value.
 - If your spindle speed is erratic or a servo jitters, this is one of the first settings to verify.
 
 ---
 
 ## `$34` – Spindle PWM Off Value
-The raw PWM value (0-1000+) to be output when the spindle is off (`M5`).
+The raw PWM value to be output from the **primary** channel when the spindle is off (`M5`).
 
 :::info Context
-- This setting is part of a group (`$34`, `$35`, `$36`) that maps the `S0` to `S-max` range to a raw PWM output range. The size of this range is driver-dependent but is often 0-1000.
-- This value corresponds to 0% duty cycle, which should be `0` for most VFD/laser applications.
-- For R/C servos, this value can be used to set the pulse width for the `S0` (off) command.
+- This setting is part of a group (`$34`, `$35`, `$36`) that maps the `S` command range to a raw PWM output range. The size of this range is driver-dependent (e.g., 0-255 or 0-1000).
+- This value corresponds to 0% duty cycle, which should be `0` for most applications.
+- Related settings:  
+  - `$734`
 :::
-
-| Value | Meaning |
-|:-----:|:--------|
-| 0     | 0% Duty Cycle. The output pin is held low. |
 
 #### Common Examples
 *   **VFD/Laser (Universal Default):**
     *   `$34=0`
-*   **R/C Servo (part of servo setup):**
-    *   See the combined servo example under `$36`.
-
-#### Tips & Tricks
-- For VFDs and lasers, you should not need to change this setting from `0`.
 
 ---
 
 ## `$35` – Spindle PWM Min Value
-The raw PWM value corresponding to the minimum spindle speed (`$31`).
+The raw PWM value for the **primary** channel corresponding to the minimum spindle speed (`$31`).
 
 :::info Context
 - This sets the lower limit of the PWM duty cycle range.
 - **For VFDs/Lasers:** It linearizes the output for controllers that have a "dead zone" at the low end.
-- **For R/C Servos:** This value is used to create the **minimum pulse width** (typically 1.0ms) which corresponds to the 0° position.
-:::
+- **For R/C Servos:** This value creates the minimum pulse width (e.g., 1.0ms).
+- Related settings:  
+  - `$735`
 
-| Value | Meaning |
-|:-----:|:--------|
-| 0-N   | The raw PWM value for the minimum duty cycle. |
+:::
 
 #### Common Examples
 *   **VFD Ignores Low Voltages:**
     *   Your spindle doesn't start until 15% power. On a 0-1000 scale, this is `150`.
     *   `$35=150`
-*   **R/C Servo (part of servo setup):**
-    *   See the combined servo example under `$36`.
-
-#### Tips & Tricks
-- To tune this for a VFD, find the lowest `S` command that makes your spindle turn reliably, then adjust `$35` until that `S` value just starts to register.
 
 ---
 
 ## `$36` – Spindle PWM Max Value
-The raw PWM value corresponding to the maximum spindle speed (`$30`).
+The raw PWM value for the **primary** channel corresponding to the maximum spindle speed (`$30`).
 
 :::info Context
 - This sets the upper limit of the PWM duty cycle range.
-- **For VFDs/Lasers:** For almost all applications, this should be set to the maximum value of the range (e.g., 1000) to allow for 100% power output.
-- **For R/C Servos:** This value is used to create the **maximum pulse width** (typically 2.0ms) which corresponds to the maximum angle (e.g., 180°).
-:::
+- For VFDs/Lasers, this should almost always be the maximum value of the PWM range (e.g., 255 or 1000) to allow for 100% power.
+- For R/C Servos, this value creates the maximum pulse width (e.g., 2.0ms).
+- Related settings:  
+  - `$736`
 
-| Value | Meaning |
-|:-----:|:--------|
-| 0-N   | The raw PWM value for the maximum duty cycle. |
+:::
 
 #### Common Examples
 *   **VFD/Laser (Universal Default):**
     *   Assuming a 0-1000 PWM range.
     *   `$36=1000`
 *   **R/C Servo Control (0-180°):**
-    *   This is a combined example for settings `$30` through `$36`.
-    *   **Goal:** Map `S0` to a 1ms pulse and `S180` to a 2ms pulse, inside a 20ms window (50Hz). The PWM range is 0-1000.
-    *   A 1ms pulse is 5% of a 20ms period (`1 / 20 * 1000 = 50`).
-    *   A 2ms pulse is 10% of a 20ms period (`2 / 20 * 1000 = 100`).
-    *   `$30=180` (Map `S` commands from 0-180)
-    *   `$31=0` (Allow S0)
-    *   `$33=50` (Set 50Hz for the 20ms period)
-    *   `$34=50` (Set the PWM value for S0 to `50` for a 1ms pulse)
-    *   `$35=50` (Also set min value to `50` for the 1ms pulse)
-    *   `$36=100` (Set the PWM value for S180 to `100` for a 2ms pulse)
+    *   **Goal:** Map `S0`-`S180` to a 1-2ms pulse within a 20ms window (50Hz).
+    *   `$30=180` (S-range)
+    *   `$33=50` (50Hz)
+    *   `$35=50` (1ms pulse = 5% of 20ms. 5% of 1000 = 50)
+    *   `$36=100` (2ms pulse = 10% of 20ms. 10% of 1000 = 100)
 
-#### Tips & Tricks
-- Controlling servos requires setting the entire block of spindle settings correctly to generate the precise pulse widths they need.
-- For VFDs, unless you have a specific reason to limit the output, `$36` should match the maximum value of your driver's PWM range.
 
 ---
 
@@ -1142,6 +1150,8 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
 - This is an advanced feature required for **spindle-synchronized motion**, such as G33 rigid tapping and lathe threading.
 - It does **not** control spindle speed; it provides high-resolution positional feedback of the spindle's rotation.
 - It requires a physical encoder mounted to the spindle.
+- It can also be used for **Spindle at Speed** automatic spin up/spin down delay if `$340` is set `> 0`.
+
 :::
 
 | Value | Meaning | Description |
@@ -1162,17 +1172,17 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
 ---
 
 ## `$39` – Enable Legacy Realtime Commands (boolean)
-Enables compatibility for older G-code senders that use legacy, single-byte real-time commands.
+Enables compatibility for older G-code senders that use legacy printable, single-byte real-time commands.
 
 :::info Context
-- Modern real-time commands are ASCII characters like `?`, `!`, `~`.
-- Legacy commands were non-printable characters (e.g., `0x80` to `0x87`). Some older control programs may still send these.
+- Legacy real-time commands were ASCII characters like `?`, `!`, `~`. Some older control programs may still send these.
+- Modern commands are non-printable characters (e.g., `0x80` to `0x87`).
 - This setting is purely for backward compatibility.
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 0     | Disabled| Only modern ASCII real-time commands are accepted. |
+| 0     | Disabled| Only legacy non-printable real-time commands are accepted. |
 | 1     | Enabled | Both modern and legacy single-byte commands are accepted. |
 
 #### Common Examples
@@ -1182,7 +1192,6 @@ Enables compatibility for older G-code senders that use legacy, single-byte real
 
 ##### Tips & Tricks
 - For most users with up-to-date software, this setting can be set to disabled (`0`).
-- Enabling this can sometimes cause issues if serial data corruption occurs, as a random byte might be misinterpreted as a legacy command.
 
 ---
 
@@ -1191,7 +1200,7 @@ Prevents jogging moves from exceeding the machine's software travel limits (`$13
 
 :::info Context
 - This is a safety feature that works in conjunction with Soft Limits (`$20`).
-- It checks the target position of any manual jog command and will reject it if it would move beyond the machine's defined boundaries.
+- It checks the target position of any manual jog command and will clamp/trim it to stay within the boundaries. This elegantly clamps the jog instead of raising soft/hard limit errors
 - It **requires a successful homing cycle** to be effective.
 :::
 
@@ -1218,7 +1227,7 @@ Configures and enables the single-axis parking motion.
 - **Important:** The parking feature in grblHAL is a **single-axis motion** that retracts one axis to a predefined safe location.  
 - The axis to move is selected with **`$42`**.  
 - **How it’s triggered:** Parking motion is executed automatically when certain events occur:  
-  - Feed hold (`!` realtime command)  
+  - `0x84` Realtime command
   - Safety door open (if configured)  
   - When the Event Plugin calls a Park Event
 - If bit 2 is set, you can use **M56** to enable/disable parking override control at runtime.  
@@ -1239,7 +1248,7 @@ Configures and enables the single-axis parking motion.
   `$41=5` (1 + 4)
 
 #### Tips & Tricks
-- For most users, `$41=1` is sufficient: parking will automatically retract the tool on feed hold or door open.  
+- For most users, `$41=1` is sufficient: parking will automatically retract the tool on `0x84`  or door open.  
 - Use `$41=5` if you want to toggle parking on/off dynamically with M56.  
 
 ---
@@ -1260,6 +1269,8 @@ Selects which single axis will be moved during a parking cycle.
 | 3     | A-axis |
 | 4     | B-axis |
 | 5     | C-axis |
+| 6     | U-axis |
+| 7     | V-axis |
 
 #### Common Examples
 * **Standard CNC (Retract Z-axis up):**  
@@ -1273,7 +1284,7 @@ Selects which single axis will be moved during a parking cycle.
 Configures the number of homing passes to perform during the homing cycle.
 
 :::info Context
-- **Purpose:** The `$43` setting determines how many times each axis will move during the homing cycle. This is particularly useful for machines with mechanical backlash or for ensuring precise homing.
+- **Purpose:** The `$43` setting determines how many times each axis will move during the homing cycle. This is particularly useful for ensuring precise homing.
 - **Default Value:** The default value is typically `1`, meaning each axis will only home one cycle during the homing cycle.
 :::
 
@@ -1287,20 +1298,19 @@ Configures the number of homing passes to perform during the homing cycle.
 
 #### Common Examples
 * **Standard Homing:**
-  * `$43=1` → Each axis moves once during the homing cycle.
+  * `$43=1` → Each axis homes once during the homing cycle.
 * **Enhanced Precision:**
-  * `$43=2` → Each axis moves twice during the homing cycle, useful for machines with backlash.
+  * `$43=2` → Each axis homes twice during the homing cycle
 * **Maximum Precision:**
-  * `$43=3` → Each axis moves three times during the homing cycle, for machines requiring the highest precision.
+  * `$43=3` → Each axis homes three times during the homing cycle, for machines requiring the highest precision.
 
 #### Tips & Tricks
-- **Backlash Compensation:** Increasing the number of homing passes can help compensate for mechanical backlash, leading to more accurate homing positions.
 - **Machine Type Considerations:** Machines with high precision requirements or those that experience mechanical flexing may benefit from additional homing passes.
 - **Performance Impact:** More homing passes will increase the time it takes to complete the homing cycle; balance the need for precision with the desired homing speed.
 
 ---
 
-## `$44–$47` – Axes Homing Phases (mask)
+## `$44–$49` – Axes Homing Phases (mask)
 Defines which axes move during each pass of the homing cycle. You can have up to 4 separate phases in your homing cycle.
 
 :::info Context
@@ -1315,6 +1325,8 @@ Defines which axes move during each pass of the homing cycle. You can have up to
 | 3   | 8     | A-Axis |
 | 4   | 16    | B-Axis |
 | 5   | 32    | C-Axis |
+| 4   | 64    | U-Axis |
+| 5   | 128   | V-Axis |
 
 #### Common Examples
 * **Standard 3-Axis CNC (Z first, then XY):**  
@@ -1332,6 +1344,7 @@ Defines which axes move during each pass of the homing cycle. You can have up to
 #### Tips & Tricks
 - Homing Z first is recommended for most machines to prevent the tool from dragging across clamps or the workpiece.
 - Plan your homing sequence carefully, especially on multi-axis machines, to avoid collisions or mechanical stress.
+- Set all to zero to allow enabling manual "homing" on machines without limit switches.
 
 ---
 
@@ -1528,7 +1541,8 @@ Enables the `$SLP` command, which allows the controller to enter a low-power sle
 Configures additional actions that occur during a Feed Hold and on resume.
 
 :::info Context
-- A standard Feed Hold (`!`) smoothly decelerates the machine and pauses the G-code program.
+- Applies to Feed Hold commands, or input signal on the Feed Hold input pin (button, etc)
+- A standard Feed Hold smoothly decelerates the machine and pauses the G-code program.
 - `$63` allows you to modify how the **laser or spindle/coolant** behaves during the hold and when resuming.
 - This is a **bitmask**: add together the values of the options you want to enable.
 :::
@@ -1594,6 +1608,7 @@ Configures advanced options for probing cycles (`G38.x`).
 | 0   | 1     | Allow Feed Override | Permits feed override (`F` adjustment) during probing commands. |
 | 1   | 2     | Apply Soft Limits | Enforces soft-limit boundaries during probing to prevent leaving the machine workspace. |
 | 3   | 8     | Auto Select Toolsetter | Automatically selects a toolsetter if one is configured for the probe operation. |
+| 4   | 16     | Auto Select Probe 2 | Automatically selects the Secondary Probe |
 
 #### Common Examples
 * **Default:**  
@@ -1609,11 +1624,46 @@ Configures advanced options for probing cycles (`G38.x`).
 - Most users can leave `$65=0` for simple probing cycles.  
 - Disable soft limits during probing can be helpful where you are probing unknown distances which may require a command that exceeds the max travel in Z for example, but you do know the probe will make contact before it actually reaches end of travel
 - Use Auto Select Toolsetter only if your machine has a compatible toolsetter configured.
-
+- Auto Select Toolsetter requires the machine to be homed and will probe at the G59.3 position. To facilitate the switch the G-Code program has to move to the G59.3 position (Preferable via Z-home for safety) before sending G38.
+- Auto select probe 2 is implemented by the BLTouch plugin and is activated when it is configured to auto-deploy on G38 with M401D1. See https://github.com/grblHAL/Plugins_misc/tree/main#bltouch-probe
 
 ---
 
-## `$100` – `$105` – Axis Travel Resolution
+---
+
+## `$70` – Enable Services (mask)
+The master switch for enabling or disabling network-related services (daemons).
+
+:::info Context
+- This is a **critical** setting for any network-enabled board. Even if you configure all the IP address and WiFi settings (`$300+`), the services **will not run** unless they are enabled here.
+- This is a **bitmask**: add together the values of the services you want to enable.
+:::
+
+| Bit | Value | Service to Enable | Description |
+|:---:|:-----:|:------------------|:------------|
+| 0   | 1     | Telnet | A raw data stream used by some G-code senders. |
+| 1   | 2     | FTP | Allows network file transfer to/from the SD card. |
+| 2   | 4     | HTTP | The standard web server (often used with WebSockets). |
+| 3   | 8     | WebSocket | A modern, efficient protocol for web-based GUIs. |
+| 4   | 16    | mDNS (Bonjour) | Broadcasts the controller's name on the network (e.g., `grblHAL.local`). |
+| 5   | 32    | WebDAV | An alternative to FTP for network file access. |
+
+#### Common Examples
+*   **All Services Disabled (Default):**
+    *   `$70=0`
+*   **Enable Common Services for a GUI:**
+    *   Most modern senders use Telnet or WebSockets, and FTP is needed for file transfers. mDNS is for easy discovery.
+    *   `1` (Telnet) + `2` (FTP) + `8` (WebSocket) + `16` (mDNS) → `$70=27`
+*   **Enable All Services:**
+    *   `1+2+4+8+16+32` → `$70=63`
+
+#### Tips & Tricks
+- If you have configured your network settings but still cannot connect to the controller, this is the **first setting you should check**.
+- For security and to save memory on the controller, only enable the services you actually plan to use.
+
+---
+
+## `$100` – `$107` – Axis Travel Resolution
 
 Defines the number of motor steps required to move an axis by **1 mm** (for linear axes) or **1 degree** (for rotary axes).  
 
@@ -1623,14 +1673,16 @@ Defines the number of motor steps required to move an axis by **1 mm** (for line
 - `$103` → A-axis  
 - `$104` → B-axis  
 - `$105` → C-axis  
+- `$106` → U-axis  
+- `$107` → V-axis  
 
 :::info Context
 - This is the most important setting for dimensional accuracy.  
 - The value depends on your motor, driver microstepping, and mechanical transmission (belt, leadscrew, ballscrew, or rotary gear reduction).  
 - A/B/C axes can be configured as **linear** or **rotary** with `$376`.  
 - Related settings:  
-  - `$110`–`$115` (Max Rate)  
-  - `$120`–`$125` (Acceleration)  
+  - `$110`–`$117` (Max Rate)  
+  - `$120`–`$127` (Acceleration)  
 :::
 
 ---
@@ -1686,7 +1738,7 @@ Defines the number of motor steps required to move an axis by **1 mm** (for line
 
 ---
 
-## `$110` – `$115` – Axis Maximum Rate
+## `$110` – `$117` – Axis Maximum Rate
 
 Sets the maximum speed for each axis in **mm/min** (linear) or **degrees/min** (rotary).
 
@@ -1696,11 +1748,14 @@ Sets the maximum speed for each axis in **mm/min** (linear) or **degrees/min** (
 - `$113` → A-axis
 - `$114` → B-axis
 - `$115` → C-axis
+- `$116` → U-axis  
+- `$117` → V-axis  
+
 
 :::info Context
 - This acts as a hard speed limit for each motor to prevent it from stalling due to lost torque at high speeds.
 - The value should be determined through testing to find the highest *reliable* speed.
-- This is related to `$120`–`$125` (Acceleration). An axis can often reach a higher max rate if the acceleration is not too aggressive.
+- This is related to `$120`–`$127` (Acceleration). An axis can often reach a higher max rate if the acceleration is not too aggressive.
 :::
 
 #### Typical Value Ranges
@@ -1727,7 +1782,7 @@ Sets the maximum speed for each axis in **mm/min** (linear) or **degrees/min** (
 
 ---
 
-## `$120` – `$125` – Axis Acceleration
+## `$120` – `$127` – Axis Acceleration
 
 Sets how quickly each axis can change its speed, in **mm/s²** (linear) or **degrees/s²** (rotary).
 
@@ -1737,6 +1792,9 @@ Sets how quickly each axis can change its speed, in **mm/s²** (linear) or **deg
 - `$123` → A-axis
 - `$124` → B-axis
 - `$125` → C-axis
+- `$126` → U-axis  
+- `$127` → V-axis  
+
 
 :::info Context
 - This is one of the most important settings for balancing performance and reliability.
@@ -1767,7 +1825,7 @@ Sets how quickly each axis can change its speed, in **mm/s²** (linear) or **deg
 
 ---
 
-## `$130` – `$135` – Axis Maximum Travel
+## `$130` – `$137` – Axis Maximum Travel
 
 Defines the total travel distance for each axis in **mm** (linear) or **degrees** (rotary).
 
@@ -1777,6 +1835,9 @@ Defines the total travel distance for each axis in **mm** (linear) or **degrees*
 - `$133` → A-axis
 - `$134` → B-axis
 - `$135` → C-axis
+- `$136` → U-axis  
+- `$137` → V-axis  
+
 
 :::info Context
 - This value defines the size of your machine's work envelope.
@@ -1801,7 +1862,7 @@ Defines the total travel distance for each axis in **mm** (linear) or **degrees*
 
 
 ---
-## `$140` - `$142` – X, Y, Z-axis Motor Current
+## `$140` - `$147` – Motor Current
 A placeholder setting for motor current on some drivers.
 
 :::info Context
@@ -1815,22 +1876,22 @@ A placeholder setting for motor current on some drivers.
 
 ---
 
-## `$150` - `$152` – X, Y, Z-axis Microsteps
+## `$150` - `$157` – Axis Microsteps
 A placeholder setting for microstepping on some drivers.
 
 :::info Context
-- On most modern controller boards, microstepping is set via physical jumpers or DIP switches on the stepper driver itself.
+- On most controller boards, microstepping is set via physical jumpers or DIP switches on the stepper driver itself.
 - This software setting is only used by drivers that support programmable microstepping (like Trinamic drivers).
 - Even with Trinamic drivers, this setting may be superseded by other, more advanced configuration methods.
 :::
 
 #### Tips & Tricks
 - Always set the physical jumpers on your drivers first. Only change this setting if your board's documentation explicitly states it is used.
-- Your Travel Resolution (`$100`-`$102`) must be updated if you change your microstepping.
+- Your Travel Resolution (`$100`-`$107`) must be updated if you change your microstepping.
 
 ---
 
-## `$160` - `$163` – X, Y, Z, A-axis Backlash Compensation
+## `$160` - `$167` – Backlash Compensation
 Applies a small, extra move when an axis changes direction to compensate for mechanical backlash.
 
 :::info Context
@@ -1853,7 +1914,7 @@ Applies a small, extra move when an axis changes direction to compensate for mec
 
 ---
 
-## `$170` - `$173` – X, Y, Z, A-axis Dual-axis Offset
+## `$170` - `$172` – X, Y, Z-axis Dual-axis Offset
 An advanced setting for adjusting the offset in a dual-motor (ganged) setup after homing.
 
 :::info Context
@@ -1881,6 +1942,10 @@ Sets the sensitivity of StallGuard for the **X-axis** during the initial, fast-m
 - This sensitivity value is used during the `$25` (Homing Search Rate) move.
 - A **lower value is more sensitive**. A value of `0` disables stall detection.
 - Works in conjunction with `$220` (slow threshold) and `$339` (enable mask).
+:::
+
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
 :::
 
 | Value | Meaning | Description |
@@ -1912,6 +1977,10 @@ Sets the sensitivity of StallGuard for the **Y-axis** during the initial, fast-m
 - Works in conjunction with `$221` (slow threshold) and `$339` (enable mask).
 :::
 
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
+:::
+
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| Stall detection is off for the fast move. |
@@ -1938,6 +2007,10 @@ Sets the sensitivity of StallGuard for the **Z-axis** during the initial, fast-m
 - This sensitivity value is used during the `$25` (Homing Search Rate) move.
 - A **lower value is more sensitive**. A value of `0` disables stall detection.
 - Works in conjunction with `$222` (slow threshold) and `$339` (enable mask).
+:::
+
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
 :::
 
 | Value | Meaning | Description |
@@ -2100,26 +2173,24 @@ Sets the sensitivity of StallGuard for the **Z-axis** during the second, slower 
 
 ---
 
----
-
 ## `$300` – Hostname
 Sets the machine's name on the network.
 
 :::info Context
 - This is the name your controller will announce on the network.
-- It can be used to connect via mDNS (e.g., `grblHAL.local`) if your network supports it.
+- It can be used to connect via mDNS (e.g., `grblHAL.local`) if `$70` has mDNS enabled.
 - It also helps identify the device in your router's client list.
 :::
 
-| Value | Meaning | Description |
-|:------|:--------|:------------|
+| Value | Meaning |
+|:------|:--------|
 | String| A string of characters. |
 
 #### Common Examples
 *   **Default Hostname:**
     *   `$300=grblHAL`
 *   **Custom Hostname for a specific machine:**
-    *   `$300=MyMill`
+    *   `$300=MyCNC`or `$300=Laser` (mDNS respectively mycnc.local or laser.local)
 
 #### Tips & Tricks
 - For maximum compatibility, use a simple name without spaces or special characters.
@@ -2127,37 +2198,34 @@ Sets the machine's name on the network.
 
 ---
 
-## `$301` – IP Mode
-Selects the method the controller uses to obtain an IP address.
+## `$301` – Ethernet IP Mode
+Selects the method the controller uses to obtain an IP address for the **wired Ethernet** connection.
 
 :::info Context
-- This is the master switch for network configuration.
+- **Static** is useful if the controlling computer has a dedicated ethernet port for the controller. A dedicated network interface for the controller is preferred - no collisions or competition for bandwidth, or for networks where DHCP is not available.
 - **DHCP** is the standard for most networks, where your router automatically assigns an address.
-- **Static** is for networks without a router or when you need a permanent, predictable address.
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Static | You must manually set the IP (`$302`), Gateway (`$303`), and Netmask (`$304`). |
-| 1    | DHCP   | The controller asks your router for an IP address. (Recommended) |
-| 2    | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
+| 1     | DHCP   | The controller asks your router for an IP address. (Recommended) |
+| 2     | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
 
 #### Common Examples
 *   **Home/Office Network with a Router:**
-    *   This is the easiest and most reliable option.
+    *   This is the easiest option.
     *   `$301=1`
-*   **Direct Connection to a PC (with or without router):**
+*   **Direct Connection to a PC (no router):**
     *   You must assign a permanent, non-conflicting address.
-    *   You configure another IP in the same range on the PC (either as primary or secondary IP)
     *   `$301=0`
 
 #### Tips & Tricks
-- Always use DHCP (`1`) unless you have a specific reason not to.
-- If you select Static mode, you are responsible for providing correct and non-conflicting network information in the following settings.
+- If you select Static mode, you are responsible for providing correct and non-conflicting network information.
 
 ---
 
-## `$302` – IP Address
+## `$302` – Ethernet IP Address
 Manually sets the static IP address for the controller.
 
 :::info Context
@@ -2180,7 +2248,7 @@ Manually sets the static IP address for the controller.
 
 ---
 
-## `$303` – Gateway
+## `$303` – Ethernet Gateway
 Manually sets the Gateway (router) IP address.
 
 :::info Context
@@ -2202,7 +2270,7 @@ Manually sets the Gateway (router) IP address.
 
 ---
 
-## `$304` – Netmask
+## `$304` – Ethernet Netmask
 Manually sets the Subnet Mask for the controller.
 
 :::info Context
@@ -2310,12 +2378,205 @@ Configures the network port for the FTP (File Transfer Protocol) service.
 
 ---
 
-## `$330` – Admin Password
+## `$310` – WiFi AP SSID
+Sets the name of the WiFi network (the SSID) that the controller will broadcast.
+
+:::info Context
+- This is the network name you will look for and connect to from your computer or phone.
+- This setting is only active when the controller is in AP mode.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The name of your machine's WiFi network, e.g., "grblHAL-CNC". |
+
+#### Common Examples
+*   **Creating a network for your machine:**
+    *   `$310=MyMill-WiFi`
+
+#### Tips & Tricks
+- Choose a unique name to easily identify your machine's network.
+- A controller reboot is required for changes to take effect.
+
+---
+
+## `$311` – WiFi AP Password
+Sets the password for the WiFi network created by the controller.
+
+:::info Context
+- This password will be required for any device trying to connect to the controller's WiFi network.
+- It enables WPA2 security for the connection.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The WiFi password. Must be at least 8 characters. |
+
+#### Common Examples
+*   **Setting a secure password:**
+    *   `$311=MySecurePassword123`
+
+#### Tips & Tricks
+- It is highly recommended to set a password to prevent unauthorized access to your machine.
+- Leaving this setting blank may create an open, unsecured network, which is a security risk.
+
+---
+
+## `$312` – WiFi AP IP Address
+Sets the IP address of the controller itself when it is acting as the access point.
+
+:::info Context
+- This is the static IP address you will use to connect to the controller's services (e.g., the WebUI).
+- It also acts as the Gateway for any device that connects to this network.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The static IP address for the controller, e.g., "192.168.0.1". |
+
+#### Common Examples
+*   **Typical AP Address:**
+    *   This is a common, non-routable IP address suitable for a small, isolated network.
+    *   `$312=192.168.0.1`
+
+#### Tips & Tricks
+- When you connect your computer to this WiFi network, it will likely be assigned an IP address in the same range (e.g., `192.168.0.100`).
+- This address must be set to a valid IP format.
+
+---
+
+## `$320` – WiFi STA SSID
+The name of the existing WiFi network (the SSID) that you want the controller to connect to.
+
+:::info Context
+- This must **exactly** match the name of your router's WiFi network, including capitalization and symbols.
+- This is the most critical setting for getting your controller on your local network.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The SSID of your existing WiFi network, e.g., "MyShopWiFi". |
+
+#### Common Examples
+*   **Connecting to your home network:**
+    *   `$320=MyHomeInternet`
+
+#### Tips & Tricks
+- WiFi network names are case-sensitive. "MyWifi" is different from "mywifi".
+- If the controller fails to connect, an incorrect SSID is the most common cause. Double-check for typos.
+
+---
+
+## `$321` – WiFi STA Password
+The password for the existing WiFi network.
+
+:::info Context
+- This must be the correct password for the WiFi network specified in `$320`.
+- Passwords are masked (`(masked)`) when you list settings for security.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The WiFi password. |
+
+#### Common Examples
+*   **Setting the password for your network:**
+    *   `$321=MyRouterPassword456`
+
+#### Tips & Tricks
+- Like the SSID, the password is case-sensitive and must be entered exactly.
+- This is the second most common cause of connection failure.
+
+---
+
+## `$322` – WiFi STA IP Mode
+Selects the method the controller uses to obtain an IP address on the WiFi network.
+
+:::info Context
+- This works exactly like the Ethernet IP Mode (`$301`).
+- **DHCP** lets your router assign an IP automatically.
+- **Static** requires you to manually assign a permanent IP.
+:::
+
+| Value | Meaning | Description |
+|:-----:|:--------|:------------|
+| 0     | Static | You must manually set the IP (`$323`), Gateway (`$324`), and Netmask (`$325`). |
+| -1    | DHCP   | The controller asks your router for an IP address. (Recommended) |
+
+#### Common Examples
+*   **Connecting to a Home/Office Router:**
+    *   This is the easiest and most reliable option.
+    *   `$322=-1`
+
+#### Tips & Tricks
+- It is strongly recommended to use DHCP (`-1`) for simplicity and to avoid IP address conflicts on your network.
+
+---
+
+## `$323` – WiFi STA IP Address
+Manually sets the static IP address for the controller on the WiFi network.
+
+:::info Context
+- This setting is **only** used if `$322=0` (Static IP Mode).
+- This is the permanent address your controller will use on your WiFi network.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The IP address in dot-decimal notation, e.g., "192.168.1.201". |
+
+#### Common Examples
+*   **Typical Static IP on a Home Network:**
+    *   Make sure this address is outside your router's DHCP assignment range to prevent conflicts.
+    *   `$323=192.168.1.201`
+
+#### Tips & Tricks
+- If you choose a static IP, consider configuring your router to reserve that IP for the controller's MAC address to further prevent conflicts.
+
+---
+
+## `$324` – WiFi STA Gateway
+Manually sets the Gateway (router) IP address for the WiFi connection.
+
+:::info Context
+- This setting is **only** used if `$322=0` (Static IP Mode).
+- This is the IP address of your WiFi router.
+- It is required for features like NTP time synchronization (`$332`) to work.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| Your router's IP address, e.g., "192.168.1.1". |
+
+#### Common Examples
+*   **Typical Home Router Address:**
+    *   `$324=192.168.1.1`
+
+---
+
+## `$325` – WiFi STA Netmask
+Manually sets the Subnet Mask for the WiFi connection.
+
+:::info Context
+- This setting is **only** used if `$322=0` (Static IP Mode).
+- For almost all home and small office networks, this is `255.255.255.0`.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The Subnet Mask, e.g., "255.255.255.0". |
+
+#### Common Examples
+*   **Standard Home/Office Network:**
+    *   `$325=255.255.255.0`
+
+---
+
+## `$330` – WebUI Admin Password
 Sets the password for the `admin` account.
 
 :::info Context
-- The `admin` account has full privileges, including uploading/deleting files via FTP and changing settings.
-- This password is required for secure network services.
+- Used by the WebUI for authorisation
 :::
 
 | Value | Meaning | Description |
@@ -2334,12 +2595,12 @@ Sets the password for the `admin` account.
 
 ---
 
-## `$331` – User Password
+## `$331` – WebUI User Password
 Sets the password for the `user` account.
 
 :::info Context
-- The `user` account may have restricted privileges compared to the `admin` account (e.g., read-only access).
-- This is useful for providing limited access to the machine's network services.
+- Used by the WebUI for authorisation
+- The `user` account may have restricted privileges compared to the `admin` account
 :::
 
 | Value | Meaning | Description |
@@ -2352,9 +2613,10 @@ Sets the password for the `user` account.
 *   **Clear the password:**
     *   `$331=` (with no value after the equals sign)
 
----
+ ---
 
-## `$332` – NTP Server URI 1
+ <!-- Not implemented yet -->
+<!-- ## `$332` – NTP Server URI 1
 Sets the address of the primary Network Time Protocol (NTP) server.
 
 :::info Context
@@ -2446,7 +2708,7 @@ Indicates if Daylight Saving Time (DST) is currently active.
 | 0     | Disabled| Standard time is in effect. |
 | 1     | Enabled | Daylight Saving Time is in effect. |
 
----
+--- -->
 
 ## `$337` – WiFi AP BSSID
 Stores the BSSID (MAC address) of the WiFi access point.
@@ -2467,7 +2729,7 @@ The master switch to enable sensorless homing for each axis.
 :::info Context
 - This setting tells grblHAL to use the Trinamic StallGuard feature for homing instead of physical limit switches.
 - This is a **bitmask**: add together the values of the axes you want to home without switches.
-- It requires the StallGuard thresholds (`$200`-`$222`) to be properly tuned.
+- It requires the StallGuard thresholds (`$200`-`$22x`) to be properly tuned.
 :::
 
 | Bit | Value | Axis |
@@ -2475,6 +2737,12 @@ The master switch to enable sensorless homing for each axis.
 | 0   | 1     | X-Axis |
 | 1   | 2     | Y-Axis |
 | 2   | 4     | Z-Axis |
+| 3   | 8     | A-Axis |
+| 4   | 16    | B-Axis |
+| 5   | 32    | C-Axis |
+| 4   | 64    | U-Axis |
+| 5   | 128   | V-Axis |
+
 
 #### Common Examples
 *   **Sensorless Homing on X and Y:**
@@ -2520,8 +2788,8 @@ You may get **"Error 14"** errors if spindle is either unable to reach or stay w
 Selects the procedure to be used for an `M6` tool change command.
 
 :::info Context
-- This setting is the master switch that defines what happens when your G-code calls for a tool change.
-- It can range from a simple pause to a fully automated ATC sequence.
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
 
 | Value | Meaning | Description |
@@ -2542,6 +2810,8 @@ Selects the procedure to be used for an `M6` tool change command.
 Sets the maximum distance the Z-axis will travel when searching for the toolsetter during a tool change.
 
 :::info Context
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 - When using an automated toolsetter, this is a safety setting to prevent a crash if the probe fails.
 - The value should be large enough to account for the difference between your longest and shortest tools.
 :::
@@ -2562,6 +2832,8 @@ Sets the slower "locate" feed rate for the final, precise touch on the toolsette
 :::info Context
 - After the initial fast search, the machine will retract and re-approach slowly at this rate for maximum accuracy.
 - This is analogous to the `$24` (Homing Locate Rate).
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
 
 | Value (mm/min)| Description |
@@ -2580,6 +2852,8 @@ Sets the faster feed rate for the initial search for the toolsetter.
 :::info Context
 - This is the speed the machine moves at the start of the tool measurement probe.
 - This is analogous to the `$25` (Homing Search Rate).
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
 
 | Value (mm/min)| Description |
@@ -2598,6 +2872,8 @@ Sets the distance the Z-axis retracts after the probe is complete.
 :::info Context
 - This moves the tool clear of the toolsetter after the measurement is complete.
 - This is analogous to the `$27` (Homing Pull-off Distance).
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
 
 | Value (mm)| Description |
@@ -2616,6 +2892,8 @@ Configures advanced options for the tool change process.
 :::info Context
 - This is a **bitmask** that enables or disables specific behaviors during an `M6` sequence.
 - The available options are defined by the specific ATC plugin or driver being used.
+- This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
+- It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
 
 ---
@@ -3362,3 +3640,108 @@ Adds a mandatory delay after the spindle is turned off (`M5`).
 *This is a duplicate/alternative way to configure Modbus parameters, often superseded by `$362`.*
 
 ---
+
+## `$709` – PWM Spindle Options (Secondary)
+
+Functions the same as `$9`, but applies to the **secondary PWM spindle** if available (spindle type 15 or 16).  
+
+:::info Context
+- Only applies if a **secondary PWM spindle** is configured.  
+- Uses the same bitmask definitions as `$9`.  
+- Related settings:  
+  - `$9` – PWM Spindle Options (Primary)
+:::
+
+| Bit | Value | Description |
+|-----|-------|-------------|
+| 0   | 1     | Disable PWM output entirely |
+| 1   | 2     | Let RPM control spindle **on/off** signal (S0 disables spindle, S>0 enables) |
+| 2   | 4     | Disable laser capability (does not affect $32 when primary spindle is controlling laser) |
+
+#### Common Examples
+* **Enable secondary PWM with RPM control:**  
+  `$709=3`
+
+* **Disable secondary PWM output:**  
+  `$709=1`
+
+#### Tips & Tricks
+- Mirrors `$9` functionality but for the secondary spindle.  
+- Allows keeping the primary spindle in laser mode while using the secondary spindle for normal PWM tasks.
+
+---
+
+## `$716` – Invert Secondary Spindle Outputs (mask)
+
+Controls polarity of the **spindle control outputs** (PWM, enable, direction).  
+Some spindle drivers expect inverted logic.
+
+:::info Context
+- For spindle types 11, 12 and 13
+- Expressed as a **mask**:  
+  - Bit 0 = Spindle Enable  
+  - Bit 1 = Spindle Direction  
+  - Bit 2 = Spindle PWM  
+- Related settings:  
+  - `$16` – Invert Primary Spindle Outputs (mask)
+
+:::
+
+#### Common Examples
+* **Default:**  
+  `$716=0`
+
+* **Invert Spindle Enable only:**  
+  `$716=1`
+
+* **Invert all signals:**  
+  `$716=7`
+
+#### Tips & Tricks
+- If the spindle **runs when it should stop**, check `$716`.  
+- Combine with `$33–$36` for full PWM control tuning.  
+
+---
+
+## `$730` & `$731` – PWM2 Spindle Max/Min Speed (RPM)
+Sets the max (`$730`) and min (`$731`) spindle speed for the **secondary** PWM channel.
+
+:::info Context
+- These are the direct equivalents of `$30` and `$31`, but for the secondary PWM output, controlled by `M3.1`, `M4.1`, `M5.1`.
+- They are used to scale the `S` command to the PWM output for a second device like a laser or servo.
+:::
+
+#### Common Examples
+*   **Laser on Secondary Channel (0-1000 Power Scale):**
+    *   `$730=1000`
+    *   `$731=0`
+
+---
+
+## `$733` – PWM2 Spindle PWM Frequency (Hz)
+Sets the frequency of the **secondary** PWM signal.
+
+:::info Context
+- This is the direct equivalent of `$33`. It must be set correctly for the device connected to the second channel.
+:::
+
+#### Common Examples
+*   **Laser on Secondary Channel:**
+    *   `$733=1000`
+
+---
+
+## `$734`, `$735`, `$736` – PWM2 Spindle PWM Off, Min, Max Values
+Sets the raw PWM output range for the **secondary** channel.
+
+:::info Context
+- These are the direct equivalents of `$34`, `$35`, and `$36`.
+- They map the `S` command range (`$730`/`$731`) to the hardware's PWM duty cycle range for the second channel.
+:::
+
+#### Common Examples
+*   **Laser on Secondary Channel (Full 0-100% Power):**
+    *   Assuming a 0-1000 PWM range.
+    *   `$734=0`
+    *   `$735=0`
+    *   `$736=1000`
