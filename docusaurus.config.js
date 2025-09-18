@@ -62,7 +62,7 @@ const config = {
             label: 'Documentation',
           },
           {
-            href: 'https://github.com/grblHAL/grblHAL',
+            href: 'https://github.com/grblHAL/',
             label: 'GitHub',
             position: 'right',
           },

@@ -1484,8 +1484,8 @@ Configures runtime behaviour for the safety-door input.
 
 :::info Context
 - This is a small **bitmask** that controls how grblHAL treats the safety-door input.  
-- **Note:** the safety-door *input itself* is a compile-time / board-map feature (it must be enabled and wired in the driver/board map). `$61` only controls run-time behaviour *once* the door input exists. :contentReference[oaicite:0]{index=0}
-- Typical behaviour when the door opens: grblHAL enters a DOOR/hold state (pauses the job and optionally runs the parking sequence). `$61` does **not** enable/disable the door input — it only modifies how door events are handled. Use `$41` (parking) and `$63` (hold actions) to control parking/hold behaviour. :contentReference[oaicite:1]{index=1}
+- **Note:** the safety-door *input itself* is a compile-time / board-map feature (it must be enabled and wired in the driver/board map). `$61` only controls run-time behaviour *once* the door input exists.
+- Typical behaviour when the door opens: grblHAL enters a DOOR/hold state (pauses the job and optionally runs the parking sequence). `$61` does **not** enable/disable the door input — it only modifies how door events are handled. Use `$41` (parking) and `$63` (hold actions) to control parking/hold behaviour. 
 :::
 
 | Bit | Value |  Description |
@@ -2113,6 +2113,10 @@ Sets the sensitivity of StallGuard for the **X-axis** during the second, slower 
 - This setting defines the StallGuard sensitivity for that slow, precise move, allowing for more accurate homing.
 :::
 
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
+:::
+
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| Stall detection is off for this phase. |
@@ -2137,6 +2141,10 @@ Sets the sensitivity of StallGuard for the **Y-axis** during the second, slower 
 - Used with `$24` (Homing Locate Rate).
 :::
 
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
+:::
+
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| Stall detection is off for this phase. |
@@ -2157,6 +2165,10 @@ Sets the sensitivity of StallGuard for the **Z-axis** during the second, slower 
 :::info Context
 - Defines the StallGuard sensitivity for the slow, precise move on the Z-axis.
 - Used with `$24` (Homing Locate Rate).
+:::
+
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
 :::
 
 | Value | Meaning | Description |
