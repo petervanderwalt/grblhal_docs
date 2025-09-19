@@ -3,22 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.8.1">
-<title data-rh="true">Complete G-code &amp; M-code Reference | grblHAL Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Complete G-code &amp; M-code Reference | grblHAL Documentation"><meta data-rh="true" name="description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes, supporting up to 8 axes (XYZABCUV)."><meta data-rh="true" property="og:description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes, supporting up to 8 axes (XYZABCUV)."><link data-rh="true" rel="icon" href="/grblhal_docs/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Complete G-code & M-code Reference","item":"https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"}]}</script><link rel="stylesheet" href="/grblhal_docs/assets/css/styles.c8fe8b1f.css">
-<script src="/grblhal_docs/assets/js/runtime~main.5513ed9d.js" defer="defer"></script>
-<script src="/grblhal_docs/assets/js/main.a31aa608.js" defer="defer"></script>
+<title data-rh="true">Complete G-code &amp; M-code Reference | grblHAL Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Complete G-code &amp; M-code Reference | grblHAL Documentation"><meta data-rh="true" name="description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes."><meta data-rh="true" property="og:description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes."><link data-rh="true" rel="icon" href="/grblhal_docs/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Complete G-code & M-code Reference","item":"https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"}]}</script><link rel="stylesheet" href="/grblhal_docs/assets/css/styles.c8fe8b1f.css">
+<script src="/grblhal_docs/assets/js/runtime~main.c822c53e.js" defer="defer"></script>
+<script src="/grblhal_docs/assets/js/main.c84cebba.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><defs>
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
-<script>!function(){var t="light";var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",e||t),document.documentElement.setAttribute("data-theme-choice",e||t)}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/grblhal_docs/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/grblhal_docs/"><div class="navbar__logo"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">grblHAL</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/grblhal_docs/Getting-Started/what-is-grblhal">Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/grblHAL/" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Getting-Started/what-is-grblhal">Getting-Started</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Core-Concepts/homing-explained">Core-Concepts</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Machine-Calibration/introduction">Machine-Calibration</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/grblhal_docs/Reference/commands">Reference</a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Reference/commands">System Commands</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/grblhal_docs/Reference/complete-g-m-code-reference">Complete G-code &amp; M-code Reference</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Reference/complete-settings-reference">Complete Settings Reference</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Guides/automatic-tool-changer">Guides</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Developer-Docs/api-reference">Developer-Docs</a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/grblhal_docs/troubleshooting">Troubleshooting</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/grblhal_docs/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Reference</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Complete G-code &amp; M-code Reference</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Complete G-code &amp; M-code Reference</h1></header>
-<p>This page is a comprehensive reference for all known grblHAL G-code and M-code commands. It is designed to be a single source of truth for machine operation and G-code programming. This reference accounts for grblHAL&#x27;s support for up to 8 axes</p>
+<script>!function(){var t="light";var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",e||t),document.documentElement.setAttribute("data-theme-choice",e||t)}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/grblhal_docs/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/grblhal_docs/"><div class="navbar__logo"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">grblHAL</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/grblhal_docs/Getting-Started/what-is-grblhal">Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/grblHAL/" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Getting-Started/what-is-grblhal">Getting-Started</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Core-Concepts/homing-explained">Core-Concepts</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Machine-Calibration/introduction">Machine-Calibration</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/grblhal_docs/Reference/complete-g-m-code-reference">Reference</a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/grblhal_docs/Reference/complete-g-m-code-reference">Complete G-code &amp; M-code Reference</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Reference/complete-settings-reference">Complete Settings Reference</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Reference/system-commands-reference">System Commands</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Guides/automatic-tool-changer">Guides</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Developer-Docs/api-reference">Developer-Docs</a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/grblhal_docs/troubleshooting">Troubleshooting</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/grblhal_docs/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Reference</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Complete G-code &amp; M-code Reference</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Complete G-code &amp; M-code Reference</h1></header>
+<p>This page is a comprehensive reference for all known grblHAL G-code and M-code commands. It is designed to be a single source of truth for machine operation and G-code programming.</p>
 <p>Use the table of contents on the right to navigate, or use your browser&#x27;s search function (<code>Ctrl+F</code>) to find a specific command.</p>
+<hr>
+<h1>General Tips &amp; Best Practices</h1>
+<ol>
+<li>
+<p><strong>Start Every File with a Safety Block:</strong> Every G-code program should begin with a &quot;safety block&quot; or preamble that sets the machine to a known, predictable state. This prevents crashes and unexpected behavior.</p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">G90 G21 G17 G40 G49 G80 G94 ; Absolute, MM, XY Plane, Cancel Comp/Offsets, Cancel Cycle, Units/Min</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M5 M9 ; Spindle and Coolant Off</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G53 G0 Z0 ; Retract Z to machine top safely</span><br></span></code></pre></div></div>
+</li>
+<li>
+<p><strong>Explicit is Better Than Implicit:</strong> Don&#x27;t assume the machine is in the correct state. Explicitly command <code>G90</code>/<code>G91</code>, <code>G20</code>/<code>G21</code>, and select your work offset (<code>G54</code>, etc.) in your program.</p>
+</li>
+<li>
+<p><strong>Understand Modality:</strong> Remember which commands are modal. Forgetting that a <code>G1</code> is active can lead to an unintended cutting move when you meant to make a rapid <code>G0</code> move. Forgetting a canned cycle (<code>G81</code>) is active can lead to unintended drilling. Always cancel modes (<code>G80</code>) when you are done with them.</p>
+</li>
+<li>
+<p><strong>Use <code>G53</code> for Safety:</strong> When you need to move to a known, fixed machine position (like a tool change station or home), use <code>G53</code>. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A <code>G53 G0 Z0</code> is one of the safest commands in G-code.</p>
+</li>
+<li>
+<p><strong>Comment Your Code:</strong> Use parentheses <code>()</code> or semicolons <code>;</code> to add comments to your G-code. This is invaluable for documenting complex sections, manual tool changes, or special setups.</p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">(*** Begin Finishing Pass for Part A ***)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">T2 M6 (Load 3mm Ball End Mill)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G43.1 Z125.5 (Apply tool length offset)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">S18000 M3</span><br></span></code></pre></div></div>
+<p>or</p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">M3 S10000 ; Set spindle speed to 10,000RPM</span><br></span></code></pre></div></div>
+</li>
+</ol>
+<hr>
+<hr>
+<h1>Command Letters</h1>
+<p>These letters have a specific, singular meaning in a G-code block. They can appear on their own or with other commands.</p>
+<table><thead><tr><th>Word</th><th>Description</th></tr></thead><tbody><tr><td><strong><code>F-</code></strong></td><td><strong>Feed Rate.</strong></td></tr><tr><td><strong><code>S-</code></strong></td><td><strong>Spindle Speed.</strong></td></tr><tr><td><strong><code>T-</code></strong></td><td><strong>Tool Select.</strong></td></tr><tr><td><strong><code>O-</code></strong></td><td><strong>Program Name / Subroutine Number.</strong></td></tr></tbody></table>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="f--feed-rate"><code>F</code> – Feed Rate<a href="#f--feed-rate" class="hash-link" aria-label="Direct link to f--feed-rate" title="Direct link to f--feed-rate">​</a></h2>
+<p>Sets the velocity for linear moves (<code>G1</code>, <code>G2</code>, <code>G3</code>) in units per minute (<code>G94</code>) or units per revolution (<code>G95</code>).</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples">Examples<a href="#examples" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
+<ul>
+<li><strong>Set feed rate, then start the a move:</strong><br>
+<code>F500</code><br>
+<code>G1 X100</code></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="s--spindle-speed"><code>S</code> – Spindle Speed<a href="#s--spindle-speed" class="hash-link" aria-label="Direct link to s--spindle-speed" title="Direct link to s--spindle-speed">​</a></h2>
+<p>Sets the target RPM for the spindle. It is used by <code>M3</code> and <code>M4</code>.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples-1">Examples<a href="#examples-1" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
+<ul>
+<li><strong>Set spindle speed, then start the spindle:</strong><br>
+<code>S10000</code><br>
+<code>M3</code></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="t--tool-select"><code>T</code> – Tool Select<a href="#t--tool-select" class="hash-link" aria-label="Direct link to t--tool-select" title="Direct link to t--tool-select">​</a></h2>
+<p>Pre-selects a tool number for a subsequent <code>M6</code> tool change command.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples-2">Examples<a href="#examples-2" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
+<ul>
+<li><strong>Pre-select tool number 5 for a later change:</strong><br>
+<code>T5</code><br>
+<code>( ... some cutting operations ... )</code><br>
+<code>M6 T5</code> (The <code>T5</code> here is often optional if the tool is already pre-selected)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="o--program-name--subroutine-number"><code>O</code> – Program Name / Subroutine Number<a href="#o--program-name--subroutine-number" class="hash-link" aria-label="Direct link to o--program-name--subroutine-number" title="Direct link to o--program-name--subroutine-number">​</a></h2>
+<p>Used to identify a subroutine (<code>O100</code>) or as a label for a program.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples-3">Examples<a href="#examples-3" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
+<ul>
+<li><strong>Define a subroutine named (or numbered) 100:</strong><br>
+<code>O100</code><br>
+<code>( ... subroutine commands ... )</code><br>
+<code>M99</code> (return from subroutine)</li>
+</ul>
 <hr>
 <h1>G-Codes</h1>
 <p>G-codes primarily control the machine&#x27;s motion, coordinate systems, and operational modes.</p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g0--rapid-positioning"><code>G0</code> – Rapid Positioning<a href="#g0--rapid-positioning" class="hash-link" aria-label="Direct link to g0--rapid-positioning" title="Direct link to g0--rapid-positioning">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G0 axes</code></p>
+</blockquote>
 <p>Moves the machine at the maximum possible travel speed to a specified coordinate. <code>G0</code> is a non-cutting move intended to reduce job time by moving quickly between operations.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> <code>G0</code> is part of the Motion Mode group. It remains active until another motion mode command (<code>G1</code>, <code>G2</code>, <code>G3</code>, etc.) is issued.</li>
@@ -48,6 +114,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g1--linear-interpolation"><code>G1</code> – Linear Interpolation<a href="#g1--linear-interpolation" class="hash-link" aria-label="Direct link to g1--linear-interpolation" title="Direct link to g1--linear-interpolation">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G1 axes &lt;F-&gt;</code></p>
+</blockquote>
 <p>Moves the machine in a straight line at a defined feed rate (<code>F</code>). This is the primary command for cutting, engraving, printing, and any other material-affecting process.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> <code>G1</code> is part of the Motion Mode group and will stay active until another motion command is issued.</li>
@@ -77,13 +147,19 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g2--g3--arc--helical-interpolation"><code>G2</code> &amp; <code>G3</code> – Arc / Helical Interpolation<a href="#g2--g3--arc--helical-interpolation" class="hash-link" aria-label="Direct link to g2--g3--arc--helical-interpolation" title="Direct link to g2--g3--arc--helical-interpolation">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G2 axes offsets (center format)</code><br>
+<code>G2 axes R- (radius format)</code><br>
+<code>G2 offsets|R- &lt;P-&gt; (full circles)</code></p>
+</blockquote>
 <p>Moves the machine along a circular arc (<code>G2</code> = Clockwise, <code>G3</code> = Counter-Clockwise) at the current feed rate. If a linear axis (like Z) is also commanded, it creates a helical motion.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Motion Mode group.</li>
 <li><strong>Plane Selection:</strong> Arcs are performed on the currently active plane (<code>G17</code> XY, <code>G18</code> XZ, <code>G19</code> YZ). The default is <code>G17</code> (XY plane).</li>
 <li><strong>Two Forms:</strong> Can be defined using either <code>R</code> (radius) or <code>I, J, K</code> (center offset) parameters.</li>
 </ul></div></div>
-<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>X, Y, Z</strong></td><td>The destination coordinates of the arc on the selected plane.</td></tr><tr><td><strong>I, J, K</strong></td><td><strong>Offset Mode:</strong> The X, Y, or Z offset from the <em>start point</em> to the arc&#x27;s <em>center point</em>. <code>I</code> for X, <code>J</code> for Y, <code>K</code> for Z. Only the two axes on the active plane are used (e.g., <code>I</code> and <code>J</code> for the <code>G17</code> XY plane).</td></tr><tr><td><strong>R</strong></td><td><strong>Radius Mode:</strong> The radius of the arc. Positive <code>R</code> for arcs &lt; 180°. Negative <code>R</code> for arcs &gt; 180°.</td></tr><tr><td><strong>F</strong></td><td>Feed rate for the move.</td></tr></tbody></table>
+<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>X, Y, Z</strong></td><td>The destination coordinates of the arc on the selected plane.</td></tr><tr><td><strong>I, J, K</strong></td><td><strong>Offset Mode:</strong> The X, Y, or Z offset from the <em>start point</em> to the arc&#x27;s <em>center point</em>. <code>I</code> for X, <code>J</code> for Y, <code>K</code> for Z. Only the two axes on the active plane are used (e.g., <code>I</code> and <code>J</code> for the <code>G17</code> XY plane).</td></tr><tr><td><strong>R</strong></td><td><strong>Radius Mode:</strong> The radius of the arc. Positive <code>R</code> for arcs &lt; 180°. Negative <code>R</code> for arcs &gt; 180°.</td></tr><tr><td><strong>P</strong></td><td><strong>Optional:</strong> Number of full circles to make (if supported by plugins).</td></tr><tr><td><strong>F</strong></td><td>Feed rate for the move.</td></tr></tbody></table>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="ijk-offset-mode-example"><code>IJK</code> (Offset) Mode Example<a href="#ijk-offset-mode-example" class="hash-link" aria-label="Direct link to ijk-offset-mode-example" title="Direct link to ijk-offset-mode-example">​</a></h4>
 <ul>
 <li><strong>Cut a 90° clockwise arc in the XY plane from (0,0) to (10,10) with the center at (10,0):</strong><br>
@@ -111,12 +187,16 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g4--dwell"><code>G4</code> – Dwell<a href="#g4--dwell" class="hash-link" aria-label="Direct link to g4--dwell" title="Direct link to g4--dwell">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G4 P-</code></p>
+</blockquote>
 <p>Pauses the machine for a specified period of time. All axes stop moving, but other machine functions (like spindle or coolant) remain in their current state.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal:</strong> <code>G4</code> is active only for the block in which it appears.</li>
 <li><strong>Purpose:</strong> Useful for clearing chips at the bottom of a hole, allowing a spindle to reach full speed, or waiting for a tool change.</li>
 </ul></div></div>
-<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>P</strong></td><td>Dwell time in seconds.</td></tr><tr><td><strong>S</strong></td><td>Dwell time in seconds (alternate, less common).</td></tr></tbody></table>
+<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>P</strong></td><td>Dwell time in seconds.</td></tr></tbody></table>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-2">Common Examples<a href="#common-examples-2" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
 <ul>
 <li>
@@ -137,6 +217,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g10-l2--g10-l20--set-coordinate-system-data"><code>G10 L2</code> &amp; <code>G10 L20</code> – Set Coordinate System Data<a href="#g10-l2--g10-l20--set-coordinate-system-data" class="hash-link" aria-label="Direct link to g10-l2--g10-l20--set-coordinate-system-data" title="Direct link to g10-l2--g10-l20--set-coordinate-system-data">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G10 L2 P- axes</code> (absolute)<br>
+<code>G10 L20 P- axes</code> (relative)</p>
+</blockquote>
 <p>Provides a way to programmatically set and offset work coordinate systems (G54-G59.3). This is an advanced feature that allows for precise, repeatable fixture setups without manually touching off each time.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal.</strong></li>
@@ -164,6 +249,12 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g17-g18-g19--plane-selection"><code>G17</code>, <code>G18</code>, <code>G19</code> – Plane Selection<a href="#g17-g18-g19--plane-selection" class="hash-link" aria-label="Direct link to g17-g18-g19--plane-selection" title="Direct link to g17-g18-g19--plane-selection">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G17</code> (XY plane)<br>
+<code>G18</code> (XZ plane)<br>
+<code>G19</code> (YZ plane)</p>
+</blockquote>
 <p>Selects the active plane for circular interpolation (<code>G2</code>/<code>G3</code>), cutter compensation, and some canned cycles. This determines which pair of axes an arc will be drawn on.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Belongs to the Plane Select modal group. <code>G17</code> is the default on startup.</li>
@@ -193,6 +284,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g20-g21--unit-selection"><code>G20</code>, <code>G21</code> – Unit Selection<a href="#g20-g21--unit-selection" class="hash-link" aria-label="Direct link to g20-g21--unit-selection" title="Direct link to g20-g21--unit-selection">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G20</code> (inches)<br>
+<code>G21</code> (millimeters)</p>
+</blockquote>
 <p>Sets the G-code interpreter&#x27;s units for all position, feed rate, and offset data.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Units modal group. The setting is persistent and will remain active until changed.</li>
@@ -220,6 +316,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g28-g30--go-to-pre-defined-position"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position<a href="#g28-g30--go-to-pre-defined-position" class="hash-link" aria-label="Direct link to g28-g30--go-to-pre-defined-position" title="Direct link to g28-g30--go-to-pre-defined-position">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G28 &lt;axes&gt;</code><br>
+<code>G30 &lt;axes&gt;</code></p>
+</blockquote>
 <p>Commands the machine to perform a rapid move to a stored, user-defined position. This is often used as a safe &quot;home&quot; or tool change position.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal.</strong></li>
@@ -250,6 +351,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g281-g301--set-pre-defined-position"><code>G28.1</code>, <code>G30.1</code> – Set Pre-Defined Position<a href="#g281-g301--set-pre-defined-position" class="hash-link" aria-label="Direct link to g281-g301--set-pre-defined-position" title="Direct link to g281-g301--set-pre-defined-position">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G28.1</code><br>
+<code>G30.1</code></p>
+</blockquote>
 <p>Stores the machine&#x27;s current absolute position as the <code>G28</code> or <code>G30</code> pre-defined location.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal.</strong></li>
@@ -274,6 +380,13 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g382-g383-g384-g385--probing"><code>G38.2</code>, <code>G38.3</code>, <code>G38.4</code>, <code>G38.5</code> – Probing<a href="#g382-g383-g384-g385--probing" class="hash-link" aria-label="Direct link to g382-g383-g384-g385--probing" title="Direct link to g382-g383-g384-g385--probing">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G38.2 axes F-</code><br>
+<code>G38.3 axes F-</code><br>
+<code>G38.4 axes F-</code><br>
+<code>G38.5 axes F-</code></p>
+</blockquote>
 <p>Performs a straight probing operation. The machine moves along a specified path until a connected probe input changes state (e.g., makes or breaks contact). The machine stops and records the trigger coordinate.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal.</strong></li>
@@ -306,6 +419,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g40--cancel-cutter-radius-compensation"><code>G40</code> – Cancel Cutter Radius Compensation<a href="#g40--cancel-cutter-radius-compensation" class="hash-link" aria-label="Direct link to g40--cancel-cutter-radius-compensation" title="Direct link to g40--cancel-cutter-radius-compensation">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G40</code></p>
+</blockquote>
 <p>Disables cutter radius compensation (<code>G41</code>/<code>G42</code>). This is the default state.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Cutter Compensation group.</li>
@@ -320,6 +437,12 @@
 <p><em>Note: Full <code>G41</code>/<code>G42</code> cutter radius compensation is not present in the grblHAL core but may be available via plugins. The <code>G40</code> command is included for compatibility and to ensure a known state.</em></p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g431-g432-g49--tool-length-offsets"><code>G43.1</code>, <code>G43.2</code>, <code>G49</code> – Tool Length Offsets<a href="#g431-g432-g49--tool-length-offsets" class="hash-link" aria-label="Direct link to g431-g432-g49--tool-length-offsets" title="Direct link to g431-g432-g49--tool-length-offsets">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G43.1 axes</code><br>
+<code>G43.2 axes</code><br>
+<code>G49</code></p>
+</blockquote>
 <p>Applies or removes a tool length offset, primarily along the Z-axis. This allows the machine to compensate for tools of different lengths without changing the G-code program.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Tool Length Offset group.</li>
@@ -347,6 +470,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g53--move-in-machine-coordinates"><code>G53</code> – Move in Machine Coordinates<a href="#g53--move-in-machine-coordinates" class="hash-link" aria-label="Direct link to g53--move-in-machine-coordinates" title="Direct link to g53--move-in-machine-coordinates">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G53 G0 axes</code><br>
+<code>G53 G1 axes &lt;F-&gt;</code></p>
+</blockquote>
 <p>Executes a linear or rapid move in the absolute machine coordinate system, temporarily ignoring any work coordinate systems (<code>G54</code>, etc.) and offsets.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal:</strong> <code>G53</code> is only active for the block in which it is commanded.</li>
@@ -371,6 +499,18 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g54-to-g593--work-coordinate-systems-wcs"><code>G54</code> to <code>G59.3</code> – Work Coordinate Systems (WCS)<a href="#g54-to-g593--work-coordinate-systems-wcs" class="hash-link" aria-label="Direct link to g54-to-g593--work-coordinate-systems-wcs" title="Direct link to g54-to-g593--work-coordinate-systems-wcs">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G54</code><br>
+<code>G55</code><br>
+<code>G56</code><br>
+<code>G57</code><br>
+<code>G58</code><br>
+<code>G59</code><br>
+<code>G59.1</code><br>
+<code>G59.2</code><br>
+<code>G59.3</code></p>
+</blockquote>
 <p>Selects one of the available work coordinate systems. A WCS defines a user-programmable origin (X0, Y0, Z0, etc.) for a specific job or fixture. This separates the program&#x27;s zero point from the machine&#x27;s home position.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the WCS group. <code>G54</code> is typically the default.</li>
@@ -409,6 +549,12 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g61-g611-g64--path-control-mode"><code>G61</code>, <code>G61.1</code>, <code>G64</code> – Path Control Mode<a href="#g61-g611-g64--path-control-mode" class="hash-link" aria-label="Direct link to g61-g611-g64--path-control-mode" title="Direct link to g61-g611-g64--path-control-mode">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G61</code> (exact stop)<br>
+<code>G61.1</code> (exact stop alias)<br>
+<code>G64 &lt;P-&gt;</code> (continuous mode with optional tolerance)</p>
+</blockquote>
 <p>These commands control how the machine handles corners and transitions between sequential motion commands. This choice is a trade-off between speed and accuracy.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Control Mode group.</li>
@@ -438,6 +584,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g80--cancel-canned-cycle"><code>G80</code> – Cancel Canned Cycle<a href="#g80--cancel-canned-cycle" class="hash-link" aria-label="Direct link to g80--cancel-canned-cycle" title="Direct link to g80--cancel-canned-cycle">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G80</code></p>
+</blockquote>
 <p>Immediately cancels any active canned cycle mode (<code>G81</code>-<code>G89</code>). It is a critical safety command to ensure that subsequent motion commands are not interpreted as part of a cycle.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Motion Mode group. It reverts the machine to <code>G1</code> (Linear Motion) behavior.</li>
@@ -453,7 +603,18 @@
 <code>G0 X50 Y50</code> (Now a normal rapid move)</li>
 </ul>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="g81-to-g89--canned-cycles"><code>G81</code> to <code>G89</code> – Canned Cycles<a href="#g81-to-g89--canned-cycles" class="hash-link" aria-label="Direct link to g81-to-g89--canned-cycles" title="Direct link to g81-to-g89--canned-cycles">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="g76-g81-to-g89--canned-cycles"><code>G76</code>, <code>G81</code> to <code>G89</code> – Canned Cycles<a href="#g76-g81-to-g89--canned-cycles" class="hash-link" aria-label="Direct link to g76-g81-to-g89--canned-cycles" title="Direct link to g76-g81-to-g89--canned-cycles">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G81 Z- R- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G82 Z- R- P- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G83 Z- R- Q- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G73 Z- R- Q- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G85 Z- R- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G86 Z- R- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G89 Z- R- P- &lt;F-&gt; &lt;L-&gt;</code><br>
+<code>G76 Z- R- &lt;F-&gt; &lt;L-&gt;</code> (lathe threading)</p>
+</blockquote>
 <p>Canned cycles are powerful shortcuts that combine several distinct movements into a single G-code command, typically for hole-making operations like drilling, boring, and tapping. Instead of programming each feed, retract, and rapid move manually, you define the cycle&#x27;s parameters once. The cycle then repeats at every new coordinate provided until a <code>G80</code> (Cancel Canned Cycle) is issued.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Once a canned cycle is active, it remains active. Every new position command for the axes on the active plane (<code>X</code> and <code>Y</code> in <code>G17</code>) will execute the full cycle at that location.</li>
@@ -464,6 +625,7 @@
 <li><strong><code>P</code></strong>: Dwell time (in seconds) at the bottom of the hole (used in <code>G82</code>, <code>G89</code>).</li>
 <li><strong><code>Q</code></strong>: The peck depth for each cutting feed in <code>G73</code> and <code>G83</code>.</li>
 <li><strong><code>F</code></strong>: The feed rate for the cutting portions of the cycle.</li>
+<li><strong><code>L</code></strong>: <strong>Optional:</strong> Number of repeats (if supported by plugins).</li>
 </ul>
 </li>
 <li><strong>Return Behavior:</strong> The return height after the cycle is controlled by <code>G98</code> and <code>G99</code> (see below).</li>
@@ -494,6 +656,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g90-g91--distance-mode"><code>G90</code>, <code>G91</code> – Distance Mode<a href="#g90-g91--distance-mode" class="hash-link" aria-label="Direct link to g90-g91--distance-mode" title="Direct link to g90-g91--distance-mode">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G90</code> (absolute)<br>
+<code>G91</code> (incremental)</p>
+</blockquote>
 <p>Controls how coordinate values (<code>X</code>, <code>Y</code>, <code>Z</code>, etc.) are interpreted by the machine. This is one of the most fundamental G-code concepts.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Distance Mode group. This setting is persistent. <code>G90</code> is the default.</li>
@@ -525,6 +692,12 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g92-g921-g922--coordinate-system-offset"><code>G92</code>, <code>G92.1</code>, <code>G92.2</code> – Coordinate System Offset<a href="#g92-g921-g922--coordinate-system-offset" class="hash-link" aria-label="Direct link to g92-g921-g922--coordinate-system-offset" title="Direct link to g92-g921-g922--coordinate-system-offset">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G92 axes</code><br>
+<code>G92.1</code> (cancel offset)<br>
+<code>G92.2</code> (suspend offset)</p>
+</blockquote>
 <p><code>G92</code> applies a temporary, &quot;volatile&quot; offset to the machine&#x27;s coordinate system. It makes the machine believe its current position is the value specified in the command. This is an older method of setting a work zero and is often discouraged in favor of <code>G10</code> and the persistent <code>G54-G59</code> work coordinate systems.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal.</strong></li>
@@ -550,6 +723,12 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g93-g94-g95--feed-rate-mode"><code>G93</code>, <code>G94</code>, <code>G95</code> – Feed Rate Mode<a href="#g93-g94-g95--feed-rate-mode" class="hash-link" aria-label="Direct link to g93-g94-g95--feed-rate-mode" title="Direct link to g93-g94-g95--feed-rate-mode">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G93</code> (inverse time)<br>
+<code>G94</code> (units per minute)<br>
+<code>G95</code> (units per revolution)</p>
+</blockquote>
 <p>Determines how the <code>F</code> word (feed rate) is interpreted.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Feed Rate Mode group. <code>G94</code> is the default and most common mode for milling.</li>
@@ -558,7 +737,7 @@
 <li><strong><code>G95</code> (Units Per Revolution Mode):</strong> The <code>F</code> word is interpreted as linear units per spindle revolution. This is the standard for CNC lathes, where chip load is directly tied to RPM.</li>
 </ul></div></div>
 <table><thead><tr><th>Command</th><th>Feed Rate Interpretation</th><th>Primary Use</th></tr></thead><tbody><tr><td><strong><code>G93</code></strong></td><td>1 / minutes (Inverse Time)</td><td>5-Axis Simultaneous Machining</td></tr><tr><td><strong><code>G94</code></strong></td><td>Units / Minute</td><td>Milling, Routing, 3D Printing</td></tr><tr><td><strong><code>G95</code></strong></td><td>Units / Revolution</td><td>Lathes, Threading</td></tr></tbody></table>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples">Examples<a href="#examples" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples-4">Examples<a href="#examples-4" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
 <ul>
 <li>
 <p><strong>Standard milling at 500 mm/min:</strong><br>
@@ -574,6 +753,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g96-g97--spindle-speed-mode"><code>G96</code>, <code>G97</code> – Spindle Speed Mode<a href="#g96-g97--spindle-speed-mode" class="hash-link" aria-label="Direct link to g96-g97--spindle-speed-mode" title="Direct link to g96-g97--spindle-speed-mode">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G96 S- &lt;D-&gt;</code> (constant surface speed)<br>
+<code>G97 S-</code> (constant RPM)</p>
+</blockquote>
 <p>Controls how the <code>S</code> word (spindle speed) is interpreted. This is primarily for CNC lathes but can be useful in other specialized applications.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Spindle Speed Mode group. <code>G97</code> is the default.</li>
@@ -595,6 +779,11 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g98-g99--canned-cycle-return-mode"><code>G98</code>, <code>G99</code> – Canned Cycle Return Mode<a href="#g98-g99--canned-cycle-return-mode" class="hash-link" aria-label="Direct link to g98-g99--canned-cycle-return-mode" title="Direct link to g98-g99--canned-cycle-return-mode">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>G98</code> (return to initial level)<br>
+<code>G99</code> (return to R level)</p>
+</blockquote>
 <p>Controls the Z-height that the tool retracts to <em>between holes</em> during a canned cycle sequence.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Modal:</strong> Part of the Canned Cycle Return group.</li>
@@ -621,12 +810,20 @@
 <code>X10 Y10</code> (Drill hole, retracts to Z=2)
 <code>X20 Y10</code> (Drill hole, retracts to Z=2)
 <code>G80</code></p>
-<h1>M-Codes</h1>
 </li>
 </ul>
+<hr>
+<h1>M-Codes</h1>
 <p>M-codes control miscellaneous machine functions. These are actions that are not related to axis motion, such as controlling the spindle, coolant, program flow, and I/O.</p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m0-m1-m2-m30--program-flow--stopping"><code>M0</code>, <code>M1</code>, <code>M2</code>, <code>M30</code> – Program Flow &amp; Stopping<a href="#m0-m1-m2-m30--program-flow--stopping" class="hash-link" aria-label="Direct link to m0-m1-m2-m30--program-flow--stopping" title="Direct link to m0-m1-m2-m30--program-flow--stopping">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M0 &lt;P-&gt;|(message)</code> (program stop)<br>
+<code>M1 &lt;P-&gt;|(message)</code> (optional stop)<br>
+<code>M2</code> (program end)<br>
+<code>M30</code> (program end &amp; rewind)</p>
+</blockquote>
 <p>These commands control the execution and termination of a G-code program.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong><code>M0</code> (Program Stop):</strong> Unconditionally halts the program. All axes, spindle, and coolant stop. The operator must press the cycle start button to resume the program from the next line.</li>
@@ -657,6 +854,12 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m3-m4-m5--spindle-control"><code>M3</code>, <code>M4</code>, <code>M5</code> – Spindle Control<a href="#m3-m4-m5--spindle-control" class="hash-link" aria-label="Direct link to m3-m4-m5--spindle-control" title="Direct link to m3-m4-m5--spindle-control">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M3 S-</code> (spindle on CW)<br>
+<code>M4 S-</code> (spindle on CCW)<br>
+<code>M5</code> (spindle off)</p>
+</blockquote>
 <p>These are the fundamental commands for controlling the spindle&#x27;s rotation.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong><code>M3</code> (Spindle On, Clockwise - CW):</strong> Starts the spindle rotating in the clockwise direction (the standard direction for most right-hand tools). The speed is determined by the last active <code>S</code> word.</li>
@@ -685,7 +888,45 @@
 <li>The controller will wait for the spindle to reach the commanded speed before executing the next motion command if &quot;Wait for Spindle at Speed&quot; is enabled in the settings. This is crucial for tapping and heavy cuts.</li>
 </ul>
 <hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="m6--automatic-tool-change-atc"><code>M6</code> – Automatic Tool Change (ATC)<a href="#m6--automatic-tool-change-atc" class="hash-link" aria-label="Direct link to m6--automatic-tool-change-atc" title="Direct link to m6--automatic-tool-change-atc">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M6 &lt;T-&gt;</code></p>
+</blockquote>
+<p>Initiates a tool change sequence. The behavior of <code>M6</code> is highly dependent on the machine&#x27;s configuration and whether an automatic tool changer is present.</p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
+<li><strong>With ATC:</strong> An <code>M6</code> command, typically combined with a tool number (<code>T</code> word), will trigger a pre-defined macro (<code>M6.nc</code>) that executes the physical tool change.</li>
+<li><strong>Without ATC:</strong> On a machine without an automatic changer, <code>M6</code> typically functions as a programmed stop (<code>M0</code>). It moves the machine to a safe tool change position, turns off the spindle, and waits for the operator to manually change the tool and press &quot;Cycle Start&quot; to continue.</li>
+</ul></div></div>
+<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong><code>T&lt;number&gt;</code></strong></td><td>The tool number to be loaded. For example, <code>T3</code> selects tool #3.</td></tr></tbody></table>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-14">Common Examples<a href="#common-examples-14" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
+<ul>
+<li>
+<p><strong>Command a change to Tool #5:</strong><br>
+<code>T5 M6</code></p>
+</li>
+<li>
+<p><strong>Simple manual tool change sequence:</strong><br>
+<code>M5</code> (Stop spindle)<br>
+<code>G53 G0 Z0</code> (Move Z to machine home)<br>
+<code>G53 G0 X0 Y0</code> (Move to front for access)<br>
+<code>T2 M6</code> (Select tool 2 and pause. A message &quot;Change to tool 2&quot; may appear in the GUI)</p>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-18">Tips &amp; Tricks<a href="#tips--tricks-18" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<ul>
+<li>The <code>T</code> word only <em>selects</em> the tool. <code>M6</code> is the command that <em>executes</em> the change.</li>
+<li>The logic for the tool change process (both manual and automatic) is often defined in a system macro file (<code>M6.nc</code>) located on the controller&#x27;s SD card or accessible by the sender. This allows for extensive customization of the tool change procedure.</li>
+<li>After a tool change, a <code>G43.1</code> command is typically used to apply the new tool&#x27;s length offset.</li>
+</ul>
+<hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m7-m8-m9--coolant-control"><code>M7</code>, <code>M8</code>, <code>M9</code> – Coolant Control<a href="#m7-m8-m9--coolant-control" class="hash-link" aria-label="Direct link to m7-m8-m9--coolant-control" title="Direct link to m7-m8-m9--coolant-control">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M7</code> (mist coolant on)<br>
+<code>M8</code> (flood coolant on)<br>
+<code>M9</code> (all coolant off)</p>
+</blockquote>
 <p>These commands control the machine&#x27;s coolant systems. In grblHAL, these are typically mapped to specific output pins which can control relays for pumps or solenoids.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong><code>M7</code> (Mist Coolant On):</strong> Activates the mist coolant output pin. This is intended for an air/oil mist system.</li>
@@ -693,7 +934,7 @@
 <li><strong><code>M9</code> (Coolant Off):</strong> Deactivates <em>both</em> the mist (<code>M7</code>) and flood (<code>M8</code>) outputs.</li>
 </ul></div></div>
 <table><thead><tr><th>Command</th><th>Mapped Output</th><th>Action</th></tr></thead><tbody><tr><td><strong><code>M7</code></strong></td><td>Mist</td><td>On</td></tr><tr><td><strong><code>M8</code></strong></td><td>Flood</td><td>On</td></tr><tr><td><strong><code>M9</code></strong></td><td>Both</td><td>Off</td></tr></tbody></table>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-14">Common Examples<a href="#common-examples-14" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-15">Common Examples<a href="#common-examples-15" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
 <ul>
 <li>
 <p><strong>Turn on the flood coolant before a cutting move:</strong><br>
@@ -710,41 +951,18 @@
 <code>M9</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-18">Tips &amp; Tricks<a href="#tips--tricks-18" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-19">Tips &amp; Tricks<a href="#tips--tricks-19" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The specific physical pins used for coolant are defined in the driver board&#x27;s configuration file.</li>
 <li>These outputs can be repurposed to control other accessories, like a vacuum clamp or an air blast, if coolant is not used.</li>
 </ul>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="m6--automatic-tool-change-atc"><code>M6</code> – Automatic Tool Change (ATC)<a href="#m6--automatic-tool-change-atc" class="hash-link" aria-label="Direct link to m6--automatic-tool-change-atc" title="Direct link to m6--automatic-tool-change-atc">​</a></h2>
-<p>Initiates a tool change sequence. The behavior of <code>M6</code> is highly dependent on the machine&#x27;s configuration and whether an automatic tool changer is present.</p>
-<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
-<li><strong>With ATC:</strong> An <code>M6</code> command, typically combined with a tool number (<code>T</code> word), will trigger a pre-defined macro (<code>M6.nc</code>) that executes the physical tool change.</li>
-<li><strong>Without ATC:</strong> On a machine without an automatic changer, <code>M6</code> typically functions as a programmed stop (<code>M0</code>). It moves the machine to a safe tool change position, turns off the spindle, and waits for the operator to manually change the tool and press &quot;Cycle Start&quot; to continue.</li>
-</ul></div></div>
-<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong><code>T&lt;number&gt;</code></strong></td><td>The tool number to be loaded. For example, <code>T3</code> selects tool #3.</td></tr></tbody></table>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-15">Common Examples<a href="#common-examples-15" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
-<ul>
-<li>
-<p><strong>Command a change to Tool #5:</strong><br>
-<code>T5 M6</code></p>
-</li>
-<li>
-<p><strong>Simple manual tool change sequence:</strong><br>
-<code>M5</code> (Stop spindle)<br>
-<code>G53 G0 Z0</code> (Move Z to machine home)<br>
-<code>G53 G0 X0 Y0</code> (Move to front for access)<br>
-<code>T2 M6</code> (Select tool 2 and pause. A message &quot;Change to tool 2&quot; may appear in the GUI)</p>
-</li>
-</ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-19">Tips &amp; Tricks<a href="#tips--tricks-19" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
-<ul>
-<li>The <code>T</code> word only <em>selects</em> the tool. <code>M6</code> is the command that <em>executes</em> the change.</li>
-<li>The logic for the tool change process (both manual and automatic) is often defined in a system macro file (<code>M6.nc</code>) located on the controller&#x27;s SD card or accessible by the sender. This allows for extensive customization of the tool change procedure.</li>
-<li>After a tool change, a <code>G43.1</code> command is typically used to apply the new tool&#x27;s length offset.</li>
-</ul>
-<hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m48-m49--override-control"><code>M48</code>, <code>M49</code> – Override Control<a href="#m48-m49--override-control" class="hash-link" aria-label="Direct link to m48-m49--override-control" title="Direct link to m48-m49--override-control">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M48</code> (enable overrides)<br>
+<code>M49</code> (disable overrides)</p>
+</blockquote>
 <p>Enables or disables the real-time feed rate, spindle speed, and rapid override switches. This allows the G-code program to enforce a specific speed or feed, preventing accidental changes by the operator.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong><code>M48</code> (Enable Overrides):</strong> Allows the physical override switches/dials and GUI sliders to function normally. This is the default state.</li>
@@ -761,7 +979,14 @@
 <code>M48</code> (Re-enable overrides for the next operation)</li>
 </ul>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="m62-to-m65--synchronized-and-asynchronous-io"><code>M62</code> to <code>M65</code> – Synchronized and Asynchronous I/O<a href="#m62-to-m65--synchronized-and-asynchronous-io" class="hash-link" aria-label="Direct link to m62-to-m65--synchronized-and-asynchronous-io" title="Direct link to m62-to-m65--synchronized-and-asynchronous-io">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="m62-m63-m64-and--m65--synchronized-and-asynchronous-io"><code>M62</code>, <code>M63</code>, <code>M64</code> and  <code>M65</code> – Synchronized and Asynchronous I/O<a href="#m62-m63-m64-and--m65--synchronized-and-asynchronous-io" class="hash-link" aria-label="Direct link to m62-m63-m64-and--m65--synchronized-and-asynchronous-io" title="Direct link to m62-m63-m64-and--m65--synchronized-and-asynchronous-io">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M62 P-</code> (sync output on)<br>
+<code>M63 P-</code> (sync output off)<br>
+<code>M64 P-</code> (async output on)<br>
+<code>M65 P-</code> (async output off)</p>
+</blockquote>
 <p>These are advanced commands for controlling digital output pins, either synchronized with motion or immediately.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong><code>P&lt;n&gt;</code></strong>: The digital output pin number to control.</li>
@@ -780,13 +1005,18 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m99--return-from-subprogram"><code>M99</code> – Return from Subprogram<a href="#m99--return-from-subprogram" class="hash-link" aria-label="Direct link to m99--return-from-subprogram" title="Direct link to m99--return-from-subprogram">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M99 &lt;P-&gt;</code></p>
+</blockquote>
 <p>Marks the end of a subprogram and returns execution to the main program. This is used with <code>M98</code> (which is not a standard grblHAL command but often implemented by senders).</p>
 <p><em>This command is primarily for compatibility with G-code structures from other controllers. Its functionality in grblHAL depends heavily on the sender or workflow being used.</em></p>
 <hr>
-<h1>User &amp; Plugin Defined M-Codes</h1>
-<p>The following M-codes do not have a single, fixed function within the grblHAL core. Instead, their behavior is defined by the specific hardware driver, a loaded plugin, or custom user macros. The descriptions below reflect their most common implementations. Always consult your specific grblHAL driver or plugin documentation for details.</p>
-<hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m114--get-current-position"><code>M114</code> – Get Current Position<a href="#m114--get-current-position" class="hash-link" aria-label="Direct link to m114--get-current-position" title="Direct link to m114--get-current-position">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M114</code></p>
+</blockquote>
 <p>Requests the controller to report its current position. This is often used by G-code senders and GUIs to synchronize their internal state with the machine&#x27;s actual location.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Origin:</strong> This command is widely used by 3D printing firmware and has been adopted by some plugins and senders in the grblHAL ecosystem (e.g., OpenPnP).</li>
@@ -803,6 +1033,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m115--get-firmware-information"><code>M115</code> – Get Firmware Information<a href="#m115--get-firmware-information" class="hash-link" aria-label="Direct link to m115--get-firmware-information" title="Direct link to m115--get-firmware-information">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M115</code></p>
+</blockquote>
 <p>Requests the controller to report its firmware version and capabilities. This is another command used by host software to identify the controller it&#x27;s communicating with.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Origin:</strong> Also common in 3D printing firmware.</li>
@@ -815,6 +1049,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m220--set-feed-rate-override-percentage"><code>M220</code> – Set Feed Rate Override Percentage<a href="#m220--set-feed-rate-override-percentage" class="hash-link" aria-label="Direct link to m220--set-feed-rate-override-percentage" title="Direct link to m220--set-feed-rate-override-percentage">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M220 S-</code></p>
+</blockquote>
 <p>Allows setting the feed rate override value programmatically from within G-code.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Origin:</strong> Marlin firmware.</li>
@@ -830,6 +1068,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m280--set-servo-position"><code>M280</code> – Set Servo Position<a href="#m280--set-servo-position" class="hash-link" aria-label="Direct link to m280--set-servo-position" title="Direct link to m280--set-servo-position">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M280 P- S-</code></p>
+</blockquote>
 <p>Commands a servo motor connected to a specific output pin to move to a given position. This is often used for controlling auxiliary machine components like tool probes, dust shoes, or material clamps.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Origin:</strong> Marlin firmware.</li>
@@ -850,6 +1092,10 @@
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m400--finish-moves"><code>M400</code> – Finish Moves<a href="#m400--finish-moves" class="hash-link" aria-label="Direct link to m400--finish-moves" title="Direct link to m400--finish-moves">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M400</code></p>
+</blockquote>
 <p>Waits for all moves in the planner buffer to complete before processing the next command. It is functionally similar to a <code>G4 P0</code> (zero-second dwell).</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Origin:</strong> Marlin / OpenPnP.</li>
@@ -863,44 +1109,95 @@
 <code>M64 P1</code> (Immediately turn on output 1 to trigger a camera)</li>
 </ul>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="trinamic-stepper-driver-m-codes">Trinamic Stepper Driver M-Codes<a href="#trinamic-stepper-driver-m-codes" class="hash-link" aria-label="Direct link to Trinamic Stepper Driver M-Codes" title="Direct link to Trinamic Stepper Driver M-Codes">​</a></h2>
-<p>If you are using a grblHAL driver for Trinamic stepper motors (e.g., TMC2209, TMC2130), a suite of M-codes becomes available to configure the drivers on the fly. These are extremely powerful for tuning motor performance.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="trinamic-stepper-driver-m-codes-m122-m569-m906-m911-m914">Trinamic Stepper Driver M-Codes (<code>M122</code>, <code>M569</code>, <code>M906</code>, <code>M911-M914</code>)<a href="#trinamic-stepper-driver-m-codes-m122-m569-m906-m911-m914" class="hash-link" aria-label="Direct link to trinamic-stepper-driver-m-codes-m122-m569-m906-m911-m914" title="Direct link to trinamic-stepper-driver-m-codes-m122-m569-m906-m911-m914">​</a></h2>
+<p>If your grblHAL setup uses Trinamic stepper drivers (e.g., TMC2209, TMC2130, TMC5160), a set of specialized M-codes allow real-time configuration and diagnostics. These are similar to the Marlin firmware commands but tailored for grblHAL.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
-<li>These commands are only available if the hardware and driver support them.</li>
-<li>They are often based on the syntax used in Marlin firmware for broad software compatibility.</li>
+<li>Only available if Trinamic drivers are installed and supported by your grblHAL firmware.</li>
+<li>Changing driver parameters on the fly allows tuning for speed, torque, noise, and thermal behavior.</li>
 </ul></div></div>
-<table><thead><tr><th>Command</th><th>Description</th></tr></thead><tbody><tr><td><strong><code>M122</code></strong></td><td><strong>Trinamic Debugging:</strong> Reports the detailed status of all configured drivers, including error flags, temperature, and current settings. Invaluable for diagnostics.</td></tr><tr><td><strong><code>M569</code></strong></td><td><strong>Set Trinamic Driver Mode:</strong> Can be used to switch between silent (<code>StealthChop</code>) and high-torque (<code>SpreadCycle</code>) modes. <code>M569 S0 X</code> sets the X-axis to <code>StealthChop</code>, <code>M569 S1 X</code> sets it to <code>SpreadCycle</code>.</td></tr><tr><td><strong><code>M906</code></strong></td><td><strong>Set Motor Current:</strong> Sets the RMS run current for the stepper motors in milliamps. <code>M906 X800 Y800 Z1000</code> would set X and Y to 800mA and Z to 1000mA.</td></tr><tr><td><strong><code>M911</code>-<code>M914</code></strong></td><td><strong>Advanced Configuration:</strong> Used for setting microstepping, hold current, and other detailed driver parameters.</td></tr></tbody></table>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="example-9">Example<a href="#example-9" class="hash-link" aria-label="Direct link to Example" title="Direct link to Example">​</a></h4>
-<ul>
-<li>
-<p><strong>Check the status of all stepper drivers:</strong><br>
-<code>M122</code></p>
-</li>
-<li>
-<p><strong>Increase the current for the Z-axis motor to 1.2A and switch X/Y to high-torque mode for a heavy job:</strong>
-<code>M906 Z1200</code>
-<code>M569 S1 X Y</code>
-<code>(...heavy cutting G-code...)</code>
-<code>M906 Z800</code> (Return current to normal)
-<code>M569 S0 X Y</code> (Return to silent mode)</p>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="m502--factory-reset-plugindriver-specific"><code>M502</code> – Factory Reset (Plugin/Driver Specific)<a href="#m502--factory-reset-plugindriver-specific" class="hash-link" aria-label="Direct link to m502--factory-reset-plugindriver-specific" title="Direct link to m502--factory-reset-plugindriver-specific">​</a></h2>
-<p>In some contexts, particularly those borrowing from 3D printing firmware, <code>M502</code> is used to revert settings to their &quot;factory defaults&quot; as defined in the firmware.</p>
-<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
-<li><strong>Warning:</strong> This is not a standard grblHAL core command. Its presence and behavior depend entirely on the specific driver or plugins in use.</li>
-<li>In grblHAL, the equivalent core functionality is to reset the settings using the <code>$RST=$</code> command. <code>M502</code> might be implemented in a plugin (like an EEPROM manager) to provide a familiar command for users coming from other platforms like Marlin or RepRap.</li>
-</ul></div></div>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="example-if-supported">Example (if supported)<a href="#example-if-supported" class="hash-link" aria-label="Direct link to Example (if supported)" title="Direct link to Example (if supported)">​</a></h4>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="m122--driver-diagnostic-report"><code>M122</code> — Driver Diagnostic Report<a href="#m122--driver-diagnostic-report" class="hash-link" aria-label="Direct link to m122--driver-diagnostic-report" title="Direct link to m122--driver-diagnostic-report">​</a></h3>
+<p><strong>Purpose:</strong> Reads and reports detailed status for each configured Trinamic driver.</p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M122 [X&lt;axis&gt;] [S&lt;silent&gt;]</code></p>
+</blockquote>
+<p><strong>Parameters:</strong></p>
 <ul>
-<li><strong>Revert settings to their default state:</strong><br>
-<code>M502</code></li>
+<li><code>X&lt;axis&gt;</code> — Optional. Limit report to specific axis (X, Y, Z, A, B, C).</li>
+<li><code>S&lt;0|1&gt;</code> — Optional. Silent output (1 = minimal, 0 = full debug info).</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-21">Tips &amp; Tricks<a href="#tips--tricks-21" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<p><strong>Example:</strong></p>
+<p><code>M122</code></p>
+<p><em>Outputs:</em> Temperature, current settings, error flags, microstepping, driver mode.</p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="m569--set-driver-mode-stealthchop--spreadcycle"><code>M569</code> — Set Driver Mode (StealthChop / SpreadCycle)<a href="#m569--set-driver-mode-stealthchop--spreadcycle" class="hash-link" aria-label="Direct link to m569--set-driver-mode-stealthchop--spreadcycle" title="Direct link to m569--set-driver-mode-stealthchop--spreadcycle">​</a></h3>
+<p><strong>Purpose:</strong> Switches stepper drivers between silent and high-torque modes.</p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M569 S&lt;0|1&gt; [X&lt;axes&gt;] [I&lt;interpolate&gt;]</code></p>
+</blockquote>
+<p><strong>Parameters:</strong></p>
 <ul>
-<li>For a true &quot;factory reset&quot; in a standard grblHAL environment, connect to the serial console and send <code>$RST=$</code> followed by <code>$RST=#</code> and <code>$RST=@</code> to clear all settings, work coordinate systems, and tool data. Always back up your configuration first.</li>
+<li><code>S0</code> — StealthChop (silent mode)</li>
+<li><code>S1</code> — SpreadCycle (high torque)</li>
+<li><code>X&lt;axes&gt;</code> — Target axes (e.g., <code>X Y Z</code>)</li>
+<li><code>I&lt;0|1&gt;</code> — Optional interpolation enable/disable (some drivers)</li>
 </ul>
+<p><strong>Example:</strong></p>
+<p><code>M569 S1 X Y ; Set X and Y to high-torque mode</code>
+<code>M569 S0 X Y ; Return X and Y to silent mode</code></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="m906--set-motor-current"><code>M906</code> — Set Motor Current<a href="#m906--set-motor-current" class="hash-link" aria-label="Direct link to m906--set-motor-current" title="Direct link to m906--set-motor-current">​</a></h3>
+<p><strong>Purpose:</strong> Sets the RMS motor current for each axis.</p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M906 [X&lt;mA&gt;] [Y&lt;mA&gt;] [Z&lt;mA&gt;] [A&lt;mA&gt;] [B&lt;mA&gt;] [C&lt;mA&gt;]</code></p>
+</blockquote>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Axis values in milliamps (RMS)</li>
+<li>Only specified axes are updated</li>
+</ul>
+<p><strong>Example:</strong></p>
+<p><code>M906 X800 Y800 Z1200 ; Set X/Y to 800mA, Z to 1200mA</code>
+<code>M906 Z800 ; Reset Z to 800mA after heavy job</code></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="m911-m914--advanced-driver-configuration"><code>M911-M914</code> — Advanced Driver Configuration<a href="#m911-m914--advanced-driver-configuration" class="hash-link" aria-label="Direct link to m911-m914--advanced-driver-configuration" title="Direct link to m911-m914--advanced-driver-configuration">​</a></h3>
+<p><strong>Purpose:</strong> Configure microstepping, hold current, and other driver-specific parameters.</p>
+<p><strong>M911 — Configure StallGuard and CoolStep</strong></p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M911 X&lt;value&gt; Y&lt;value&gt; Z&lt;value&gt; A&lt;value&gt;</code></p>
+</blockquote>
+<p><em>Sets thresholds for stall detection and load-based current adjustment.</em></p>
+<p><strong>M912 — Read StallGuard / load data</strong></p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M912 X Y Z A</code></p>
+</blockquote>
+<p><em>Returns real-time load or stall info per axis.</em></p>
+<p><strong>M913 — Set dynamic current adjustment</strong></p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M913 X&lt;hold%,run%&gt; Y&lt;hold%,run%&gt; ...</code></p>
+</blockquote>
+<p><em>Adjust holding vs running current.</em></p>
+<p><strong>M914 — Set microstepping interpolation</strong></p>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M914 X&lt;steps&gt; Y&lt;steps&gt; Z&lt;steps&gt; ...</code></p>
+</blockquote>
+<p><em>Example: <code>M914 X16 Y16</code> enables 16x interpolation for X/Y.</em></p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="m70-m71-m72-m73--modal-state-saverestore"><code>M70</code>, <code>M71</code>, <code>M72</code>, <code>M73</code> – Modal State Save/Restore<a href="#m70-m71-m72-m73--modal-state-saverestore" class="hash-link" aria-label="Direct link to m70-m71-m72-m73--modal-state-saverestore" title="Direct link to m70-m71-m72-m73--modal-state-saverestore">​</a></h2>
+<p><strong>Syntax:</strong></p>
+<blockquote>
+<p><code>M70</code> (save state)<br>
+<code>M71</code> (invalidate state)<br>
+<code>M72</code> (restore state)<br>
+<code>M73</code> (save &amp; auto-restore)</p>
+</blockquote>
 <p>These are powerful but advanced M-codes that allow the controller to save and restore its current modal state. This includes the active G-codes (like <code>G0</code>/<code>G1</code>, <code>G17</code>/<code>G18</code>, <code>G54</code>, <code>G90</code>/<code>G91</code>), feed rate, spindle speed, etc.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li>These are part of the grblHAL core but are considered advanced features.</li>
@@ -914,36 +1211,13 @@
 <p>Imagine you have a macro to find the center of a hole. This macro needs to use <code>G91</code> (incremental mode) and <code>G1</code> with a specific feed rate. However, the main program might be running in <code>G90</code> with a different feed rate. Using <code>M70</code>/<code>M72</code> ensures the macro doesn&#x27;t mess up the main program&#x27;s state.</p>
 <ul>
 <li>
-<p><strong>Macro G-code (<code>find_center.nc</code>):</strong>
+<p><strong>Macro G-code (<code>find_center.nc</code>):</strong><br>
 <code>M70</code> (Save the state of the main program)</p>
-<p><code>G91 G1 F100</code> (Switch to incremental, set a slow feed rate for probing)
+<p><code>G91 G1 F100</code> (Switch to incremental, set a slow feed rate for probing)<br>
 <code>(G-code for probing in X and Y to find the center...)</code></p>
 <p><code>M72</code> (Restore the original state. The machine is now back in G90/G91, G54, etc., with its original feed rate)</p>
 </li>
 </ul>
-<hr>
-<h1>General Tips &amp; Best Practices</h1>
-<ol>
-<li>
-<p><strong>Start Every File with a Safety Block:</strong> Every G-code program should begin with a &quot;safety block&quot; or preamble that sets the machine to a known, predictable state. This prevents crashes and unexpected behavior.</p>
-<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">G90 G21 G17 G40 G49 G80 G94 ; Absolute, MM, XY Plane, Cancel Comp/Offsets, Cancel Cycle, Units/Min</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M5 M9 ; Spindle and Coolant Off</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G53 G0 Z0 ; Retract Z to machine top safely</span><br></span></code></pre></div></div>
-</li>
-<li>
-<p><strong>Explicit is Better Than Implicit:</strong> Don&#x27;t assume the machine is in the correct state. Explicitly command <code>G90</code>/<code>G91</code>, <code>G20</code>/<code>G21</code>, and select your work offset (<code>G54</code>, etc.) in your program.</p>
-</li>
-<li>
-<p><strong>Understand Modality:</strong> Remember which commands are modal. Forgetting that a <code>G1</code> is active can lead to an unintended cutting move when you meant to make a rapid <code>G0</code> move. Forgetting a canned cycle (<code>G81</code>) is active can lead to unintended drilling. Always cancel modes (<code>G80</code>) when you are done with them.</p>
-</li>
-<li>
-<p><strong>Use <code>G53</code> for Safety:</strong> When you need to move to a known, fixed machine position (like a tool change station or home), use <code>G53</code>. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A <code>G53 G0 Z0</code> is one of the safest commands in G-code.</p>
-</li>
-<li>
-<p><strong>Comment Your Code:</strong> Use parentheses <code>()</code> to add comments to your G-code. This is invaluable for documenting complex sections, manual tool changes, or special setups.</p>
-<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">(*** Begin Finishing Pass for Part A ***)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">T2 M6 (Load 3mm Ball End Mill)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G43.1 Z125.5 (Apply tool length offset)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">S18000 M3</span><br></span></code></pre></div></div>
-</li>
-</ol>
-<hr>
-</li>
-</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/04-Reference/complete-g-m-code-reference.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Reference/commands"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">System Commands</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Reference/complete-settings-reference"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Complete Settings Reference</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#g0--rapid-positioning" class="table-of-contents__link toc-highlight"><code>G0</code> – Rapid Positioning</a></li><li><a href="#g1--linear-interpolation" class="table-of-contents__link toc-highlight"><code>G1</code> – Linear Interpolation</a></li><li><a href="#g2--g3--arc--helical-interpolation" class="table-of-contents__link toc-highlight"><code>G2</code> &amp; <code>G3</code> – Arc / Helical Interpolation</a></li><li><a href="#g4--dwell" class="table-of-contents__link toc-highlight"><code>G4</code> – Dwell</a></li><li><a href="#g10-l2--g10-l20--set-coordinate-system-data" class="table-of-contents__link toc-highlight"><code>G10 L2</code> &amp; <code>G10 L20</code> – Set Coordinate System Data</a></li><li><a href="#g17-g18-g19--plane-selection" class="table-of-contents__link toc-highlight"><code>G17</code>, <code>G18</code>, <code>G19</code> – Plane Selection</a></li><li><a href="#g20-g21--unit-selection" class="table-of-contents__link toc-highlight"><code>G20</code>, <code>G21</code> – Unit Selection</a></li><li><a href="#g28-g30--go-to-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position</a></li><li><a href="#g281-g301--set-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28.1</code>, <code>G30.1</code> – Set Pre-Defined Position</a></li><li><a href="#g382-g383-g384-g385--probing" class="table-of-contents__link toc-highlight"><code>G38.2</code>, <code>G38.3</code>, <code>G38.4</code>, <code>G38.5</code> – Probing</a></li><li><a href="#g40--cancel-cutter-radius-compensation" class="table-of-contents__link toc-highlight"><code>G40</code> – Cancel Cutter Radius Compensation</a></li><li><a href="#g431-g432-g49--tool-length-offsets" class="table-of-contents__link toc-highlight"><code>G43.1</code>, <code>G43.2</code>, <code>G49</code> – Tool Length Offsets</a></li><li><a href="#g53--move-in-machine-coordinates" class="table-of-contents__link toc-highlight"><code>G53</code> – Move in Machine Coordinates</a></li><li><a href="#g54-to-g593--work-coordinate-systems-wcs" class="table-of-contents__link toc-highlight"><code>G54</code> to <code>G59.3</code> – Work Coordinate Systems (WCS)</a></li><li><a href="#g61-g611-g64--path-control-mode" class="table-of-contents__link toc-highlight"><code>G61</code>, <code>G61.1</code>, <code>G64</code> – Path Control Mode</a></li><li><a href="#g80--cancel-canned-cycle" class="table-of-contents__link toc-highlight"><code>G80</code> – Cancel Canned Cycle</a></li><li><a href="#g81-to-g89--canned-cycles" class="table-of-contents__link toc-highlight"><code>G81</code> to <code>G89</code> – Canned Cycles</a></li><li><a href="#g90-g91--distance-mode" class="table-of-contents__link toc-highlight"><code>G90</code>, <code>G91</code> – Distance Mode</a></li><li><a href="#g92-g921-g922--coordinate-system-offset" class="table-of-contents__link toc-highlight"><code>G92</code>, <code>G92.1</code>, <code>G92.2</code> – Coordinate System Offset</a></li><li><a href="#g93-g94-g95--feed-rate-mode" class="table-of-contents__link toc-highlight"><code>G93</code>, <code>G94</code>, <code>G95</code> – Feed Rate Mode</a></li><li><a href="#g96-g97--spindle-speed-mode" class="table-of-contents__link toc-highlight"><code>G96</code>, <code>G97</code> – Spindle Speed Mode</a></li><li><a href="#g98-g99--canned-cycle-return-mode" class="table-of-contents__link toc-highlight"><code>G98</code>, <code>G99</code> – Canned Cycle Return Mode</a></li><li><a href="#m0-m1-m2-m30--program-flow--stopping" class="table-of-contents__link toc-highlight"><code>M0</code>, <code>M1</code>, <code>M2</code>, <code>M30</code> – Program Flow &amp; Stopping</a></li><li><a href="#m3-m4-m5--spindle-control" class="table-of-contents__link toc-highlight"><code>M3</code>, <code>M4</code>, <code>M5</code> – Spindle Control</a></li><li><a href="#m7-m8-m9--coolant-control" class="table-of-contents__link toc-highlight"><code>M7</code>, <code>M8</code>, <code>M9</code> – Coolant Control</a></li><li><a href="#m6--automatic-tool-change-atc" class="table-of-contents__link toc-highlight"><code>M6</code> – Automatic Tool Change (ATC)</a></li><li><a href="#m48-m49--override-control" class="table-of-contents__link toc-highlight"><code>M48</code>, <code>M49</code> – Override Control</a></li><li><a href="#m62-to-m65--synchronized-and-asynchronous-io" class="table-of-contents__link toc-highlight"><code>M62</code> to <code>M65</code> – Synchronized and Asynchronous I/O</a></li><li><a href="#m99--return-from-subprogram" class="table-of-contents__link toc-highlight"><code>M99</code> – Return from Subprogram</a></li><li><a href="#m114--get-current-position" class="table-of-contents__link toc-highlight"><code>M114</code> – Get Current Position</a></li><li><a href="#m115--get-firmware-information" class="table-of-contents__link toc-highlight"><code>M115</code> – Get Firmware Information</a></li><li><a href="#m220--set-feed-rate-override-percentage" class="table-of-contents__link toc-highlight"><code>M220</code> – Set Feed Rate Override Percentage</a></li><li><a href="#m280--set-servo-position" class="table-of-contents__link toc-highlight"><code>M280</code> – Set Servo Position</a></li><li><a href="#m400--finish-moves" class="table-of-contents__link toc-highlight"><code>M400</code> – Finish Moves</a></li><li><a href="#trinamic-stepper-driver-m-codes" class="table-of-contents__link toc-highlight">Trinamic Stepper Driver M-Codes</a></li><li><a href="#m502--factory-reset-plugindriver-specific" class="table-of-contents__link toc-highlight"><code>M502</code> – Factory Reset (Plugin/Driver Specific)</a></li><li><a href="#m70-m71-m72-m73--modal-state-saverestore" class="table-of-contents__link toc-highlight"><code>M70</code>, <code>M71</code>, <code>M72</code>, <code>M73</code> – Modal State Save/Restore</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
+<hr></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/04-Reference/complete-g-m-code-reference.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Machine-Calibration/backlash-compensation"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Backlash Compensation</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Reference/complete-settings-reference"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Complete Settings Reference</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#f--feed-rate" class="table-of-contents__link toc-highlight"><code>F</code> – Feed Rate</a></li><li><a href="#s--spindle-speed" class="table-of-contents__link toc-highlight"><code>S</code> – Spindle Speed</a></li><li><a href="#t--tool-select" class="table-of-contents__link toc-highlight"><code>T</code> – Tool Select</a></li><li><a href="#o--program-name--subroutine-number" class="table-of-contents__link toc-highlight"><code>O</code> – Program Name / Subroutine Number</a></li><li><a href="#g0--rapid-positioning" class="table-of-contents__link toc-highlight"><code>G0</code> – Rapid Positioning</a></li><li><a href="#g1--linear-interpolation" class="table-of-contents__link toc-highlight"><code>G1</code> – Linear Interpolation</a></li><li><a href="#g2--g3--arc--helical-interpolation" class="table-of-contents__link toc-highlight"><code>G2</code> &amp; <code>G3</code> – Arc / Helical Interpolation</a></li><li><a href="#g4--dwell" class="table-of-contents__link toc-highlight"><code>G4</code> – Dwell</a></li><li><a href="#g10-l2--g10-l20--set-coordinate-system-data" class="table-of-contents__link toc-highlight"><code>G10 L2</code> &amp; <code>G10 L20</code> – Set Coordinate System Data</a></li><li><a href="#g17-g18-g19--plane-selection" class="table-of-contents__link toc-highlight"><code>G17</code>, <code>G18</code>, <code>G19</code> – Plane Selection</a></li><li><a href="#g20-g21--unit-selection" class="table-of-contents__link toc-highlight"><code>G20</code>, <code>G21</code> – Unit Selection</a></li><li><a href="#g28-g30--go-to-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position</a></li><li><a href="#g281-g301--set-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28.1</code>, <code>G30.1</code> – Set Pre-Defined Position</a></li><li><a href="#g382-g383-g384-g385--probing" class="table-of-contents__link toc-highlight"><code>G38.2</code>, <code>G38.3</code>, <code>G38.4</code>, <code>G38.5</code> – Probing</a></li><li><a href="#g40--cancel-cutter-radius-compensation" class="table-of-contents__link toc-highlight"><code>G40</code> – Cancel Cutter Radius Compensation</a></li><li><a href="#g431-g432-g49--tool-length-offsets" class="table-of-contents__link toc-highlight"><code>G43.1</code>, <code>G43.2</code>, <code>G49</code> – Tool Length Offsets</a></li><li><a href="#g53--move-in-machine-coordinates" class="table-of-contents__link toc-highlight"><code>G53</code> – Move in Machine Coordinates</a></li><li><a href="#g54-to-g593--work-coordinate-systems-wcs" class="table-of-contents__link toc-highlight"><code>G54</code> to <code>G59.3</code> – Work Coordinate Systems (WCS)</a></li><li><a href="#g61-g611-g64--path-control-mode" class="table-of-contents__link toc-highlight"><code>G61</code>, <code>G61.1</code>, <code>G64</code> – Path Control Mode</a></li><li><a href="#g80--cancel-canned-cycle" class="table-of-contents__link toc-highlight"><code>G80</code> – Cancel Canned Cycle</a></li><li><a href="#g76-g81-to-g89--canned-cycles" class="table-of-contents__link toc-highlight"><code>G76</code>, <code>G81</code> to <code>G89</code> – Canned Cycles</a></li><li><a href="#g90-g91--distance-mode" class="table-of-contents__link toc-highlight"><code>G90</code>, <code>G91</code> – Distance Mode</a></li><li><a href="#g92-g921-g922--coordinate-system-offset" class="table-of-contents__link toc-highlight"><code>G92</code>, <code>G92.1</code>, <code>G92.2</code> – Coordinate System Offset</a></li><li><a href="#g93-g94-g95--feed-rate-mode" class="table-of-contents__link toc-highlight"><code>G93</code>, <code>G94</code>, <code>G95</code> – Feed Rate Mode</a></li><li><a href="#g96-g97--spindle-speed-mode" class="table-of-contents__link toc-highlight"><code>G96</code>, <code>G97</code> – Spindle Speed Mode</a></li><li><a href="#g98-g99--canned-cycle-return-mode" class="table-of-contents__link toc-highlight"><code>G98</code>, <code>G99</code> – Canned Cycle Return Mode</a></li><li><a href="#m0-m1-m2-m30--program-flow--stopping" class="table-of-contents__link toc-highlight"><code>M0</code>, <code>M1</code>, <code>M2</code>, <code>M30</code> – Program Flow &amp; Stopping</a></li><li><a href="#m3-m4-m5--spindle-control" class="table-of-contents__link toc-highlight"><code>M3</code>, <code>M4</code>, <code>M5</code> – Spindle Control</a></li><li><a href="#m6--automatic-tool-change-atc" class="table-of-contents__link toc-highlight"><code>M6</code> – Automatic Tool Change (ATC)</a></li><li><a href="#m7-m8-m9--coolant-control" class="table-of-contents__link toc-highlight"><code>M7</code>, <code>M8</code>, <code>M9</code> – Coolant Control</a></li><li><a href="#m48-m49--override-control" class="table-of-contents__link toc-highlight"><code>M48</code>, <code>M49</code> – Override Control</a></li><li><a href="#m62-m63-m64-and--m65--synchronized-and-asynchronous-io" class="table-of-contents__link toc-highlight"><code>M62</code>, <code>M63</code>, <code>M64</code> and  <code>M65</code> – Synchronized and Asynchronous I/O</a></li><li><a href="#m99--return-from-subprogram" class="table-of-contents__link toc-highlight"><code>M99</code> – Return from Subprogram</a></li><li><a href="#m114--get-current-position" class="table-of-contents__link toc-highlight"><code>M114</code> – Get Current Position</a></li><li><a href="#m115--get-firmware-information" class="table-of-contents__link toc-highlight"><code>M115</code> – Get Firmware Information</a></li><li><a href="#m220--set-feed-rate-override-percentage" class="table-of-contents__link toc-highlight"><code>M220</code> – Set Feed Rate Override Percentage</a></li><li><a href="#m280--set-servo-position" class="table-of-contents__link toc-highlight"><code>M280</code> – Set Servo Position</a></li><li><a href="#m400--finish-moves" class="table-of-contents__link toc-highlight"><code>M400</code> – Finish Moves</a></li><li><a href="#trinamic-stepper-driver-m-codes-m122-m569-m906-m911-m914" class="table-of-contents__link toc-highlight">Trinamic Stepper Driver M-Codes (<code>M122</code>, <code>M569</code>, <code>M906</code>, <code>M911-M914</code>)</a><ul><li><a href="#m122--driver-diagnostic-report" class="table-of-contents__link toc-highlight"><code>M122</code> — Driver Diagnostic Report</a></li><li><a href="#m569--set-driver-mode-stealthchop--spreadcycle" class="table-of-contents__link toc-highlight"><code>M569</code> — Set Driver Mode (StealthChop / SpreadCycle)</a></li><li><a href="#m906--set-motor-current" class="table-of-contents__link toc-highlight"><code>M906</code> — Set Motor Current</a></li><li><a href="#m911-m914--advanced-driver-configuration" class="table-of-contents__link toc-highlight"><code>M911-M914</code> — Advanced Driver Configuration</a></li></ul></li><li><a href="#m70-m71-m72-m73--modal-state-saverestore" class="table-of-contents__link toc-highlight"><code>M70</code>, <code>M71</code>, <code>M72</code>, <code>M73</code> – Modal State Save/Restore</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
