@@ -40,6 +40,7 @@ If too short, drivers may **miss steps**. If too long, it can **limit maximum st
 - Always start **low** (e.g. 2 µs) and only increase if you see reliability issues.  
 - A higher value reduces maximum achievable step frequency.  
 - If `$29` (Pulse Delay) is used, the **effective pulse width** is `$29 (Pulse Delay) + $0 (Pulse on time) + $0 (Pulse off time)`.  
+- Pulse Off Time is hard-coded to 2 µs minimum. It is only relevant when approaching the maximum possible step rate. Later versions of most drivers will limit the max rate instead of lowering the the off-time, where earlier drivers would break down.
 
 ---
 
@@ -851,8 +852,7 @@ Sets the faster feed rate used to initially find the homing switches during the 
 Sets a delay *after* a homing switch is triggered and released to prevent mechanical switch bounce from causing a false re-trigger.
 
 :::info Context
-- **Legacy Misconception:** In classic Grbl, this was often described as a "debounce" filter. In grblHAL, it functions differently and more accurately as a "settling" delay.
-- **How it Works:** Most grblHAL boards use hardware interrupts to detect the switch press instantly. After the initial trigger is processed and the machine backs off the switch (`$27`), the controller will wait for this delay time (`$26`) before it is allowed to sense the switch again.
+- Most grblHAL boards use hardware interrupts to detect the switch press instantly. After the initial trigger is processed and the machine backs off the switch (`$27`), the controller will wait for this delay time (`$26`) before it is allowed to sense the switch again.
 - This prevents the mechanical "bounce" that occurs when the switch physically settles from immediately causing a false second trigger.
 :::
 
@@ -1166,7 +1166,7 @@ Informs grblHAL how many pulses it will receive from a spindle encoder for one f
     *   `$38=1024`
 
 ##### Tips & Tricks
-- This setting is the foundation for lathe functionality in grblHAL.
+- This setting is mainly relevant to lathe threading in grblHAL.
 - Do not enable this unless you have a properly configured spindle encoder connected to the correct input pins on your controller.
 
 ---
@@ -1199,7 +1199,7 @@ Enables compatibility for older G-code senders that use legacy printable, single
 Prevents jogging moves from exceeding the machine's software travel limits (`$13x`).
 
 :::info Context
-- This is a safety feature that works in conjunction with Soft Limits (`$20`).
+- This is a safety feature
 - It checks the target position of any manual jog command and will clamp/trim it to stay within the boundaries. This elegantly clamps the jog instead of raising soft/hard limit errors
 - It **requires a successful homing cycle** to be effective.
 :::
@@ -1310,7 +1310,7 @@ Configures the number of homing passes to perform during the homing cycle.
 
 ---
 
-## `$44–$49` – Axes Homing Phases (mask)
+## `$44, $45, $46, $47, $48, $49` – Axes Homing Phases (mask)
 Defines which axes move during each pass of the homing cycle. You can have up to 4 separate phases in your homing cycle.
 
 :::info Context
@@ -1345,6 +1345,83 @@ Defines which axes move during each pass of the homing cycle. You can have up to
 - Homing Z first is recommended for most machines to prevent the tool from dragging across clamps or the workpiece.
 - Plan your homing sequence carefully, especially on multi-axis machines, to avoid collisions or mechanical stress.
 - Set all to zero to allow enabling manual "homing" on machines without limit switches.
+
+---
+
+## `$50` – Jog Step Speed
+Sets the feed rate (in mm/min) to be used for step-style jogging moves.
+
+:::info Context
+- This is an optional, driver-specific setting, primarily used by pendants and jog wheels. It may not be available on all boards.
+- It defines the speed for precise, incremental jogs (e.g., moving exactly 0.1mm).
+- Works in conjunction with `$53` (Jog Step Distance).
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for short, precise jogging moves. |
+
+#### Common Examples
+*   **Precise Positioning Speed:**
+    *   `$50=100`
+
+#### Tips & Tricks
+- This allows you to have a different, often slower, speed for fine-tuning your position compared to your general-purpose slow jog speed (`$51`).
+
+---
+
+## `$51` – Jog Slow Speed
+Sets the feed rate (in mm/min) to be used for continuous slow jogging.
+
+:::info Context
+- An optional, driver-specific setting for pendants and jog wheels.
+- This is the speed used when you are continuously holding down a jog button for slow, controlled movement.
+- Works in conjunction with `$54` (Jog Slow Distance).
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for continuous slow jogging. |
+
+#### Common Examples
+*   **Controlled Slow Jog:**
+    *   A speed that is fast enough to cover distance but slow enough for precise stopping.
+    *   `$51=500`
+
+---
+
+## `$52` – Jog Fast Speed
+Sets the feed rate (in mm/min) to be used for continuous fast jogging.
+
+:::info Context
+- An optional, driver-specific setting for pendants and jog wheels.
+- This is the speed used when you are continuously holding down a jog button for rapid positioning.
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for continuous fast jogging. |
+
+#### Common Examples
+*   **Rapid Manual Positioning:**
+    *   Typically set to a high percentage of the axis max rate.
+    *   `$52=2500`
+
+---
+
+## `$53` – `$55` – Jog Distances
+Sets the incremental distances for step-style jogging.
+
+:::info Context
+- These optional, driver-specific settings define the distance for each "click" or "step" of a jog command.
+- `$53`: Jog Step Distance (e.g., 0.01mm)
+- `$54`: Jog Slow Distance (e.g., 0.1mm)
+- `$55`: Jog Fast Distance (e.g., 1.0mm)
+:::
+
+| Value (mm) | Description |
+|:----------:|:------------|
+| 0.001 - N  | The incremental distance for each type of jog step. |
 
 ---
 
@@ -1485,7 +1562,7 @@ Configures runtime behaviour for the safety-door input.
 :::info Context
 - This is a small **bitmask** that controls how grblHAL treats the safety-door input.  
 - **Note:** the safety-door *input itself* is a compile-time / board-map feature (it must be enabled and wired in the driver/board map). `$61` only controls run-time behaviour *once* the door input exists.
-- Typical behaviour when the door opens: grblHAL enters a DOOR/hold state (pauses the job and optionally runs the parking sequence). `$61` does **not** enable/disable the door input — it only modifies how door events are handled. Use `$41` (parking) and `$63` (hold actions) to control parking/hold behaviour. 
+- Typical behaviour when the door opens: grblHAL enters a DOOR/hold state (pauses the job and optionally runs the parking sequence). `$61` does **not** enable/disable the door input — it only modifies how door events are handled. Use `$41` (parking) and `$63` (hold actions) to control parking/hold behaviour.
 :::
 
 | Bit | Value |  Description |
@@ -1629,6 +1706,20 @@ Configures advanced options for probing cycles (`G38.x`).
 
 ---
 
+## `$66` - `$69` – Piecewise Linear Spindle Compensation
+Configures a multi-point calibration curve to correct a non-linear response from a spindle controller or VFD.
+
+:::info Context
+- This is an advanced feature for fine-tuning spindle speed accuracy when using PWM-to-analog (0-10V) converters.
+- Some converters are not perfectly linear (e.g., 50% PWM might give 4.8V instead of 5.0V). This feature allows you to create a "correction map".
+- Each setting defines a point on this map. `$66` is the first point, `$69` is the last.
+- The format for each setting is a packed value: `(RPM << 16) | PWM`.
+:::
+
+#### Tips & Tricks
+- This is a highly advanced feature. For most users, ensuring `$30`, `$31`, `$35`, and `$36` are set correctly is sufficient.
+- To use this, you would need to measure your spindle's actual RPM at various PWM outputs and then calculate the correction points, which is a complex process.
+
 ---
 
 ## `$70` – Enable Services (mask)
@@ -1660,6 +1751,279 @@ The master switch for enabling or disabling network-related services (daemons).
 #### Tips & Tricks
 - If you have configured your network settings but still cannot connect to the controller, this is the **first setting you should check**.
 - For security and to save memory on the controller, only enable the services you actually plan to use.
+- Use `$NETIF` to see which services are running (listening) as well as the Network interface's MAC address and IP address.
+
+
+---
+
+## `$71` – Bluetooth Device Name
+Sets the broadcast name for the controller's Bluetooth interface.
+
+:::info Context
+- This is the name that will appear in the list of available Bluetooth devices on your computer or phone.
+- This setting is only available on boards with a Bluetooth module.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The name for the Bluetooth device, e.g., "grblHAL-BT". |
+
+---
+
+## `$72` – Bluetooth Service Name
+Sets the name of the Bluetooth serial port profile (SPP) service.
+
+:::info Context
+- A technical setting for the Bluetooth service. In almost all cases, the default value should not be changed.
+:::
+
+---
+
+## `$73` – WiFi Mode
+The master switch to select the operating mode for the WiFi module.
+
+:::info Context
+- This setting determines how the WiFi on your controller will function.
+- It is only available on boards with a WiFi module.
+:::
+
+| Value | Meaning | Description |
+|:-----:|:--------|:------------|
+| 0     | Off     | The WiFi module is completely disabled. |
+| 1     | Access Point (AP) Mode | The controller creates its own WiFi network. Use settings `$310`-`$312`. |
+| 2     | Station (STA) Mode | The controller connects to an existing WiFi network. Use settings `$320`-`$325`. (Most common) |
+
+#### Common Examples
+*   **Connect to your workshop WiFi:**
+    *   `$73=2`
+*   **Create a direct-connect network for the machine:**
+    *   `$73=1`
+
+#### Tips & Tricks
+- After changing the WiFi mode, a controller reset is required.
+- Station mode (`2`) is the most common and convenient way to put your machine on your local network.
+
+---
+
+## `$74` – WiFi Station SSID
+The name (SSID) of the existing WiFi network that you want the controller to connect to.
+
+:::info Context
+- This setting is only used when `$73=2` (Station Mode).
+- This is the **primary setting** for connecting to your network. It must be exact.
+- This setting is functionally the same as `$320`. `$74` is often the core setting, while `$320` can be an alias for drivers with multiple network interfaces.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The SSID of your existing WiFi network, e.g., "MyShopWiFi". |
+
+#### Tips & Tricks
+- WiFi network names are case-sensitive. "MyWifi" is different from "mywifi".
+- If the controller fails to connect, an incorrect SSID is the most common cause.
+
+---
+
+## `$75` – WiFi Station Password
+The password for the existing WiFi network.
+
+:::info Context
+- This setting is only used when `$73=2` (Station Mode).
+- This must be the correct password for the WiFi network specified in `$74`.
+- This is functionally the same as `$321`.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The WiFi password. |
+
+---
+
+## `$76` – WiFi Access Point SSID
+Sets the name of the WiFi network (the SSID) that the controller will broadcast in AP mode.
+
+:::info Context
+- This setting is only used when `$73=1` (Access Point Mode).
+- This is the network name you will look for on your computer or phone.
+- This is functionally the same as `$310`.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The name of your machine's WiFi network, e.g., "grblHAL-CNC". |
+
+---
+
+## `$77` – WiFi Access Point Password
+Sets the password for the WiFi network created by the controller in AP mode.
+
+:::info Context
+- This setting is only used when `$73=1` (Access Point Mode).
+- A password of at least 8 characters is required for a secure WPA2 connection.
+- This is functionally the same as `$311`.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The WiFi password. Must be at least 8 characters. |
+
+---
+
+## `$78` – WiFi AP Country
+Sets the regulatory country code for the WiFi Access Point.
+
+:::info Context
+- This setting is only used when `$73=1` (Access Point Mode).
+- It configures the WiFi module to use the correct channels and power levels that are legally permitted in your country.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The two-letter ISO country code, e.g., "US", "GB", "DE". |
+
+#### Tips & Tricks
+- While it may work if left blank, setting this to your country code is recommended for proper and legal WiFi operation.
+
+---
+
+## `$79` – WiFi AP Channel
+Sets the WiFi channel that the controller will use when operating in Access Point (AP) mode.
+
+:::info Context
+- This setting is only used when `$73=1` (Access Point Mode).
+- Choosing a less congested channel can improve connection stability and speed.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 1-13  | A standard WiFi channel number. |
+
+#### Tips & Tricks
+- Use a WiFi analyzer app on your phone to find the least congested channels in your area.
+
+---
+
+
+## `$80` – Spindle P-Gain
+Sets the Proportional gain for the closed-loop spindle speed controller.
+
+:::info Context
+- An advanced feature that requires a spindle with an encoder (`$38`) for RPM feedback.
+- The P-Gain is the primary driver of the correction. It applies a correction proportional to the current RPM error.
+- A higher P-Gain results in a faster response but can lead to instability and oscillation if too high.
+- Part of the PID control loop (`$80`, `$81`, `$82`).
+:::
+
+#### Tips & Tricks
+- Tuning a PID controller is an advanced topic. Start with the default values provided by your driver and adjust in small increments.
+
+---
+
+## `$81` – Spindle I-Gain
+Sets the Integral gain for the closed-loop spindle speed controller.
+
+:::info Context
+- An advanced PID tuning parameter for closed-loop spindle control.
+- The I-Gain works to eliminate small, steady-state errors over time by "integrating" the error. It pushes the system towards the exact target RPM.
+- A higher I-Gain can reduce steady-state error but can also cause overshoot.
+:::
+
+---
+
+## `$82` – Spindle D-Gain
+Sets the Derivative gain for the closed-loop spindle speed controller.
+
+:::info Context
+- An advanced PID tuning parameter for closed-loop spindle control.
+- The D-Gain works to dampen the system's response, reducing the overshoot and oscillation caused by the P and I terms.
+- It acts based on the rate of change of the error.
+:::
+
+---
+
+## `$83` – Spindle Deadband
+Sets an RPM range around the target where no PID correction is applied.
+
+:::info Context
+- A tuning parameter for the closed-loop spindle controller.
+- This prevents the PID loop from constantly making tiny, unnecessary adjustments ("hunting") when the RPM is very close to the target.
+:::
+
+| Value (RPM) | Description |
+|:-----------:|:------------|
+| 0 - N       | The +/- RPM value from the target to consider "in position". |
+
+#### Common Examples
+*   **A small deadband of 10 RPM:**
+    *   If the target is 10000 RPM, the controller will not make any corrections as long as the actual speed is between 9990 and 10010 RPM.
+    *   `$83=10`
+
+---
+
+## `$84` - `$86` – Spindle Speed Max Error
+Defines the maximum allowable error for each component of the speed PID controller before a fault may be triggered.
+
+:::info Context
+- An advanced safety feature for the closed-loop spindle speed PID loop (`$80`-`$83`).
+- If the difference between commanded and actual RPM exceeds these limits, the system can trigger an alarm to prevent issues.
+- `$84`: Max Proportional Error
+- `$85`: Max Integral Error
+- `$86`: Max Derivative Error
+:::
+
+---
+
+## `$90` – Position P-Gain
+Sets the Proportional gain for the spindle-synchronized motion controller.
+
+:::info Context
+- This tunes the PID loop that controls the motion axes (e.g., Z and X on a lathe) to keep them perfectly in sync with the spindle's rotational **position**.
+- This is essential for lathe threading (`G33`) and rigid tapping.
+- The P-Gain is the primary driver for keeping the tool's position locked to the thread pitch.
+:::
+
+---
+
+## `$91` – Position I-Gain
+Sets the Integral gain for the synchronized motion controller.
+
+:::info Context
+- The I-Gain helps eliminate any "following error," ensuring the tool does not lag behind the spindle's rotation over the length of the thread.
+- Part of the Position PID loop (`$90`-`$96`).
+:::
+
+---
+
+## `$92` – Position D-Gain
+Sets the Derivative gain for the synchronized motion controller.
+
+:::info Context
+- The D-Gain helps to dampen oscillations and improve the stability of the synchronized motion, especially during acceleration.
+- Part of the Position PID loop (`$90`-`$96`).
+:::
+
+---
+
+## `$93` – Position Deadband
+Sets a position error range (in encoder counts) where no PID correction is applied.
+
+:::info Context
+- This defines the tolerance window for the synchronized motion.
+- It prevents the motion axes from constantly "hunting" or jittering in response to tiny fluctuations in the encoder signal.
+:::
+
+---
+
+## `$94` - `$96` – Position Max Error
+Defines the maximum allowable following error for each component of the position PID controller.
+
+:::info Context
+- An advanced safety feature for the synchronized motion loop.
+- If the tool's position deviates from the target by more than these values, a fault can be triggered.
+- `$94`: Max Proportional Error
+- `$95`: Max Integral Error
+- `$96`: Max Derivative Error
+:::
 
 ---
 
@@ -2028,6 +2392,16 @@ StallGuard should not be used unless the machine manufacturer has tuned the asso
 
 ---
 
+## `$203` – A StallGuard2 Fast Threshold (TMC)
+## `$204` – B StallGuard2 Fast Threshold (TMC)
+## `$205` – C StallGuard2 Fast Threshold (TMC)
+## `$206` – U StallGuard2 Fast Threshold (TMC)
+## `$207` – V StallGuard2 Fast Threshold (TMC)
+Sets the sensitivity of StallGuard for the A, B, C, U, or V axes, respectively, during the initial, fast-moving phase of a sensorless homing cycle. Refer to `$200` for full context.
+
+---
+
+
 ## `$210` – X Hold Current (TMC)
 Sets the percentage of the full running current that the **X-axis** driver will supply to the motor when it is idle.
 
@@ -2102,6 +2476,15 @@ Sets the percentage of the full running current that the **Z-axis** driver will 
 
 #### Tips & Tricks
 - If your Z-axis drops when idle, the first thing to try is increasing this value. If that is not sufficient, use `$37=4` to keep it fully powered.
+
+---
+
+## `$213` – A Hold Current (TMC)
+## `$214` – B Hold Current (TMC)
+## `$215` – C Hold Current (TMC)
+## `$216` – U Hold Current (TMC)
+## `$217` – V Hold Current (TMC)
+Sets the percentage of the full running current that the A, B, C, U, or V axis driver will supply to the motor when it is idle. Refer to `$210` for full context.
 
 ---
 
@@ -2184,6 +2567,21 @@ StallGuard should not be used unless the machine manufacturer has tuned the asso
 - Due to the nature of lead screws, finding a reliable slow stall sensitivity on the Z-axis may require more experimentation than for belt-driven axes.
 
 ---
+
+## `$223` – A StallGuard2 Slow Threshold (TMC)
+## `$224` – B StallGuard2 Slow Threshold (TMC)
+## `$225` – C StallGuard2 Slow Threshold (TMC)
+## `$226` – U StallGuard2 Slow Threshold (TMC)
+## `$227` – V StallGuard2 Slow Threshold (TMC)
+Sets the sensitivity of StallGuard for the A, B, C, U, or V axes, respectively, during the second, slower phase of a sensorless homing cycle. Refer to `$220` for full context.
+
+---
+
+## `$228` – `$299` – Reserved Driver/Plugin Axis Settings Range
+This range is reserved for driver or plugin-specific axis settings beyond the core StallGuard parameters.
+
+---
+
 
 ## `$300` – Hostname
 Sets the machine's name on the network.
@@ -2457,6 +2855,94 @@ Sets the IP address of the controller itself when it is acting as the access poi
 
 ---
 
+## `$313` – Gateway 2 (Network Interface 2 Gateway)
+Manually sets the Gateway (router) IP address for the second network interface.
+
+:::info Context
+- This setting is used if `Setting_IpMode2` is `0` (Static IP Mode) for the second network interface.
+- If used for WiFi AP mode, this would be the IP address of the controller, acting as the gateway for connected devices.
+- For documentation purposes, this aligns with `Setting_Gateway2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| String| The gateway's IP address, e.g., "192.168.0.1". |
+
+---
+
+## `$314` – Netmask 2 (Network Interface 2 Netmask)
+Manually sets the Subnet Mask for the second network interface.
+
+:::info Context
+- This setting is used if `Setting_IpMode2` is `0` (Static IP Mode) for the second network interface.
+- For documentation purposes, this aligns with `Setting_NetMask2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| String| The Subnet Mask, e.g., "255.255.255.0". |
+
+---
+
+## `$315` – Telnet Port 2 (Network Interface 2 Telnet Port)
+Configures the network port for the Telnet service on the second network interface.
+
+:::info Context
+- Allows configuration of an alternative Telnet port for the second network interface.
+- For documentation purposes, this aligns with `Setting_TelnetPort2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$316` – HTTP Port 2 (Network Interface 2 HTTP Port)
+Configures the network port for the HTTP service on the second network interface.
+
+:::info Context
+- Allows configuration of an alternative HTTP port for the second network interface.
+- For documentation purposes, this aligns with `Setting_HttpPort2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$317` – WebSocket Port 2 (Network Interface 2 WebSocket Port)
+Configures the network port for the WebSocket service on the second network interface.
+
+:::info Context
+- Allows configuration of an alternative WebSocket port for the second network interface.
+- For documentation purposes, this aligns with `Setting_WebSocketPort2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$318` – FTP Port 2 (Network Interface 2 FTP Port)
+Configures the network port for the FTP service on the second network interface.
+
+:::info Context
+- Allows configuration of an alternative FTP port for the second network interface.
+- For documentation purposes, this aligns with `Setting_FtpPort2`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+
+
+
 ## `$320` – WiFi STA SSID
 The name of the existing WiFi network (the SSID) that you want the controller to connect to.
 
@@ -2584,6 +3070,47 @@ Manually sets the Subnet Mask for the WiFi connection.
 
 ---
 
+## `$326` – HTTP Port 3 (Network Interface 3 HTTP Port)
+Configures the network port for the HTTP service on the third network interface.
+
+:::info Context
+- This would typically be used for a third network interface or specific to a WiFi Station mode if that's how the driver maps it.
+- For documentation purposes, this aligns with `Setting_HttpPort3`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$327` – WebSocket Port 3 (Network Interface 3 WebSocket Port)
+Configures the network port for the WebSocket service on the third network interface.
+
+:::info Context
+- For documentation purposes, this aligns with `Setting_WebSocketPort3`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$328` – FTP Port 3 (Network Interface 3 FTP Port)
+Configures the network port for the FTP service on the third network interface.
+
+:::info Context
+- For documentation purposes, this aligns with `Setting_FtpPort3`.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
+
+---
+
+
 ## `$330` – WebUI Admin Password
 Sets the password for the `admin` account.
 
@@ -2627,8 +3154,7 @@ Sets the password for the `user` account.
 
  ---
 
- <!-- Not implemented yet -->
-<!-- ## `$332` – NTP Server URI 1
+## `$332` – NTP Server URI 1
 Sets the address of the primary Network Time Protocol (NTP) server.
 
 :::info Context
@@ -2720,7 +3246,7 @@ Indicates if Daylight Saving Time (DST) is currently active.
 | 0     | Disabled| Standard time is in effect. |
 | 1     | Enabled | Daylight Saving Time is in effect. |
 
---- -->
+---
 
 ## `$337` – WiFi AP BSSID
 Stores the BSSID (MAC address) of the WiFi access point.
@@ -2734,6 +3260,20 @@ Stores the BSSID (MAC address) of the WiFi access point.
 - For most users on a simple home WiFi network, this setting can be left blank.
 
 ---
+
+## `$338` – Trinamic Driver (flag)
+A general flag to enable or disable features specific to Trinamic stepper drivers (TMC2209, TMC5160, etc.).
+
+:::info Context
+- This setting typically acts as a master switch for the TMC-related features, such as current control (`$210` - `$212`) and StallGuard for sensorless homing (`$339`).
+- Its exact bitmask values are driver-dependent.
+:::
+
+#### Tips & Tricks
+- Only enable this if your board uses Trinamic drivers and you intend to use their advanced features.
+
+---
+
 
 ## `$339` – Sensorless Homing (Trinamic flag)
 The master switch to enable sensorless homing for each axis.
@@ -2910,98 +3450,199 @@ Configures advanced options for the tool change process.
 
 ---
 
----
-
-## `$350` – Plasma/THC Mode
-Configures the operating mode for the Torch Height Control (THC) system.
+## `$347` - `$349` – Dual Axis Length Fail
+A safety feature for ganged axes to detect if the gantry has become skewed or racked.
 
 :::info Context
-- This is the master setting for the Plasma/THC plugin.
-- It can enable or disable automatic THC, or put the system into different modes for testing or manual control.
-- THC is a system that automatically adjusts the Z-axis (torch height) to maintain a constant distance from the material while cutting, based on the measured arc voltage.
+- This feature is for machines with two motors driving a single axis (e.g., a dual-Y gantry).
+- It compares the positions of the two motors. If they differ by more than the allowed amount, it triggers an alarm.
+- `$347`: **Fail Percent:** The maximum allowed difference as a percentage of the move length.
+- `$348`: **Fail Min:** A minimum move length before this check is activated.
+- `$349`: **Fail Max:** A maximum difference in mm, regardless of percentage.
+:::
+
+
+---
+
+## `$350` – THC Mode
+The master switch and mode selector for the Torch Height Control system.
+
+:::info Context
+- This setting is used by the Plasma/THC plugin.
+- THC automatically adjusts torch height to maintain a constant arc voltage, which is critical for cut quality.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0     | Disabled |
+| 1     | Automatic |
+| ...   | Plugin-specific modes |
+
+---
+
+## `$351` – THC Delay
+Sets a delay after the "Arc OK" signal is received before THC becomes active.
+
+:::info Context
+- This is the "pierce delay." It allows the torch to pierce the material completely before height control begins, preventing the torch from diving into molten metal.
+:::
+
+| Value (seconds)| Description |
+|:--------------:|:------------|
+| 0.0 - N        | The delay time. |
+
+---
+
+## `$352` – THC Threshold
+Sets the voltage "deadband" for THC corrections.
+
+:::info Context
+- This is the +/- voltage window around the target arc voltage where no Z-axis correction will be made.
+- It prevents the Z-axis from constantly jittering ("hunting") due to tiny voltage fluctuations.
+:::
+
+| Value (Volts) | Description |
+|:-------------:|:------------|
+| 0.0 - N       | The allowable voltage deviation before a correction is made. |
+
+---
+
+## `$353` - `$355` – THC PID Gains
+Sets the P, I, and D gains for the THC's Z-axis correction PID controller.
+
+:::info Context
+- `$353`: P-Gain (Proportional)
+- `$354`: I-Gain (Integral)
+- `$355`: D-Gain (Derivative)
+- These values are used to tune how aggressively and smoothly the Z-axis responds to changes in arc voltage. This is a very advanced tuning process.
+:::
+
+---
+
+## `$356` – THC VAD Threshold
+Voltage-based Anti-dive threshold.
+
+:::info Context
+- A feature to prevent "torch diving" at corners. When the machine slows down, this helps the THC logic to avoid misinterpreting the resulting voltage change.
+:::
+
+---
+
+## `$357` – THC Void Override
+Enables THC override when crossing voids or previously cut kerfs.
+
+:::info Context
+- When the torch crosses a void, voltage spikes and a simple THC will dive. This feature helps prevent that.
+:::
+
+---
+
+## `$358` – Arc Fail Timeout (sec)
+Sets the maximum time to wait for the "Arc OK" signal after the torch is fired (`M3`).
+
+:::info Context
+- After the torch is commanded to fire, the controller starts this timer.
+- It then waits for a valid "Arc OK" signal to be received on the input pin defined by `$367`.
+- If the "Arc OK" signal is not received before this timer expires, grblHAL will declare a fault and begin the retry sequence.
+- This prevents the machine from running a cutting path without the torch being properly lit and cutting.
+:::
+
+| Value (sec)| Meaning | Description |
+|:----------:|:--------|:------------|
+| 0.1 - N    | Timeout | The duration to wait for the "Arc OK" signal. |
+
+#### Common Examples
+*   **Wait up to 5 seconds for the arc:**
+    *   This provides ample time for the plasma cutter to fire and for the arc to transfer and stabilize.
+    *   `$358=5.0`
+
+#### Tips & Tricks
+- This value should be long enough to account for your plasma cutter's entire pierce sequence.
+- If it's too short, you may get false "misfire" alarms. If it's too long, the machine will wait unnecessarily before starting a retry.
+
+---
+## `$359` – Arc Retry Delay (sec)
+Sets the delay between a failed arc attempt and the next attempt.
+
+:::info Context
+- If the `$358` timer expires, grblHAL will turn off the torch, wait for this delay period, and then try to fire the torch again.
+- This delay allows the plasma cutter's internal systems to reset and for any post-flow air to stop before the next attempt.
+:::
+
+| Value (sec)| Meaning | Description |
+|:----------:|:--------|:------------|
+| 0.1 - N    | Delay | The pause duration between retry attempts. |
+
+#### Common Examples
+*   **Wait 3 seconds between retries:**
+    *   This gives the system time to reset before trying again.
+    *   `$359=3.0`
+
+#### Tips & Tricks
+- Check your plasma cutter's manual for a recommended "post-flow" time, and set this delay to be slightly longer than that.
+
+---
+
+## `$360` – Arc Max Retries
+Sets the number of times to attempt to fire the torch *after* the initial failure.
+
+:::info Context
+- This setting controls how many times the retry cycle (`$359` delay -> fire torch -> `$358` timeout) will be repeated.
+- If the arc still fails after all retry attempts, grblHAL will abort the job and enter an alarm state.
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 0     | Disabled| THC is completely off. Z-axis will not move based on arc voltage. |
-| 1     | Automatic| THC is enabled and will control the Z-axis during a cut. |
-| ...   | ...     | Other plugin-specific modes (e.g., Manual, Test) may be available. |
+| 0     | No Retries | If the first attempt fails, the job will alarm immediately. |
+| 1-N   | # of Retries | The number of additional attempts to make. |
 
 #### Common Examples
-*   **Normal Plasma Cutting:**
-    *   `$350=1`
+*   **Allow 2 retries:**
+    *   The system will try to fire the torch a total of 3 times (the initial attempt + 2 retries).
+    *   `$360=2`
 
 #### Tips & Tricks
-- This setting is only available when the Plasma/THC plugin is compiled and enabled in the firmware.
-- You must have the required hardware (voltage divider, arc OK signal) connected to the controller.
+- Setting this to `1` or `2` can often recover from intermittent misfires caused by moisture or worn consumables, saving a large job from being ruined.
+- If you are getting frequent misfires that require multiple retries, it is a sign that your plasma consumables (nozzle, electrode) need to be replaced.
 
 ---
 
-## `$351` – Plasma/THC Sample / Filter / Delay
-Configures timing and filtering parameters for the THC plugin.
+## `$361` & `$362` – Arc Voltage Scale & Offset
+Applies a scale factor and offset to the raw analog voltage reading from the THC.
 
 :::info Context
-- This is a plugin-specific setting, and its exact function is defined by the THC plugin being used.
-- It often controls multiple parameters packed into a single value, such as:
-  - **Sample Filter:** How much to smooth the incoming arc voltage signal to prevent jittery Z-axis motion.
-  - **Delay:** A delay after the "Arc OK" signal is received before THC becomes active. This allows the pierce to complete before height control begins.
+- These settings are used to calibrate the analog input (`$366`) to match the true arc voltage.
+- This allows you to correct for inaccuracies in the voltage divider or analog reading circuitry.
+- **Formula:** `True_Voltage = (Raw_ADC_Reading * Scale) + Offset`
 :::
 
-#### Tips & Tricks
-- Consult the documentation for your specific grblHAL THC plugin to understand how to configure this value.
-- This is a critical tuning parameter for achieving good cut quality with a plasma torch.
+| Setting | Description |
+|:--------|:------------|
+| `$361`  | **Voltage Scale:** A multiplier (e.g., `1.01` to increase reading by 1%). |
+| `$362`  | **Voltage Offset:** A value to add or subtract (e.g., `-0.5` to subtract 0.5V). |
 
 ---
 
-## `$352` & `$353` – Plasma/THC Additional Params
-Additional plugin-specific parameters for THC.
+## `$363` – Arc Height Per Volt
+Defines the relationship between arc voltage and torch height.
 
 :::info Context
-- These are generic slots for the THC plugin to store other important values.
-- Common uses include setting the acceptable voltage band (deadband) or the Z-axis velocity for THC correction moves.
+- A fundamental tuning parameter for THC. It tells the controller how much to move the Z-axis for a given change in voltage.
+- The value is typically expressed in mm/Volt or inches/Volt.
+- This value is specific to your plasma cutter, material, and consumables.
 :::
 
 ---
 
-## `$360` – Default Modbus VFD Address
-Sets the default Modbus address for the spindle VFD.
+## `$364` & `$365` – Arc OK Voltage Range
+Defines the acceptable voltage window for the "Arc OK" signal.
 
 :::info Context
-- This setting is used by the Modbus VFD plugin.
-- In a Modbus network, each device must have a unique address (typically from 1 to 247).
-- This value must match the address that is configured in the VFD's own internal parameters.
+- In some systems without a dedicated "Arc OK" digital input, grblHAL can infer the signal by monitoring the arc voltage.
+- `$364`: **Arc OK High Voltage:** The upper voltage limit.
+- `$365`: **Arc OK Low Voltage:** The lower voltage limit.
+- If the measured arc voltage is within this window, the arc is considered stable.
 :::
-
-| Value | Meaning | Description |
-|:-----:|:--------|:------------|
-| 1-247 | Address | The unique address of the VFD on the Modbus serial line. |
-
-#### Common Examples
-*   **Controlling a Single VFD:**
-    *   VFDs often ship with a default address of 1.
-    *   Check your VFDs manual, or go into the VFD settings and check what the Modbus address is set to
-    *   `$360=1`
-
-#### Tips & Tricks
-- If grblHAL cannot communicate with your VFD, the most common causes are an incorrect Modbus address, incorrect serial wiring (A/B swapped), or incorrect communication parameters (`$362`, `$374`).
-
----
-
-## `$362` – Modbus Flags / Parity / Baud Index
-Configures the serial communication protocol for Modbus RTU.
-
-:::info Context
-- This is a packed setting that controls the low-level serial format.
-- It must **exactly** match the serial configuration of the VFD.
-- It typically includes:
-  - **Parity:** (None, Even, or Odd)
-  - **Data Bits:** (Usually 8)
-  - **Stop Bits:** (Usually 1 or 2)
-:::
-
-#### Tips & Tricks
-- Consult your VFD manual for the required serial settings (e.g., "9600, 8, N, 1" for 9600 baud, 8 data bits, None parity, 1 stop bit).
-- This setting, along with the baud rate (`$374`), must be correct for communication to work.
 
 ---
 
@@ -3212,47 +3853,136 @@ Identifies which axes are rotary axes, as opposed to linear axes.
 
 ---
 
-## `$384` – Disable G92 Persistence
-Controls whether `G92` offsets are remembered after a reset.
+## `$377` – BlueTooth Init OK (Status Flag)
+A read-only status flag that indicates whether the Bluetooth module initialized successfully.
 
 :::info Context
-- `G92` is a command that temporarily shifts the origin of the coordinate system without changing the Work Coordinate System (WCS).
-- By default, grblHAL saves this offset to EEPROM so that your temporary zero point is not lost if the controller is reset.
-- This setting allows you to disable that persistence, making `G92` behave more like it does in traditional CNC controllers.
+- This is not a user-settable parameter. It's a diagnostic output.
+- A value of `1` typically means the module is ready; `0` means it failed to initialize.
 :::
-
-| Value | Meaning | Description |
-|:-----:|:--------|:------------|
-| 0     | Persistence Enabled | `G92` offsets are saved and will be active after a reset. (Default) |
-| 1     | Persistence Disabled| `G92` offsets are cleared on reset. |
-
-#### Tips & Tricks
-- It is generally safer to work with standard Work Coordinate Systems (`G54`-`G59`) rather than `G92`.
-- Disabling persistence (`$384=1`) can prevent confusion if you forget that a temporary `G92` offset is active after a reboot.
 
 ---
 
-## `$393` – Coolant On Delay (sec)
-Adds a mandatory delay after a coolant M-command is executed, before motion resumes.
+## `$378` – Laser Coolant On Delay (sec)
+## `$379` – Laser Coolant Off Delay (sec)
+Sets a delay for when the laser coolant system turns on or off, respectively.
 
 :::info Context
-- Some coolant systems, especially mist systems or those with long hoses, need time for the coolant to reach the cutting tool.
-- This setting forces grblHAL to pause for a specified time after an `M7` or `M8` command is processed.
+- These are part of the closed-loop laser coolant control system (`$378` - `$383`, `$390`, `$391`).
+- `On Delay`: Time to wait after `M3`/`M4` before the coolant is assumed to be flowing.
+- `Off Delay`: Time the coolant pump continues to run after `M5` to cool down the laser.
+:::
+
+| Value (seconds) | Description |
+|:---------------:|:------------|
+| 0.0 - N         | The delay duration in seconds. |
+
+---
+
+## `$380` – Laser Coolant Min Temp (°C)
+## `$381` – Laser Coolant Max Temp (°C)
+Define the acceptable operating temperature range for the laser coolant.
+
+:::info Context
+- If the coolant temperature (read via `$390`) goes outside this range, an alarm or warning can be triggered to protect the laser.
+:::
+
+| Value (°C) | Description |
+|:----------:|:------------|
+| N          | Temperature in degrees Celsius. |
+
+---
+
+## `$382` – Laser Coolant Offset (ADC calibration)
+## `$383` – Laser Coolant Gain (ADC calibration)
+Calibration parameters for the analog-to-digital converter (ADC) used to read the laser coolant temperature.
+
+:::info Context
+- These are used to convert the raw ADC value from the temperature sensor into an accurate temperature reading.
+- Formula: `True_Temperature = (Raw_ADC_Reading * Gain) + Offset`
+:::
+
+---
+
+## `$385` – BlueTooth State Input
+Maps a digital input pin to monitor the state of the Bluetooth module.
+
+:::info Context
+- This setting is for drivers/plugins that can read an external pin to determine if Bluetooth is active, paired, or in a specific state.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| Pin # | The hardware digital input pin number. |
+
+---
+
+## `$386` – Fan Port 0
+## `$387` – Fan Port 1
+## `$388` – Fan Port 2
+## `$389` – Fan Port 3
+Maps the physical output pins for up to four controllable fans.
+
+:::info Context
+- These settings define which I/O port controls each fan.
+- Fans can be linked to spindle state via `$483`.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| Pin # | The hardware digital output pin number. |
+
+---
+
+## `$390` – Laser Coolant Temp Port (Analog pin)
+Maps the analog input pin for reading the laser coolant temperature sensor.
+
+:::info Context
+- This tells the laser coolant control system which ADC pin to use for temperature feedback.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| Pin # | The hardware ADC pin number. |
+
+---
+
+## `$391` – Laser Coolant OK Port (Digital pin)
+Maps the digital input pin for the laser coolant flow switch.
+
+:::info Context
+- This input provides feedback on whether the coolant is actually flowing, essential for laser safety.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| Pin # | The hardware digital input pin number. |
+
+---
+
+## `$392` – Door Spindle On Delay (sec)
+Adds a delay after the safety door is closed before the spindle is automatically restarted.
+
+:::info Context
+- A safety feature used with the Safety Door (`$61`) system.
+- Provides a "grace period" after the door is closed before the spindle automatically turns back on.
+:::
+
+---
+
+## `$393` – Door Coolant On Delay (sec)
+Adds a mandatory delay after the safety door is closed before coolant outputs are re-activated.
+
+:::info Context
+- This is a safety feature, similar to `$392` (Door Spindle On Delay).
+- It prevents coolant from spraying unexpectedly immediately after the door is closed, giving the operator time to clear the area.
 :::
 
 | Value (sec) | Description |
 |:-----------:|:------------|
 | 0.0 - N     | The pause duration in seconds. |
 
-#### Common Examples
-*   **Machine with a Long Coolant Line:**
-    *   It takes 2.5 seconds for coolant to start flowing at the tool.
-    *   `$393=2.5`
-
-#### Tips & Tricks
-- This provides a more reliable way to ensure coolant is present than adding `G4` dwell commands to your G-code.
-- If this is a non-zero value, there will be a noticeable pause after every `M7`/`M8`.
-
+---
 ---
 
 ## `$394` – Spindle On Delay (sec)
@@ -3299,6 +4029,17 @@ Selects the default spindle to be used if not otherwise specified by a command.
 
 ---
 
+## `$396`, `$397` – WebUI Settings
+Configures behavior for the network-based Web User Interface.
+
+:::info Context
+- `$396`: **WebUI Timeout:** Sets a timeout for the WebUI session.
+- `$397`: **WebUI Auto-Report Interval:** Sets how often the WebUI receives an automatic status update from the controller.
+:::
+
+
+---
+
 ## `$398` – Planner Buffer Blocks
 Configures the size of the motion planner buffer.
 
@@ -3321,6 +4062,23 @@ Configures the size of the motion planner buffer.
 #### Tips & Tricks
 - If you notice your machine "stuttering" on complex 3D toolpaths or fast laser engraving jobs, increasing this value can often solve the problem by preventing the buffer from running empty.
 - Do not set this higher than the maximum supported by your board, as it can cause instability or a crash.
+
+---
+
+## `$399` – CANbus Baud Rate
+Sets the communication speed for an integrated CAN bus interface.
+
+:::info Context
+- This is for controllers that communicate with external devices (e.g., smart motor drivers, I/O expanders) over a CAN bus network.
+- The value must match the baud rate of all other devices on the CAN bus.
+:::
+
+| Index | Baud Rate |
+|:-----:|:----------|
+| 0     | 125 kbps  |
+| 1     | 250 kbps  |
+| 2     | 500 kbps  |
+| 3     | 1 Mbps    |
 
 ---
 
@@ -3369,28 +4127,69 @@ Sets the Counts Per Revolution (CPR) of the Encoder 0 hardware.
 
 ---
 
+## `$402` – `$449` – Encoder Settings (Extended)
+This range is reserved for additional encoder configurations beyond the primary Encoder 0 (`$400`, `$401`). It may be used for multiple MPGs, digital potentiometers, or other rotational input devices. The specific settings within this range are plugin- or driver-dependent.
+
+---
+
 ## `$450 - $459` – User Defined Slots
-Ten general-purpose "slots" that are not used by the core grblHAL firmware.
+Ten general-purpose "slots" that are for private custom settings values implemented by plugins
 
 :::info Context
-- These settings (`$450`-`$459`) are provided as persistent storage for your own custom data.
-- The most common use is to store values that are then read or used by NGC macros.
+- These settings (`$450`-`$459`) are provided as persistent storage for use within custom plugins
+- The most common use is to store settings that are then read or used by the plugin.
 :::
 
 | Value | Meaning |
 |:-----:|:--------|
 | Any   | Can store floating-point numbers or integers for use in macros. |
 
-#### Common Examples
-*   **Store a Safe Z-Height for a Macro:**
-    *   A macro for a tool change might need to know a safe height to retract to.
-    *   `$450=25.0` (Store 25.0mm)
-*   **Store a Probing Feed Rate:**
-    *   A custom probing macro could use this value for its feed rate.
-    *   `$450=150.0` (Store 150mm/min)
 
 #### Tips & Tricks
-- This is a powerful feature for creating flexible macros without hard-coding values. Keep a personal record of what you are using each slot for.
+- Do not use for plugins/customisations that are published and thus available for wide use
+-
+
+---
+
+## `$460` – VFD Modbus Address
+Sets the Modbus slave address for the primary VFD.
+
+:::info Context
+- This is used by VFD plugins (e.g., GS20, YL620A) to communicate with the VFD via Modbus RTU.
+- This address *must* match the ID configured in the VFD's parameters.
+- If multiple VFDs are on the same Modbus network, each needs a unique address.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| 1-247 | The unique Modbus slave ID of the VFD. |
+
+#### Common Examples
+*   **Typical VFD Address:**
+    *   `$460=1`
+
+#### Tips & Tricks
+- Consult your VFD's manual for its Modbus slave ID parameter.
+
+---
+
+## `$461` – VFD RPM/Hz Scaling
+Configures the RPM-to-frequency conversion for some VFD plugins.
+
+:::info Context
+- These settings are used by some VFD drivers (like GS20, YL620A) to convert the `S` command (in RPM) to the frequency (in Hz) that the VFD requires.
+- `$460`: VFD Modbus Address (This appears to be a duplicate of `$360` for some drivers).
+- `$461`: **RPM per Hz:** The core conversion factor.
+:::
+
+#### Common Examples for `$461`
+*   **2-pole spindle motor (50 Hz → 3000 RPM):**
+    *   `3000 RPM / 50 Hz = 60`.
+    *   `$461=60`
+*   **4-pole spindle motor (50 Hz → 1500 RPM):**
+    *   `1500 RPM / 50 Hz = 30`.
+    *   `$461=30`
+
 
 ---
 
@@ -3565,6 +4364,97 @@ Reserved slots for mapping additional Modbus registers.
 
 ---
 
+## `$472` – VFD 20 (Additional Modbus Register Mapping)
+## `$473` – VFD 21 (Additional Modbus Register Mapping)
+Reserved slots for mapping additional Modbus registers to extend VFD control or monitoring capabilities. Refer to `$470` for context.
+
+---
+
+## `$476` - `$479` – VFD Modbus Addresses
+Provides additional slots for defining Modbus addresses for up to four VFDs.
+
+:::info Context
+- This allows grblHAL to control multiple VFDs on the same Modbus network.
+- `$476`: Address for VFD 0
+- `$477`: Address for VFD 1
+- `$478`: Address for VFD 2
+- `$479`: Address for VFD 3
+:::
+
+---
+
+## `$480` – Fan 0 Off Delay
+Sets an "off delay" timer for a connected fan.
+
+:::info Context
+- This can be used as a "run-on" timer. After the fan is commanded to turn off, it will continue to run for this duration.
+- Useful for ensuring a component (like a spindle or laser) is fully cooled down after the job is complete.
+:::
+
+| Value (seconds) | Description |
+|:---------------:|:------------|
+| 0 - N           | The run-on time in seconds. |
+
+---
+
+## `$481` – Auto Report Interval (ms)
+Sets the interval for the automatic, unsolicited streaming of status reports.
+
+:::info Context
+- This is an advanced feature primarily for network-based connections.
+- When set to a non-zero value, the controller will automatically send a `?` status report at this interval without the GUI needing to request it.
+- This can reduce network traffic compared to a constant polling loop from the sender.
+:::
+
+| Value (ms) | Meaning | Description |
+|:----------:|:--------|:------------|
+| 0          | Disabled| Status reports are only sent when requested with `?`. (Default) |
+| 100 - N    | Interval | The time in milliseconds between each automatic report. |
+
+#### Common Examples
+*   **Stream a report 5 times per second:**
+    *   `$481=200`
+
+#### Tips & Tricks
+- This should only be enabled if your G-code sender is specifically designed to work with an auto-reporting stream. Using it with a standard polling sender will result in a flood of duplicate messages.
+
+---
+
+## `$482` – Timezone Offset
+Sets the timezone as a simple offset from UTC in minutes.
+
+:::info Context
+- This is a simpler alternative to the full POSIX TZ string in `$335`.
+- It is used to correct the UTC time from an NTP server to your local time.
+- It does **not** automatically handle Daylight Saving Time.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| -N to +N| The offset from UTC in minutes. |
+
+#### Common Examples
+*   **USA Eastern Standard Time (EST is UTC-5):**
+    *   -5 hours * 60 minutes/hour = -300 minutes.
+    *   `$482=-300`
+*   **Central European Time (CET is UTC+1):**
+    *   +1 hour * 60 minutes/hour = 60 minutes.
+    *   `$482=60`
+
+---
+
+
+## `$483` – Fan To Spindle Link
+Links a fan's operation directly to the spindle's state.
+
+:::info Context
+- This setting allows a fan to be automatically turned on whenever the spindle is running (`M3`/`M4`) and turned off when the spindle stops (`M5`).
+- This is commonly used for a spindle cooling fan or a dust collection vacuum that should only run when cutting.
+- The value is a **bitmask** linking a fan number to a spindle number.
+:::
+
+---
+
 ## `$484` – Unlock Required After E-Stop
 A safety feature that requires an explicit unlock command after an E-stop has been cleared by a reset.
 
@@ -3583,6 +4473,213 @@ A safety feature that requires an explicit unlock command after an E-stop has be
     *   `$484=1`
 
 ---
+
+## `$485` – Enable Tool Persistence
+Controls whether the last used tool number is remembered after a reset.
+
+:::info Context
+- If enabled, the controller will save the last active tool (`T` number) to memory.
+- When the controller reboots, that tool will be automatically re-activated, along with its associated offsets.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0     | Disabled |
+| 1     | Enabled |
+
+---
+
+## `$486` – Offset Lock
+A safety feature that prevents G-code commands from modifying work coordinate systems.
+
+:::info Context
+- When enabled, this setting blocks any G-code command that attempts to change a work offset (e.g., `G10 L2 Pn`).
+- This is a safety feature to prevent a running G-code program from accidentally overwriting your carefully set work zero positions.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0     | Disabled| `G10` commands are allowed to change offsets. |
+| 1     | Enabled | `G10` commands that would change offsets will trigger an error. |
+
+---
+
+## `$487`, `$488`, `$489` – Spindle I/O Port Remapping
+Allows remapping of the primary spindle's control pins to different physical I/O ports.
+
+:::info Context
+- This is an advanced hardware configuration setting.
+- It allows you to override the default board pinout and assign the spindle control signals to different pins.
+- This is useful for custom machine builds or when a default pin has been damaged.
+:::
+
+| Setting | Signal to Remap |
+|:--------|:----------------|
+| `$487`  | Spindle On/Enable Port |
+| `$488`  | Spindle Direction Port |
+| `$489`  | Spindle PWM Port |
+
+#### Tips & Tricks
+- You must know the I/O Port numbers for your specific controller.
+- Changing these without understanding your board's hardware can prevent your spindle from working.
+
+---
+
+
+---
+
+## `$490` - `$499` – Macro M-Code Mapping
+Assigns custom M-codes (from M100 upwards) to run specific G-code programs from the SD card.
+
+:::info Context
+- This is a powerful feature for creating custom M-codes that execute complex actions defined in a separate file.
+- `$490` corresponds to `M100`, `$491` to `M101`, and so on up to `$499` for `M109`.
+- The value of the setting is the **filename** of the G-code macro to be executed.
+:::
+
+| Setting | M-Code |
+|:--------|:-------|
+| `$490`  | M100   |
+| `$491`  | M101   |
+| ...     | ...    |
+| `$499`  | M109   |
+
+#### Common Examples
+*   **Run `toolchange.ngc` when M100 is called:**
+    *   `$490=toolchange.ngc`
+*   **Run `probe_center.ngc` when M101 is called:**
+    *   `$491=probe_center.ngc`
+
+#### Tips & Tricks
+- This allows you to create complex, reusable machine actions (like a full tool change sequence) and trigger them with a simple, single M-code.
+- The macro files must be present on the controller's SD card.
+
+---
+
+## `$500` - `$509` – MacroPort Input Mapping
+Triggers a specific macro to run when a physical input pin changes state.
+
+:::info Context
+- This allows you to connect physical buttons directly to your controller to run complex G-code macros.
+- `$500` corresponds to the "MacroPort 0" input pin, `$501` to "MacroPort 1", and so on.
+- The value of the setting is the **M-code number** of the macro to be executed.
+:::
+
+| Setting | Input Pin |
+|:--------|:----------|
+| `$500`  | MacroPort 0 |
+| `$501`  | MacroPort 1 |
+| ...     | ...       |
+| `$509`  | MacroPort 9 |
+
+#### Common Examples
+*   **Pressing a button on Port 0 runs M70:**
+    *   `$500=70`
+*   **Pressing a button on Port 1 runs M71:**
+    *   `$501=71`
+
+#### Tips & Tricks
+- This is different from `$590+` (Button Actions), which trigger built-in system actions. MacroPort triggers full G-code programs.
+- You must know the physical pin mapping for the MacroPort inputs on your specific controller board.
+
+
+---
+
+
+## `$510` - `$517` – Spindle Enable Mapping
+Assigns a specific spindle type to each of the 8 available spindle slots.
+
+:::info Context
+- grblHAL can support up to 8 different spindles (e.g., PWM, Relay, Modbus, etc.).
+- This block of settings determines which "driver" or type of spindle is assigned to each slot.
+- `$510`: Configuration for Spindle 0
+- `$511`: Configuration for Spindle 1
+- ... and so on.
+:::
+
+---
+
+## `$518` – Reserved
+This is an unused slot in the settings enum.
+
+---
+
+## `$519` – Encoder-to-Spindle Mapping
+Links a specific encoder to a specific spindle for closed-loop control.
+
+:::info Context
+- This setting tells the closed-loop spindle PID controller (`$80`-`$86`) which encoder to use as its feedback source.
+- For example, you might link Encoder 0 to Spindle 0.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0-N   | The index of the encoder to use. |
+
+---
+
+## `$520` - `$527` – Spindle Tool Start Offset
+Assigns a starting tool number for each spindle.
+
+:::info Context
+- This is used in multi-spindle or ATC setups.
+- It allows you to define a range of tool numbers that belong to a specific spindle.
+- For example, you could assign tools 1-10 to Spindle 0 and tools 11-20 to Spindle 1.
+:::
+
+---
+
+## `$530` – MQTT Broker IP Address
+Sets the IP address of the MQTT Broker for IoT integration.
+
+:::info Context
+- MQTT is a lightweight messaging protocol often used for IoT devices.
+- If your grblHAL build supports MQTT, this allows it to connect to an MQTT broker to publish status updates or receive commands.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The IP address of the MQTT Broker, e.g., "192.168.1.10". |
+
+---
+
+## `$531` – MQTT Broker Port
+Sets the port number for connecting to the MQTT Broker.
+
+:::info Context
+- The standard MQTT port is 1883.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| Port #| A valid TCP port number. |
+
+---
+
+## `$532` – MQTT Broker Username
+Sets the username for authenticating with the MQTT Broker.
+
+:::info Context
+- If your MQTT Broker requires authentication, enter the username here.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The username for MQTT authentication. |
+
+---
+
+## `$533` – MQTT Broker Password
+Sets the password for authenticating with the MQTT Broker.
+
+:::info Context
+- If your MQTT Broker requires authentication, enter the password here.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| String| The password for MQTT authentication. |
+
 ---
 
 ## `$534` – Output RS274/NGC Debug Messages
@@ -3611,15 +4708,49 @@ Enables debugging messages from the RS274/NGC Expressions inside Macros.
 #### Tips & Tricks
 - This setting is your best friend when trying to figure out why a complex macro or `O-word` subroutine isn't working as expected.
 
+## `$535` – Network MAC (Status Flag)
+Displays the MAC (Media Access Control) address of the primary network interface.
+
+:::info Context
+- This is a read-only hardware identifier for the network interface.
+- It is not a user-settable parameter.
+:::
+
+---
+
+## `$536` – RGB Strip Length 0
+## `$537` – RGB Strip Length 1
+Sets the number of LEDs in a connected RGB LED strip for two separate channels.
+
+:::info Context
+- These settings are for controlling addressable RGB LED strips, often used for machine status indicators or ambient lighting.
+- Each setting defines the length of a specific strip, allowing the controller to address individual LEDs.
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0-N   | The number of LEDs in the strip. |
+
+---
+
+
 ## `$538` – Fast Rotary "Go to G28" Behaviour
-Controls the behavior of rotary axes when a `G28` command is issued.
+
+Controls the behavior of rotary axes, particularly when executing a G28 command, to ensure the shortest path is taken or to manage continuous rotation.
 
 :::info Context
 - `G28` sends axes to a pre-defined home position.
 - This setting can modify how rotary axes handle this move, for example, by always taking the shortest path.
 :::
 
+
+#### Common Example
+`G91G28A0`  
+`G90`
+Return move should complete in half a rotation or less if enabled by setting `$538=1`
+
 ---
+
 
 ## `$539` – Spindle Off Delay (sec)
 Adds a mandatory delay after the spindle is turned off (`M5`).
@@ -3643,13 +4774,249 @@ Adds a mandatory delay after the spindle is turned off (`M5`).
 
 ---
 
-## `$673` – Coolant On Delay (sec)
-*This is a duplicate of `$393`. The `$393` setting is the standard one to use.*
+## `$546` – Panel Jog Speed Keypad
+Sets a specific jog speed preset used by an external control panel's keypad.
+
+:::info Context
+- This is part of the optional driver-implemented settings for external control panels (`$540`-`$579`).
+- It allows the panel to trigger a predefined jog speed, often used for a "fine" or "coarse" jog button.
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for keypad-triggered jog moves. |
 
 ---
 
-## `$681` – ModBus Serial Format (RTU parity/format)
-*This is a duplicate/alternative way to configure Modbus parameters, often superseded by `$362`.*
+## `$550` – Panel Jog Distance Keypad
+Sets a specific incremental jog distance preset used by an external control panel's keypad.
+
+:::info Context
+- This is part of the optional driver-implemented settings for external control panels.
+- It allows the panel to trigger a predefined jog distance (e.g., 0.001mm, 0.01mm, 0.1mm, 1mm).
+:::
+
+| Value (mm) | Description |
+|:----------:|:------------|
+| 0.001 - N  | The incremental distance for keypad-triggered jog steps. |
+
+---
+
+## `$551` – Panel Jog Accel Ramp
+Sets an acceleration ramp factor for jogging operations initiated from an external control panel.
+
+:::info Context
+- This is part of the optional driver-implemented settings for external control panels.
+- It can be used to provide a smoother or more aggressive acceleration profile specifically for manual jogging.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| 0-N   | An acceleration ramp factor, specific to the panel driver. |
+
+---
+
+## `$554` – Panel Encoder 1 Mode
+## `$555` – Panel Encoder 1 CPD
+## `$556` – Panel Encoder 2 Mode
+## `$557` – Panel Encoder 2 CPD
+## `$558` – Panel Encoder 3 Mode
+## `$559` – Panel Encoder 3 CPD
+These settings configure the operating mode and Counts Per Division (CPD) for additional encoders on an external control panel.
+
+:::info Context
+- These are part of the optional driver-implemented settings for external control panels.
+- `Mode`: Defines the function of the encoder (e.g., jog an axis, adjust overrides).
+- `CPD`: Sets the counts per division for the encoder, similar to `$401`.
+:::
+
+---
+
+## `$560` – `$579` – Panel & Pendant Settings (Extended)
+This range is reserved for further configuration options specific to external control panels and pendants, as implemented by various drivers.
+
+---
+
+## `$590` – `$599` – Button Action Mapping
+Assigns a specific system action to be performed when a physical input button is pressed.
+
+:::info Context
+- This allows direct mapping of physical buttons to internal grblHAL commands (e.g., `Reset`, `Feed Hold`, `Cycle Start`, `Home`).
+- This differs from `MacroPort` mapping (`$500+`) which triggers custom G-code macros.
+- Each setting corresponds to a button input (e.g., `$590` for Button 0, `$591` for Button 1, etc.). The value is an index representing the action.
+:::
+
+| Setting | Input Button |
+|:--------|:-------------|
+| `$590`  | Button 0     |
+| `$591`  | Button 1     |
+| ...     | ...          |
+| `$599`  | Button 9     |
+
+#### Tips & Tricks
+- The specific mapping of index values to actions is defined by the grblHAL core or active plugins. Consult driver documentation for available actions.
+
+---
+
+## `$600` – `$639` – Modbus TCP Settings
+This range is reserved for settings related to Modbus TCP/IP communication. This would typically involve configuring IP addresses, ports, and slave IDs for Modbus TCP devices on a network. The specific settings and their functions are dependent on the Modbus TCP plugin implementation.
+
+---
+
+
+## `$640` - `$649` – Kinematics Slots
+Settings used to pass parameters to a specialized machine kinematics module.
+
+:::info Context
+- Most CNC machines use a simple "Cartesian" kinematic model where X, Y, and Z are independent.
+- grblHAL can support more complex machine types, such as **CoreXY**, SCARA, or robotic arms, through a kinematics module.
+- These settings are used to pass the necessary geometric parameters (like arm lengths, motor positions, or belt paths) to the active kinematics module.
+:::
+
+| Setting | Example Use |
+|:--------|:------------|
+| `$640`  | Parameter 0 | For a SCARA arm, this might be the length of the first arm segment. |
+| `$641`  | Parameter 1 | For a SCARA arm, this might be the length of the second arm segment. |
+
+#### Tips & Tricks
+- For standard Cartesian machines, these settings have no effect and can be ignored.
+- If you are using a special kinematics build of grblHAL (like CoreXY), you must configure these settings according to the documentation for that specific kinematic model.
+
+---
+
+## `$650` – Filesystem Options (FSOptions)
+Configures options related to the filesystem, typically on an SD card.
+
+:::info Context
+- This setting can control behaviors like whether to automatically run a file named `autoexec.g` on startup.
+- The exact options available are implementation-dependent.
+:::
+
+---
+
+## `$651` – `$670` – Stepper Driver Settings
+This range is reserved for individual stepper driver-specific configurations. This might include settings for motor current, microstepping, stealthChop/spreadCycle modes, or other advanced Trinamic features that are applied per individual driver rather than per axis. The exact parameters and their meaning are dependent on the specific stepper driver plugin.
+
+---
+
+## `$671` – Invert Home Pins (mask)
+Inverts the logic for the homing switch inputs.
+
+:::info Context
+- This setting is a **duplicate** of `$5`. It is provided for legacy compatibility.
+- It is recommended to use `$5` for all new configurations.
+:::
+
+---
+
+## `$672` – Reserved 672
+This is a reserved setting slot.
+
+---
+
+## `$673` – Coolant On Delay (sec)
+Adds a mandatory delay after a generic coolant M-command is executed, before motion resumes.
+
+:::info Context
+- Some coolant systems, especially mist systems or those with long hoses, need time for the coolant to reach the cutting tool.
+- This setting forces grblHAL to pause for a specified time after an `M7` or `M8` command is processed.
+:::
+
+| Value (sec) | Description |
+|:-----------:|:------------|
+| 0.0 - N     | The pause duration in seconds. |
+
+#### Tips & Tricks
+- This provides a more reliable way to ensure coolant is present than adding `G4` dwell commands to your G-code.
+- If this is a non-zero value, there will be a noticeable pause after every `M7`/`M8`.
+- This is distinct from `$393` (Door Coolant On Delay) which is specifically triggered by a safety door event.
+
+---
+
+## `$674` – THC Options (mask)
+Configures advanced options for the THC (Torch Height Control) plugin.
+
+:::info Context
+- This is a **bitmask** that enables or disables specific behaviors within the THC system.
+- The available options are defined by the specific THC plugin being used.
+- This is a companion to the main THC settings in the `$350+` block.
+:::
+
+---
+
+## `$675` – Macro ATC Options
+Configures options for an Automatic Tool Changer (ATC) that is controlled by G-code macros.
+
+:::info Context
+- This setting is used when `$341` is set to a mode that triggers a macro for tool changes.
+- It can control behaviors like whether to automatically start the spindle after a tool change is complete.
+:::
+
+---
+
+## `$676` – Reset Actions (mask)
+Configures additional actions to be performed when the controller is reset.
+
+:::info Context
+- This is a bitmask allowing custom behavior on a soft or hard reset, such as clearing specific states or triggering a macro.
+:::
+
+---
+
+
+## `$677` – Stepper Spindle Options
+Configures options for a "stepper spindle," where the spindle is driven by a stepper motor.
+
+:::info Context
+- An advanced feature for controlling a spindle that requires step and direction signals, similar to a motion axis.
+- This allows for precise, synchronized control of the spindle's rotation.
+:::
+
+---
+
+## `$678` & `$679` – Relay Port Mapping
+Assigns a physical output port to control a relay for secondary probe functions.
+
+:::info Context
+- This allows grblHAL to control a relay in response to a probe event.
+- `$678`: Relay Port for Toolsetter
+- `$679`: Relay Port for Probe 2
+- A common use is to activate a cleaning air blast before a toolsetter probe.
+:::
+
+---
+
+## `$680` – Stepper Enable Delay (ms)
+Sets a delay (in milliseconds) after the stepper motors are enabled before any motion is allowed.
+
+:::info Context
+- Some stepper drivers or motor configurations might require a short stabilization time after receiving the enable signal before they can reliably accept step pulses.
+:::
+
+| Value (ms) | Description |
+|:----------:|:------------|
+| 0 - N      | The delay duration in milliseconds. |
+
+---
+
+
+## `$681` – Modbus Stream Format
+Configures the data format used for Modbus streaming or reporting.
+
+:::info Context
+- This is an advanced setting for Modbus-enabled systems, defining how data values are encoded or presented in Modbus communications.
+:::
+
+---
+
+
+## `$682` – THC Feed Factor
+Sets a factor to adjust the Z-axis feed rate for THC correction moves.
+
+:::info Context
+- A tuning parameter for the THC plugin.
+- It can be used to scale the speed of the THC's Z-axis adjustments to match the capabilities of the machine and the cutting parameters.
+:::
 
 ---
 
@@ -3730,6 +5097,21 @@ Sets the max (`$730`) and min (`$731`) spindle speed for the **secondary** PWM c
 
 ---
 
+## `$732` – Spindle Mode 1 (Secondary Spindle Mode)
+Enables or disables a specific mode (e.g., Laser Mode) for the **secondary** PWM spindle.
+
+:::info Context
+- This is the direct equivalent of `$32` (Laser Mode), but applies to the secondary spindle (often controlled by `M3.1`, `M4.1`, `M5.1`).
+- When enabled (`1`), it optimizes motion control for laser cutting/engraving, similar to the primary laser mode.
+:::
+
+| Value | Meaning | Description |
+|:-----:|:--------|:------------|
+| 0     | Disabled| Standard spindle operation for the secondary spindle. |
+| 1     | Enabled | Optimized for lasers on the secondary spindle. |
+
+---
+
 ## `$733` – PWM2 Spindle PWM Frequency (Hz)
 Sets the frequency of the **secondary** PWM signal.
 
@@ -3757,3 +5139,160 @@ Sets the raw PWM output range for the **secondary** channel.
     *   `$734=0`
     *   `$735=0`
     *   `$736=1000`
+
+---
+
+## `$737` – Linear Spindle 1 Piece 1
+## `$738` – Linear Spindle 1 Piece 2
+## `$739` – Linear Spindle 1 Piece 3
+## `$740` – Linear Spindle 1 Piece 4
+Configures a multi-point calibration curve to correct a non-linear response from a **secondary** spindle controller or VFD.
+
+:::info Context
+- These are the direct equivalents of `$66` - `$69`, but for the secondary PWM output.
+- They define correction points for the secondary spindle's PWM-to-RPM (or PWM-to-voltage) linearity.
+- The format for each setting is a packed value: `(RPM << 16) | PWM`.
+:::
+
+---
+
+## `$742` & `$743` – Motor Warnings Enable & Invert
+Configures the inputs for non-critical motor warnings.
+
+:::info Context
+- Some advanced motor drivers provide a "warning" signal that can indicate a potential issue (like high temperature) before it becomes a critical fault.
+- grblHAL can monitor these signals.
+:::
+
+| Setting | Description |
+|:--------|:------------|
+| `$742`  | **Motor Warnings Enable (mask):** A bitmask to enable monitoring for each axis. |
+| `$743`  | **Motor Warnings Invert (mask):** A bitmask to invert the logic of the warning signal. |
+
+---
+
+## `$744` & `$745` – Motor Faults Enable & Invert
+Configures the inputs for critical motor fault detection.
+
+:::info Context
+- Many industrial stepper and servo drivers provide a "fault" or "alarm" output signal that activates on critical errors (over-voltage, stall, etc.).
+- grblHAL can monitor these signals and trigger an immediate machine alarm.
+- This is a critical safety feature for high-reliability machines.
+:::
+
+| Setting | Description |
+|:--------|:------------|
+| `$744`  | **Motor Faults Enable (mask):** A bitmask to enable monitoring for each axis. (X=1, Y=2, Z=4, etc.) |
+| `$745`  | **Motor Faults Invert (mask):** A bitmask to invert the logic of the fault signal (active-high vs. active-low). |
+
+#### Common Examples
+*   **Enable Fault Detection on X, Y, Z:**
+    *   `$744=7`
+*   **Fault Signal is Active-Low (Needs Inversion) on X, Y, Z:**
+    *   `$745=7`
+
+#### Tips & Tricks
+- You must have the fault output from your motor drivers wired to the correct input pins on your controller for this feature to work.
+- Consult your controller's documentation for the motor fault pin assignments.
+
+---
+
+## `$750` - `$759` – Event Action Mapping
+Assigns a specific action to be performed when a system event occurs.
+
+:::info Context
+- This is the core of the grblHAL Event System, a powerful tool for automation. It allows you to trigger actions (like running a macro or toggling a pin) based on system events.
+- Each setting (`$750` to `$759`) corresponds to a specific event. The value you enter determines the action to take.
+- An action can be an M-code (`70` = `M70`), a system command (`1001` = `Run`), or a custom action.
+:::
+
+| Setting | Event Trigger |
+|:--------|:--------------|
+| `$750`  | On Tool Change (`M6`) |
+| `$751`  | On Program End (`M2`/`M30`) |
+| `$752`  | On Homing Cycle End (`$H`) |
+| `$753`  | On Coolant Change (Flood/Mist) |
+| `$754`  | On Spindle State Change (On/Off) |
+| `$755`  | On Jog Start |
+| `$756`  | On Jog End |
+| `$757`  | On Laser On |
+| `$758`  | On Laser Off |
+| `$759`  | On Startup |
+
+#### Common Examples
+*   **Run a "tool change complete" macro (M80) after M6:**
+    *   `$750=80`
+*   **Run a "present workpiece" macro (M90) at the end of every job:**
+    *   `$751=90`
+*   **Run a "go to front" macro (M95) after homing is finished:**
+    *   `$752=95`
+
+#### Tips & Tricks
+- This is a highly flexible way to automate repetitive tasks. You can create complex G-code macros and have them triggered automatically by machine events.
+
+---
+
+## `$760` - `$769` – Event I/O Port Mapping
+Assigns a physical I/O port to be controlled directly by a system event.
+
+:::info Context
+- This allows an event to directly toggle a physical output pin, without needing a macro.
+- The setting (`$760`-`$769`) corresponds to the event number from the `$75x` block.
+- The value you enter is the I/O Port number you want to control.
+:::
+
+| Setting | Event to Map |
+|:--------|:-------------|
+| `$760`  | Event 0 (Tool Change) |
+| `$761`  | Event 1 (Program End) |
+| ...     | ... |
+| `$769`  | Event 9 (Startup) |
+
+#### Common Examples
+*   **Toggle I/O Port 5 at the end of every program:**
+    *   Perhaps Port 5 is connected to a "job finished" indicator light.
+    *   `$761=5`
+
+#### Tips & Tricks
+- This is an advanced feature for deep hardware integration, providing faster I/O control than a macro.
+- You must know the I/O port numbers for your specific controller board.
+
+---
+
+## `$770` & `$771` – Spindle Offset X & Y
+Sets an X and Y offset for the currently active spindle.
+
+:::info Context
+- This is a key feature for machines with multiple tools that are not parfocal (i.e., they have different X/Y positions relative to the main spindle).
+- It allows you to define the physical offset of a secondary tool (like a laser or engraving bit) from the primary tool.
+- When you switch to a tool that has an offset defined, grblHAL will automatically apply this offset to all subsequent moves.
+:::
+
+| Setting | Description |
+|:--------|:------------|
+| `$770`  | **Spindle Offset X:** The X-axis distance from the primary spindle to this tool. |
+| `$771`  | **Spindle Offset Y:** The Y-axis distance from the primary spindle to this tool. |
+
+#### Common Examples
+*   **A laser is mounted 50.5mm to the right of the spindle:**
+    *   `$770=50.5`
+    *   `$771=0.0`
+
+#### Tips & Tricks
+- These offsets are applied *per spindle*. You would set them after selecting the appropriate spindle with `$SPINDLE=n`.
+- This feature is often used in conjunction with a camera for alignment.
+
+---
+
+## `$772` – Spindle Offset Options
+Configures options for the spindle offset feature.
+
+:::info Context
+- This setting is a **bitmask** that modifies the behavior of the spindle offset system.
+- The available options are implementation-dependent.
+:::
+
+---
+
+## `$773` – `$779` – Reserved Spindle Offset Settings
+This range is explicitly reserved for future spindle offset-related settings.
