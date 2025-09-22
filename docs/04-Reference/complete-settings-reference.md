@@ -4774,6 +4774,91 @@ Adds a mandatory delay after the spindle is turned off (`M5`).
 
 ---
 
+## `$541` – Panel Modbus Address
+Sets the Modbus slave address for an external control panel if it uses Modbus for communication.
+
+:::info Context
+- This setting is part of the optional driver-implemented settings for external control panels (`$540`-`$579`).
+- It must match the Modbus slave ID configured on the physical control panel.
+:::
+
+| Value | Meaning |
+|:------|:--------|
+| 1-247 | The unique Modbus slave ID of the panel. |
+
+---
+
+## `$542` – Panel Update Interval
+Sets the interval (in milliseconds) at which an external control panel or pendant requests or receives status updates from the controller.
+
+:::info Context
+- This setting is part of the optional driver-implemented settings for external control panels (`$540`-`$579`).
+- A lower value provides more real-time feedback but increases communication traffic.
+:::
+
+| Value (ms) | Meaning |
+|:----------:|:--------|
+| 10 - N     | The update interval in milliseconds. |
+
+---
+
+## `$543` – Jog Speed x1
+Sets the feed rate (in mm/min) to be used for the slowest "x1" step-style jogging moves from an external control panel.
+
+:::info Context
+- This is an optional, driver-specific setting, primarily used by pendants and jog wheels. It may not be available on all boards.
+- It defines the speed for precise, incremental jogs (e.g., when the "x1" jog increment is selected).
+- Works in conjunction with `$547` (Jog Distance x1).
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for short, precise jogging moves. |
+
+#### Common Examples
+*   **Fine Positioning Speed:**
+    *   `$543=50`
+
+---
+
+## `$544` – Jog Speed x10
+Sets the feed rate (in mm/min) to be used for the medium "x10" step-style jogging moves from an external control panel.
+
+:::info Context
+- This is an optional, driver-specific setting for pendants and jog wheels.
+- It defines the speed for incremental jogs when the "x10" jog increment is selected.
+- Works in conjunction with `$548` (Jog Distance x10).
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for medium, incremental jogging moves. |
+
+#### Common Examples
+*   **Controlled Medium Jog:**
+    *   `$544=250`
+
+---
+
+## `$545` – Jog Speed x100
+Sets the feed rate (in mm/min) to be used for the fastest "x100" step-style jogging moves from an external control panel.
+
+:::info Context
+- This is an optional, driver-specific setting for pendants and jog wheels.
+- It defines the speed for incremental jogs when the "x100" jog increment is selected.
+- Works in conjunction with `$549` (Jog Distance x100).
+:::
+
+| Value (mm/min) | Meaning |
+|:--------------:|:--------|
+| 1 - N          | The feed rate for fast, incremental jogging moves. |
+
+#### Common Examples
+*   **Rapid Incremental Positioning:**
+    *   `$545=1000`
+
+---
+
 ## `$546` – Panel Jog Speed Keypad
 Sets a specific jog speed preset used by an external control panel's keypad.
 
@@ -4915,7 +5000,7 @@ This is a reserved setting slot.
 ---
 
 ## `$673` – Coolant On Delay (sec)
-Adds a mandatory delay after a generic coolant M-command is executed, before motion resumes.
+Adds a mandatory delay after a generic coolant M-command (`M7`, `M8`) is executed, before motion resumes.
 
 :::info Context
 - Some coolant systems, especially mist systems or those with long hoses, need time for the coolant to reach the cutting tool.
@@ -4929,7 +5014,7 @@ Adds a mandatory delay after a generic coolant M-command is executed, before mot
 #### Tips & Tricks
 - This provides a more reliable way to ensure coolant is present than adding `G4` dwell commands to your G-code.
 - If this is a non-zero value, there will be a noticeable pause after every `M7`/`M8`.
-- This is distinct from `$393` (Door Coolant On Delay) which is specifically triggered by a safety door event.
+- This is distinct from `$393` (Door Coolant On Delay), which is specifically triggered by a safety door event.
 
 ---
 
