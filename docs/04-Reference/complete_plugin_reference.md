@@ -11,7 +11,7 @@ Each section includes the original repository URL for reference.
 ## Plugin: Plasma / Torch Height Control (THC)
 Github Repository: https://github.com/grblHAL/Plugin_plasma
 
-### $-Settings
+#### $-Settings
 
 | Setting | Description | Example |
 |---------|-------------|---------|
@@ -23,7 +23,7 @@ Github Repository: https://github.com/grblHAL/Plugin_plasma
 | `$355` | Voltage threshold | `0.5` → threshold value |
 | `$356` | Velocity Anti-Dive threshold (%) | `20` |
 
-### M-Codes
+#### M-Codes
 
 | M-Code | Syntax | Description |
 |--------|--------|-------------|
@@ -34,7 +34,7 @@ Github Repository: https://github.com/grblHAL/Plugin_plasma
 | `M67` | `M67 E[port] Q[percent]` | Immediate velocity reduction |
 | `M68` | `M68 E[port] Q[percent]` | Velocity reduction synchronized |
 
-### Example
+#### Example
 ```gcode
 ; Plasma THC example
 $350=2          ; THC mode: arc ok + up/down
@@ -55,14 +55,14 @@ M64 P0          ; Disable THC after cut
 ## Plugin: Fan Control (`Plugin_fans`)
 Github Repository: https://github.com/grblHAL/Plugin_fans
 
-### M-Codes
+#### M-Codes
 
 | M-Code | Syntax | Description |
 |--------|--------|-------------|
 | `M106` | `M106 P[fan] S[speed]` | Turn fan ON, set PWM speed (0–255) |
 | `M107` | `M107 P[fan]` | Turn fan OFF |
 
-### $-Settings
+#### $-Settings
 
 | $-Setting | Description |
 |-----------|-------------|
@@ -70,7 +70,7 @@ Github Repository: https://github.com/grblHAL/Plugin_fans
 | `$480` | Auto-off delay (minutes) |
 | `$483` | Bitmask: link fans to spindle enable |
 
-### Example
+#### Example
 ```gcode
 ; Turn on fan 0 at PWM 200
 M106 P0 S200
@@ -88,7 +88,7 @@ Github Repository: https://github.com/grblHAL/Plugins_misc
 |---------|--------|-------------|
 | `M150` | `M150 [R[intensity]] [U[intensity]] [B[intensity]] [S[strip]]` | Set LED color/brightness for a strip |
 
-### Example
+#### Example
 ```gcode
 ; Set strip 1 to bright red
 M150 R255 U0 B0 S1
@@ -109,7 +109,7 @@ Github Repository: https://github.com/grblHAL/Plugins_misc
 |---------|--------|-------------|
 | `M220` | `M220 [B] [R] [S[percent]]` | Feed override: B=backup, R=restore, S=set % |
 
-### Example
+#### Example
 ```gcode
 ; Set feed override to 80%
 M220 S80
@@ -127,7 +127,7 @@ Github Repository: https://github.com/grblHAL/Plugins_misc
 |---------|--------|-------------|
 | `M280` | `M280 P[servo] S[position]` | Control analog/PWM servo: P=index, S=angle 0–180° |
 
-### Example
+#### Example
 ```gcode
 ; Move servo 0 to 90 degrees
 M280 P0 S90
@@ -150,7 +150,7 @@ Github Repository: https://github.com/grblHAL/Plugin_OpenPNP
 | `M205` | `M205 [axes]` | Set jerk |
 | `M400` | `M400` | Wait for motion buffer empty |
 
-### Example
+#### Example
 ```gcode
 ; Turn on digital output 2
 M42 P2 S1
@@ -173,7 +173,7 @@ Github Repository: https://github.com/grblHAL/Plugin_SD_card
 | `$FR` | `$FR` | Enable rewind mode |
 | `$FD=[filename]` | `$FD=[filename]` | Delete file |
 
-### Example
+#### Example
 ```gcode
 ; Mount SD card
 $FM
@@ -203,7 +203,7 @@ Github Repository: https://github.com/grblHAL/Plugins_motor
 | `M913` | `M913 [axes]` | Hybrid threshold |
 | `M914` | `M914 [axes]` | Homing sensitivity |
 
-### Example
+#### Example
 ```gcode
 ; Check driver status on X/Y
 M122 XY
@@ -228,7 +228,7 @@ Github Repository: https://github.com/grblHAL/Plugins_spindle
 | `M104` | `M104 P[n]` | Select spindle |
 | `M51` | `M51 [options]` | Enable spindle features |
 
-### Example
+#### Example
 ```gcode
 ; Turn on spindle clockwise at 1200 RPM
 M3 S1200
@@ -250,7 +250,7 @@ Github Repository: https://github.com/grblHAL/Plugins_laser
 | `M3/M4` | `M3/M4 S[power]` | Laser on with PWM power |
 | `M5` | `M5` | Laser off |
 
-### Example
+#### Example
 ```gcode
 ; Laser on at 50% power
 M3 S128
@@ -268,7 +268,7 @@ Github Repository: https://github.com/grblHAL/Plugin_encoder
 |-----------|-------------|
 | `$701-$704` | Encoder pins and scaling per axis |
 
-### Example
+#### Example
 ```gcode
 ; Read spindle encoder position
 M114
@@ -283,7 +283,7 @@ Github Repository: https://github.com/grblHAL/Plugin_EEPROM
 |---------|-------------|
 | Storage | Extended EEPROM for custom variables |
 
-### Example
+#### Example
 ```gcode
 ; Read/write custom EEPROM values (plugin-specific)
 ; Example depends on machine configuration
@@ -298,7 +298,7 @@ Github Repository: https://github.com/grblHAL/Plugin_WebUI
 |---------|-------------|
 | HTTP / WebSocket API | Exposes existing M/G-codes via web interface |
 
-### Example
+#### Example
 ```gcode
 ; No new M-codes; use M3/M4/M5 via WebUI API
 ```
