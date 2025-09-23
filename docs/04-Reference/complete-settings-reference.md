@@ -1409,19 +1409,103 @@ Sets the feed rate (in mm/min) to be used for continuous fast jogging.
 
 ---
 
-## `$53` – `$55` – Jog Distances
-Sets the incremental distances for step-style jogging.
+---
+
+## `$53` – Jog Step Distance
+Sets the smallest incremental distance for step-style jogging.
 
 :::info Context
-- These optional, driver-specific settings define the distance for each "click" or "step" of a jog command.
-- `$53`: Jog Step Distance (e.g., 0.01mm)
-- `$54`: Jog Slow Distance (e.g., 0.1mm)
-- `$55`: Jog Fast Distance (e.g., 1.0mm)
+- This optional, driver-specific setting defines the distance for each "click" or "step" of a jog command when the "step" (or "x1") increment is selected.
+- It's typically used for very fine adjustments, like 0.01mm or 0.001mm.
 :::
 
 | Value (mm) | Description |
 |:----------:|:------------|
-| 0.001 - N  | The incremental distance for each type of jog step. |
+| 0.001 - N  | The incremental distance for the smallest jog step. |
+
+#### Common Examples
+*   **Default for fine adjustments:**
+    *   `$53=0.01`
+*   **For ultra-fine positioning:**
+    *   `$53=0.001`
+
+#### Tips & Tricks
+- This setting is crucial for precise zeroing and probing.
+- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
+
+---
+
+---
+
+## `$53` – Jog Step Distance
+Sets the smallest incremental distance for step-style jogging.
+
+:::info Context
+- This optional, driver-specific setting defines the distance for each "click" or "step" of a jog command when the "step" (or "x1") increment is selected.
+- It's typically used for very fine adjustments, like 0.01mm or 0.001mm.
+:::
+
+| Value (mm) | Description |
+|:----------:|:------------|
+| 0.001 - N  | The incremental distance for the smallest jog step. |
+
+#### Common Examples
+*   **Default for fine adjustments:**
+    *   `$53=0.01`
+*   **For ultra-fine positioning:**
+    *   `$53=0.001`
+
+#### Tips & Tricks
+- This setting is crucial for precise zeroing and probing.
+- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
+
+---
+
+## `$54` – Jog Slow Distance
+Sets the medium incremental distance for step-style jogging.
+
+:::info Context
+- This optional, driver-specific setting defines the distance for each "click" or "step" of a jog command when the "slow" (or "x10") increment is selected.
+- It provides a balance between fine adjustment and covering distance quickly.
+:::
+
+| Value (mm) | Description |
+|:----------:|:------------|
+| 0.01 - N   | The incremental distance for medium jog steps. |
+
+#### Common Examples
+*   **Default for general positioning:**
+    *   `$54=0.1`
+*   **For slightly coarser adjustments:**
+    *   `$54=0.5`
+
+#### Tips & Tricks
+- This setting is often used for moving the tool into a general area before switching to finer jog increments.
+- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
+
+---
+
+## `$55` – Jog Fast Distance
+Sets the largest incremental distance for step-style jogging.
+
+:::info Context
+- This optional, driver-specific setting defines the distance for each "click" or "step" of a jog command when the "fast" (or "x100") increment is selected.
+- It's used for quickly traversing significant distances across the machine's work area.
+:::
+
+| Value (mm) | Description |
+|:----------:|:------------|
+| 0.1 - N    | The incremental distance for the largest jog step. |
+
+#### Common Examples
+*   **Default for rapid positioning:**
+    *   `$55=1.0`
+*   **For very large machines or long rapid moves:**
+    *   `$55=10.0`
+
+#### Tips & Tricks
+- This setting helps quickly move the tool to the vicinity of the workpiece.
+- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
 
 ---
 
@@ -1785,6 +1869,7 @@ The master switch to select the operating mode for the WiFi module.
 :::info Context
 - This setting determines how the WiFi on your controller will function.
 - It is only available on boards with a WiFi module.
+- For some platforms (e.g., ESP32), an additional "Access Point/Station" mode is available.
 :::
 
 | Value | Meaning | Description |
@@ -1792,6 +1877,7 @@ The master switch to select the operating mode for the WiFi module.
 | 0     | Off     | The WiFi module is completely disabled. |
 | 1     | Access Point (AP) Mode | The controller creates its own WiFi network. Use settings `$310`-`$312`. |
 | 2     | Station (STA) Mode | The controller connects to an existing WiFi network. Use settings `$320`-`$325`. (Most common) |
+| 3     | Access Point/Station (AP/STA) Mode** | The controller simultaneously creates its own WiFi network and connects to an existing one. (Platform-specific, ESP32 only) |
 
 #### Common Examples
 *   **Connect to your workshop WiFi:**
@@ -1811,7 +1897,6 @@ The name (SSID) of the existing WiFi network that you want the controller to con
 :::info Context
 - This setting is only used when `$73=2` (Station Mode).
 - This is the **primary setting** for connecting to your network. It must be exact.
-- This setting is functionally the same as `$320`. `$74` is often the core setting, while `$320` can be an alias for drivers with multiple network interfaces.
 :::
 
 | Value | Meaning |
@@ -1830,7 +1915,6 @@ The password for the existing WiFi network.
 :::info Context
 - This setting is only used when `$73=2` (Station Mode).
 - This must be the correct password for the WiFi network specified in `$74`.
-- This is functionally the same as `$321`.
 :::
 
 | Value | Meaning |
@@ -1845,7 +1929,6 @@ Sets the name of the WiFi network (the SSID) that the controller will broadcast 
 :::info Context
 - This setting is only used when `$73=1` (Access Point Mode).
 - This is the network name you will look for on your computer or phone.
-- This is functionally the same as `$310`.
 :::
 
 | Value | Meaning |
@@ -1860,7 +1943,6 @@ Sets the password for the WiFi network created by the controller in AP mode.
 :::info Context
 - This setting is only used when `$73=1` (Access Point Mode).
 - A password of at least 8 characters is required for a secure WPA2 connection.
-- This is functionally the same as `$311`.
 :::
 
 | Value | Meaning |
@@ -2940,83 +3022,60 @@ Configures the network port for the FTP service on the second network interface.
 
 ---
 
-
-
-
-## `$320` – WiFi STA SSID
-The name of the existing WiFi network (the SSID) that you want the controller to connect to.
+## `$320` – Hostname 3 (Network Interface 3 Hostname)
+Sets the machine's hostname for the third network interface.
 
 :::info Context
-- This must **exactly** match the name of your router's WiFi network, including capitalization and symbols.
-- This is the most critical setting for getting your controller on your local network.
+- This setting configures the hostname for a specific network interface, which is **normally used for WiFi Station mode** on controllers that support multiple network interfaces (e.g., ESP32 in AP/STA mode).
+- This hostname is separate from the primary hostname (`$300`).
 :::
 
 | Value | Meaning |
 |:------|:--------|
-| String| The SSID of your existing WiFi network, e.g., "MyShopWiFi". |
+| String| The hostname for this network interface, e.g., "grblHAL-STA". |
 
 #### Common Examples
-*   **Connecting to your home network:**
-    *   `$320=MyHomeInternet`
+*   **Assigning a specific hostname to the WiFi Station interface:**
+    *   `$320=MyCNC_STA`
 
 #### Tips & Tricks
-- WiFi network names are case-sensitive. "MyWifi" is different from "mywifi".
-- If the controller fails to connect, an incorrect SSID is the most common cause. Double-check for typos.
+- While this interface is "normally used for WiFi Station," this specific setting sets its *hostname*, not its SSID. The WiFi Station SSID is set by `$74`.
 
 ---
 
-## `$321` – WiFi STA Password
-The password for the existing WiFi network.
+## `$321` – IP Mode 3 (Network Interface 3 IP Mode)
+Selects the method the controller uses to obtain an IP address for the third network interface.
 
 :::info Context
-- This must be the correct password for the WiFi network specified in `$320`.
-- Passwords are masked (`(masked)`) when you list settings for security.
-:::
-
-| Value | Meaning |
-|:------|:--------|
-| String| The WiFi password. |
-
-#### Common Examples
-*   **Setting the password for your network:**
-    *   `$321=MyRouterPassword456`
-
-#### Tips & Tricks
-- Like the SSID, the password is case-sensitive and must be entered exactly.
-- This is the second most common cause of connection failure.
-
----
-
-## `$322` – WiFi STA IP Mode
-Selects the method the controller uses to obtain an IP address on the WiFi network.
-
-:::info Context
-- This works exactly like the Ethernet IP Mode (`$301`).
-- **DHCP** lets your router assign an IP automatically.
-- **Static** requires you to manually assign a permanent IP.
+- This setting configures the IP addressing mode for the network interface that is **normally used for WiFi Station mode**.
+- It works similarly to `$301` (Ethernet IP Mode).
+- **DHCP** (recommended) lets your router automatically assign an address.
+- **Static** requires manual configuration of IP Address, Gateway, and Netmask.
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 0     | Static | You must manually set the IP (`$323`), Gateway (`$324`), and Netmask (`$325`). |
-| -1    | DHCP   | The controller asks your router for an IP address. (Recommended) |
+| 0     | Static | You must manually set the IP (`$322`), Gateway (`$323`), and Netmask (`$324`) for this interface. |
+| 1     | DHCP   | The controller asks your router for an IP address. (Recommended for dynamic networks) |
+| 2     | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
 
 #### Common Examples
-*   **Connecting to a Home/Office Router:**
-    *   This is the easiest and most reliable option.
-    *   `$322=-1`
+*   **For dynamically assigned IP for the WiFi Station interface:**
+    *   `$321=1` (DHCP)
+*   **For a fixed IP address for the WiFi Station interface:**
+    *   `$321=0` (Static)
 
 #### Tips & Tricks
-- It is strongly recommended to use DHCP (`-1`) for simplicity and to avoid IP address conflicts on your network.
+- For most home networks, using DHCP (`1`) is recommended for simplicity and to avoid IP address conflicts.
 
 ---
 
-## `$323` – WiFi STA IP Address
-Manually sets the static IP address for the controller on the WiFi network.
+## `$322` – IP Address 3 (Network Interface 3 IP Address)
+Manually sets the static IP address for the third network interface.
 
 :::info Context
-- This setting is **only** used if `$322=0` (Static IP Mode).
-- This is the permanent address your controller will use on your WiFi network.
+- This setting is **only** used if `$321=0` (Static IP Mode for the interface normally used for WiFi Station).
+- This will be the permanent IP address assigned to this specific network interface.
 :::
 
 | Value | Meaning |
@@ -3024,21 +3083,20 @@ Manually sets the static IP address for the controller on the WiFi network.
 | String| The IP address in dot-decimal notation, e.g., "192.168.1.201". |
 
 #### Common Examples
-*   **Typical Static IP on a Home Network:**
-    *   Make sure this address is outside your router's DHCP assignment range to prevent conflicts.
-    *   `$323=192.168.1.201`
+*   **Typical Static IP for a WiFi Station interface:**
+    *   `$322=192.168.1.201`
 
 #### Tips & Tricks
-- If you choose a static IP, consider configuring your router to reserve that IP for the controller's MAC address to further prevent conflicts.
+- Ensure this IP address is unique on your network segment and does not conflict with other devices or your router's DHCP assignment range.
 
 ---
 
-## `$324` – WiFi STA Gateway
-Manually sets the Gateway (router) IP address for the WiFi connection.
+## `$323` – Gateway 3 (Network Interface 3 Gateway)
+Manually sets the Gateway (router) IP address for the third network interface.
 
 :::info Context
-- This setting is **only** used if `$322=0` (Static IP Mode).
-- This is the IP address of your WiFi router.
+- This setting is **only** used if `$321=0` (Static IP Mode for the interface normally used for WiFi Station).
+- This is the IP address of the gateway device (usually your router) for this network interface.
 - It is required for features like NTP time synchronization (`$332`) to work.
 :::
 
@@ -3047,17 +3105,17 @@ Manually sets the Gateway (router) IP address for the WiFi connection.
 | String| Your router's IP address, e.g., "192.168.1.1". |
 
 #### Common Examples
-*   **Typical Home Router Address:**
-    *   `$324=192.168.1.1`
+*   **Typical home router address:**
+    *   `$323=192.168.1.1`
 
 ---
 
-## `$325` – WiFi STA Netmask
-Manually sets the Subnet Mask for the WiFi connection.
+## `$324` – Netmask 3 (Network Interface 3 Netmask)
+Manually sets the Subnet Mask for the third network interface.
 
 :::info Context
-- This setting is **only** used if `$322=0` (Static IP Mode).
-- For almost all home and small office networks, this is `255.255.255.0`.
+- This setting is **only** used if `$321=0` (Static IP Mode for the interface normally used for WiFi Station).
+- The Netmask defines the size of the local network segment this interface is on.
 :::
 
 | Value | Meaning |
@@ -3065,8 +3123,22 @@ Manually sets the Subnet Mask for the WiFi connection.
 | String| The Subnet Mask, e.g., "255.255.255.0". |
 
 #### Common Examples
-*   **Standard Home/Office Network:**
-    *   `$325=255.255.255.0`
+*   **Standard subnet mask:**
+    *   `$324=255.255.255.0`
+
+---
+
+## `$325` – Telnet Port 3 (Network Interface 3 Telnet Port)
+Configures the network port for the Telnet service on the third network interface.
+
+:::info Context
+- This applies to the network interface that is **normally used for WiFi Station mode**.
+- This allows for a separate Telnet port if this interface is used for communication and requires a distinct port.
+:::
+
+| Value | Meaning | Description |
+|:------|:--------|:------------|
+| Port #| A valid TCP port number. |
 
 ---
 
@@ -3074,8 +3146,8 @@ Manually sets the Subnet Mask for the WiFi connection.
 Configures the network port for the HTTP service on the third network interface.
 
 :::info Context
-- This would typically be used for a third network interface or specific to a WiFi Station mode if that's how the driver maps it.
-- For documentation purposes, this aligns with `Setting_HttpPort3`.
+- This applies to the network interface that is **normally used for WiFi Station mode**.
+- This allows for a separate HTTP port if this interface is used for serving a WebUI or other HTTP-based services.
 :::
 
 | Value | Meaning | Description |
@@ -3088,7 +3160,8 @@ Configures the network port for the HTTP service on the third network interface.
 Configures the network port for the WebSocket service on the third network interface.
 
 :::info Context
-- For documentation purposes, this aligns with `Setting_WebSocketPort3`.
+- This applies to the network interface that is **normally used for WiFi Station mode**.
+- This allows for a separate WebSocket port if this interface is used for real-time communication with a GUI or other applications.
 :::
 
 | Value | Meaning | Description |
@@ -3101,7 +3174,8 @@ Configures the network port for the WebSocket service on the third network inter
 Configures the network port for the FTP service on the third network interface.
 
 :::info Context
-- For documentation purposes, this aligns with `Setting_FtpPort3`.
+- This applies to the network interface that is **normally used for WiFi Station mode**.
+- This allows for a separate FTP port if this interface is used for file transfers to/from an SD card.
 :::
 
 | Value | Meaning | Description |
@@ -3109,7 +3183,6 @@ Configures the network port for the FTP service on the third network interface.
 | Port #| A valid TCP port number. |
 
 ---
-
 
 ## `$330` – WebUI Admin Password
 Sets the password for the `admin` account.
@@ -3261,16 +3334,35 @@ Stores the BSSID (MAC address) of the WiFi access point.
 
 ---
 
-## `$338` – Trinamic Driver (flag)
-A general flag to enable or disable features specific to Trinamic stepper drivers (TMC2209, TMC5160, etc.).
+## `$338` – Trinamic Driver Enable (mask)
+Configures which axes are controlled by Trinamic stepper drivers and enables their advanced features.
 
 :::info Context
-- This setting typically acts as a master switch for the TMC-related features, such as current control (`$210` - `$212`) and StallGuard for sensorless homing (`$339`).
-- Its exact bitmask values are driver-dependent.
+- This setting is a **bitmask** used to specify which individual axes are equipped with Trinamic stepper drivers (e.g., TMC2209, TMC5160).
+- Enabling a bit for an axis allows grblHAL to utilize Trinamic-specific features for that axis, such as programmable current control (`$210`-`$217`) and StallGuard for sensorless homing (`$339`).
+- This setting is typically available for boards which have pluggable or software-configurable drivers.
 :::
 
+| Bit | Value | Axis |
+|:---:|:-----:|:-----|
+| 0   | 1     | X-Axis has Trinamic driver |
+| 1   | 2     | Y-Axis has Trinamic driver |
+| 2   | 4     | Z-Axis has Trinamic driver |
+| 3   | 8     | A-Axis has Trinamic driver |
+| 4   | 16    | B-Axis has Trinamic driver |
+| 5   | 32    | C-Axis has Trinamic driver |
+| 6   | 64    | U-Axis has Trinamic driver |
+| 7   | 128   | V-Axis has Trinamic driver |
+
+#### Common Examples
+*   **X and Y axes using Trinamic drivers:**
+    *   `$338=3` (1 for X + 2 for Y)
+*   **All primary 3 axes using Trinamic drivers:**
+    *   `$338=7` (1 for X + 2 for Y + 4 for Z)
+
 #### Tips & Tricks
-- Only enable this if your board uses Trinamic drivers and you intend to use their advanced features.
+- Only enable the bits corresponding to axes that genuinely use Trinamic drivers on your board and for which you intend to use their advanced features. Incorrectly enabling this can lead to unexpected behavior.
+- Refer to your specific board's documentation to confirm which axes are wired to Trinamic-compatible drivers.
 
 ---
 
@@ -3282,6 +3374,10 @@ The master switch to enable sensorless homing for each axis.
 - This setting tells grblHAL to use the Trinamic StallGuard feature for homing instead of physical limit switches.
 - This is a **bitmask**: add together the values of the axes you want to home without switches.
 - It requires the StallGuard thresholds (`$200`-`$22x`) to be properly tuned.
+:::
+
+:::danger Note
+StallGuard should not be used unless the machine manufacturer has tuned the associated Trinamic parameters beforehand - the procedure for that is not simple. If enabled it is for advanced users that has a good understanding of how to tune the parameters.
 :::
 
 | Bit | Value | Axis |
@@ -3348,13 +3444,18 @@ Selects the procedure to be used for an `M6` tool change command.
 |:-----:|:--------|:------------|
 | 0     | Disabled| `M6` commands are ignored. |
 | 1     | Manual  | Pauses the machine and waits for the user to change the tool and press Cycle Start. |
-| 2+    | Automatic| Initiates a predefined ATC macro or sequence. |
+| 2+    | Semi automatic | Initiates a predefined tool change sequence |
 
 #### Common Examples
 *   **Simple Manual Tool Change:**
     *   `$341=1`
-*   **ATC Controlled by a Macro:**
+*   **A predefined tool change sequence**
     *   `$341=2`
+
+
+#### Tips & Tricks
+- Semi Automatic tool change sequences are hardcoded in the core
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
 
 ---
 
@@ -3376,6 +3477,9 @@ Sets the maximum distance the Z-axis will travel when searching for the toolsett
 *   **Typical Toolsetter Setup:**
     *   `$342=-50.0`
 
+#### Tips & Tricks
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
+
 ---
 
 ## `$343` – Tool Change Probe Feed (Locate Feed)
@@ -3395,6 +3499,10 @@ Sets the slower "locate" feed rate for the final, precise touch on the toolsette
 #### Common Examples
 *   **High-Precision Toolsetter:**
     *   `$343=25`
+
+
+#### Tips & Tricks
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
 
 ---
 
@@ -3416,6 +3524,10 @@ Sets the faster feed rate for the initial search for the toolsetter.
 *   **Standard Toolsetter Setup:**
     *   `$344=400`
 
+
+#### Tips & Tricks
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
+
 ---
 
 ## `$345` – Tool Change Probe Pull-off / Retract
@@ -3436,6 +3548,10 @@ Sets the distance the Z-axis retracts after the probe is complete.
 *   **Standard Toolsetter Setup:**
     *   `$345=2.0`
 
+
+#### Tips & Tricks
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
+
 ---
 
 ## `$346` – Tool Change Options (mask)
@@ -3443,10 +3559,14 @@ Configures advanced options for the tool change process.
 
 :::info Context
 - This is a **bitmask** that enables or disables specific behaviors during an `M6` sequence.
-- The available options are defined by the specific ATC plugin or driver being used.
+- The available options depends on the tool change mode selected by `$341`.
 - This setting applies to Manual/Semi-Automatic Toolchanges, they are not used when the ATC is enabled.
 - It requires the sender to handle the new TOOL state: https://github.com/grblHAL/core/wiki/Manual,-semi-automatic-and-automatic-tool-change
 :::
+
+#### Tips & Tricks
+- `$341` - `$346` are not available if an ATC is configured. See `$675`.
+
 
 ---
 
@@ -3730,6 +3850,9 @@ Inverts the logic for the generic digital input pins.
 #### Tips & Tricks
 - This is an advanced setting used when integrating custom hardware or macros that read digital inputs.
 - You must know the I/O port number that corresponds to the physical pin on your controller.
+- Use the `$PINS` command to list all pins including auxiliary I/O ports.
+- `$PINSTATE` command can be used to check pin capabilities and current state.
+
 
 ---
 
@@ -3748,6 +3871,13 @@ Disables the internal pull-up resistors on the generic digital input pins.
 | 2   | 4     | I/O Port 2               |
 | ... | ...   | And so on...             |
 
+#### Tips & Tricks
+- Use the `$PINS` command to list all pins including auxiliary I/O ports.
+- `$PINSTATE` command can be used to check pin capabilities and current state.
+- [M62, M63, M64 and M65 – Synchronized and Asynchronous I/O](../Reference/complete-g-m-code-reference#m62-m63-m64-and--m65--synchronized-and-asynchronous-io)  
+-  [M66 – Wait for Input Signal](../Reference/complete-g-m-code-reference#m66--wait-for-input-signal)  
+-  [M67, M68 – Set Analog Output](../Reference/complete-g-m-code-reference#m67-m68--set-analog-output)  
+
 ---
 
 ## `$372` – Invert I/O Port Outputs (mask)
@@ -3765,6 +3895,13 @@ Inverts the logic for the generic digital output pins.
 | 2   | 4     | I/O Port 2       |
 | ... | ...   | And so on...     |
 
+#### Tips & Tricks
+- Use the `$PINS` command to list all pins including auxiliary I/O ports.
+- `$PINSTATE` command can be used to check pin capabilities and current state.
+- [M62, M63, M64 and M65 – Synchronized and Asynchronous I/O](../Reference/complete-g-m-code-reference#m62-m63-m64-and--m65--synchronized-and-asynchronous-io)  
+-  [M66 – Wait for Input Signal](../Reference/complete-g-m-code-reference#m66--wait-for-input-signal)  
+-  [M67, M68 – Set Analog Output](../Reference/complete-g-m-code-reference#m67-m68--set-analog-output)  
+
 ---
 
 ## `$373` – IO Open-Drain Enable
@@ -3774,6 +3911,14 @@ Configures generic output pins to operate in "open-drain" mode.
 - This is an advanced electrical configuration. In open-drain mode, the pin can only pull the signal to Ground (low). It cannot drive it High. An external pull-up resistor is required.
 - This is useful for interfacing with devices that operate at a different voltage level or for connecting multiple devices to a single signal line.
 :::
+
+#### Tips & Tricks
+- Use the `$PINS` command to list all pins including auxiliary I/O ports.
+- `$PINSTATE` command can be used to check pin capabilities and current state.
+- [M62, M63, M64 and M65 – Synchronized and Asynchronous I/O](../Reference/complete-g-m-code-reference#m62-m63-m64-and--m65--synchronized-and-asynchronous-io)  
+-  [M66 – Wait for Input Signal](../Reference/complete-g-m-code-reference#m66--wait-for-input-signal)  
+-  [M67, M68 – Set Analog Output](../Reference/complete-g-m-code-reference#m67-m68--set-analog-output)  
+
 
 ---
 
@@ -3853,13 +3998,35 @@ Identifies which axes are rotary axes, as opposed to linear axes.
 
 ---
 
-## `$377` – BlueTooth Init OK (Status Flag)
-A read-only status flag that indicates whether the Bluetooth module initialized successfully.
+## `$377` – Bluetooth Module Status (Config Flag for Auto-Configuration)
+Manages the initialization state of an external Bluetooth module
 
 :::info Context
-- This is not a user-settable parameter. It's a diagnostic output.
-- A value of `1` typically means the module is ready; `0` means it failed to initialize.
+- This setting is specifically for external UART-connected Bluetooth modules. It is **not** applicable for Bluetooth functionality provided directly by the controller's chipset.
+- It is used by the Bluetooth plugin to control and report on the module's initialization status.
+- Setting it to `0` typically signals the plugin to attempt (or re-attempt) auto-configuration of the external Bluetooth module. A successful auto-configuration process will then set this value to `1`.
 :::
+
+:::info Pins
+To achieve this an UART port and an interrupt capable auxillary input pin is required - the input pin has to be connected to the module STATE pin (See `$385`). The plugin will claim the highest numbered Aux input pin, this can be found by either checking the board map file or listing the available pins with the $pins system command.
+:::
+
+
+
+| Value | Meaning |
+|:-----:|:--------|
+| 0     | Signals the Bluetooth plugin to attempt auto-configuration/initialization of the external module. |
+| 1     | Indicates the external Bluetooth module has been successfully initialized (set by the plugin). |
+
+#### Auto configuration
+
+Ensure the $377 setting is set to 0 (it can be found in the Bluetooth group if your sender supports grouping of settings). Power up the controller and the module while pressing down the AT-mode switch on the module. This will change the controller baud rate to 38400 and it will then send the AT commands required for configuration. Reports will be sent to the default com port indicating success or failure. Success is also indicated by $377 beeing set to 1. After auto configuration is completed cycle power to both the module and the controller to start normal operation.
+
+#### Manual configuration
+If the module is already configured for correct operation (baud rate set to 115200 baud) then automatic switching can be enabled by setting $377 to 1.
+
+#### Tips & Tricks
+- For a comprehensive guide, refer to the [grblHAL Bluetooth Plugin documentation](https://github.com/grblHAL/Plugins_Bluetooth/#auto-configure).
 
 ---
 
@@ -3908,7 +4075,7 @@ Calibration parameters for the analog-to-digital converter (ADC) used to read th
 Maps a digital input pin to monitor the state of the Bluetooth module.
 
 :::info Context
-- This setting is for drivers/plugins that can read an external pin to determine if Bluetooth is active, paired, or in a specific state.
+Used for switching control to/from the Bluetooth data stream when a sender connects/disconnects
 :::
 
 | Value | Meaning |
@@ -3993,6 +4160,12 @@ Adds a mandatory delay after a spindle start command is executed, before motion 
 - It forces grblHAL to pause for a specified time after an `M3` or `M4` command.
 :::
 
+:::tip Note
+When "spindle-at-speed" is configured by `$340` this setting is ignored
+:::
+
+
+
 | Value (sec) | Description |
 |:-----------:|:------------|
 | 0.0 - N     | The pause duration in seconds. |
@@ -4007,6 +4180,8 @@ Adds a mandatory delay after a spindle start command is executed, before motion 
 #### Tips & Tricks
 - Using this setting is much safer than relying on `G4` dwell commands in G-code, as it prevents the tool from plunging into the material before the spindle is at full speed.
 - Time how long it takes for your spindle to reach its typical operating speed and set this value accordingly, adding a small safety margin.
+- Also see `G65P6` which turns off all spindle delays for the next M3, M4 and M5 command. Useful for ATCs which use the spindle to lock/unlock the spindle collet nut.
+- The reason for having both a general delay and a door open delay is that the general delay is not needed (nor wanted) if G4 is used for spindle delay in the g-code.
 
 ---
 
@@ -4046,12 +4221,12 @@ Configures the size of the motion planner buffer.
 :::info Context
 - The planner buffer is where grblHAL stores upcoming motion blocks. This allows it to "look ahead" to calculate smooth accelerations and manage cornering speeds.
 - A larger buffer allows for smoother motion on complex paths with many small line segments (like 3D carving or raster engraving).
-- The maximum size is limited by the available RAM on your controller.
+- The maximum size is limited by the available RAM on your controllerm or capped to a max of 1000 blocks
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 16-N  | The number of motion blocks to buffer. |
+| 16-1000  | The number of motion blocks to buffer. |
 
 #### Common Examples
 *   **Standard Controller (e.g., STM32F4xx):**
@@ -4060,8 +4235,7 @@ Configures the size of the motion planner buffer.
     *   `$398=64`
 
 #### Tips & Tricks
-- If you notice your machine "stuttering" on complex 3D toolpaths or fast laser engraving jobs, increasing this value can often solve the problem by preventing the buffer from running empty.
-- Do not set this higher than the maximum supported by your board, as it can cause instability or a crash.
+- The maximum useful value depends on the processor speed and whether it has a FPU or not. This since the planner buffer is continuously processed to determine the optimal feed rate. Since a larger buffer takes longer to process there will be a point where increasing the buffer size will lead to reduced performance.
 
 ---
 
@@ -4142,12 +4316,11 @@ Ten general-purpose "slots" that are for private custom settings values implemen
 
 | Value | Meaning |
 |:-----:|:--------|
-| Any   | Can store floating-point numbers or integers for use in macros. |
+| Any   | Can store floating-point numbers or integers for use in plugins. The data type for each is declared by the plugin itself |
 
 
 #### Tips & Tricks
-- Do not use for plugins/customisations that are published and thus available for wide use
--
+- Do not use for plugins/customizations that are published and thus available for wide use
 
 ---
 
@@ -4190,6 +4363,10 @@ Configures the RPM-to-frequency conversion for some VFD plugins.
     *   `1500 RPM / 50 Hz = 30`.
     *   `$461=30`
 
+
+---
+
+## `$462` - `$473` - reserved for VFD spindle parameters. Currently some are defined and used by the `MODVFD VFD` driver.
 
 ---
 
@@ -4388,12 +4565,15 @@ Sets an "off delay" timer for a connected fan.
 
 :::info Context
 - This can be used as a "run-on" timer. After the fan is commanded to turn off, it will continue to run for this duration.
-- Useful for ensuring a component (like a spindle or laser) is fully cooled down after the job is complete.
 :::
 
 | Value (seconds) | Description |
 |:---------------:|:------------|
 | 0 - N           | The run-on time in seconds. |
+
+#### Tips & Tricks
+- Useful for ensuring a component (like a spindle or laser) is fully cooled down after the job is complete.
+- Can be used to ensure all the smoke is ventilated from an enclosed laser machine for example
 
 ---
 
@@ -4417,6 +4597,8 @@ Sets the interval for the automatic, unsolicited streaming of status reports.
 
 #### Tips & Tricks
 - This should only be enabled if your G-code sender is specifically designed to work with an auto-reporting stream. Using it with a standard polling sender will result in a flood of duplicate messages.
+- May also be useful for pendants (pendant firmware needs ability to be configured not to send realtime polls)
+- `0x8C` Realtime command can be used to toggle auto real time report mode on/off, available when the auto real time report is enabled. The current state can be queried. ioSender turns it off when connected and restores it on disconnect.
 
 ---
 
@@ -4445,12 +4627,12 @@ Sets the timezone as a simple offset from UTC in minutes.
 
 
 ## `$483` – Fan To Spindle Link
-Links a fan's operation directly to the spindle's state.
+Links a fan's operation directly to the spindle or laser's state.
 
 :::info Context
-- This setting allows a fan to be automatically turned on whenever the spindle is running (`M3`/`M4`) and turned off when the spindle stops (`M5`).
-- This is commonly used for a spindle cooling fan or a dust collection vacuum that should only run when cutting.
-- The value is a **bitmask** linking a fan number to a spindle number.
+- This setting allows a fan to be automatically turned on whenever the spindle/laser is running (`M3`/`M4`) and turned off when the spindle stops (`M5`).
+- This is commonly used for a spindle/laser cooling fan or a dust collection vacuum that should only run when cutting.
+- The value is a **bitmask** linking a fan number to a spindle/tool head number.
 :::
 
 ---
@@ -4466,7 +4648,7 @@ A safety feature that requires an explicit unlock command after an E-stop has be
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| The machine is IDLE and ready for commands immediately after reset. |
-| 1     | Enabled | The machine enters an ALARM state after reset, requiring `$X` to unlock. (Safer) |
+| 1     | Enabled (Default) | The machine enters an ALARM state after reset, requiring `$X` to unlock. (Safer) |
 
 #### Common Examples
 *   **For Enhanced Safety:**
@@ -4489,23 +4671,40 @@ Controls whether the last used tool number is remembered after a reset.
 
 ---
 
-## `$486` – Offset Lock
-A safety feature that prevents G-code commands from modifying work coordinate systems.
+## `$486` – Offset Lock (mask)
+A safety feature that prevents G-code commands from modifying specific work coordinate systems.
 
 :::info Context
-- When enabled, this setting blocks any G-code command that attempts to change a work offset (e.g., `G10 L2 Pn`).
-- This is a safety feature to prevent a running G-code program from accidentally overwriting your carefully set work zero positions.
+- When enabled, this setting blocks any G-code command (e.g., `G10 Lx`) that attempts to change the offset of selected work coordinate systems.
+- This is a safety feature to prevent a running G-code program from accidentally overwriting your carefully set work zero positions for critical coordinate systems.
+- This is a **bitmask**: add together the values of the G59.x work coordinate systems you want to protect from modification.
 :::
 
-| Value | Meaning |
-|:-----:|:--------|
-| 0     | Disabled| `G10` commands are allowed to change offsets. |
-| 1     | Enabled | `G10` commands that would change offsets will trigger an error. |
+| Bit | Value | Work Coordinate System to Lock |
+|:---:|:-----:|:-------------------------------|
+| 0   | 1     | Lock G59.1 offset             |
+| 1   | 2     | Lock G59.2 offset             |
+| 2   | 4     | Lock G59.3 offset             |
+
+#### Common Examples
+*   **Default (No offsets locked):**
+    *   `$486=0`
+*   **Lock G59.3 (often used for toolsetter):**
+    *   `$486=4`
+*   **Lock G59.1 and G59.2:**
+    *   `$486=3` (1 for G59.1 + 2 for G59.2)
+
+#### Tips & Tricks
+- This is particularly useful if G59.3 is designated for your toolsetter location, preventing accidental changes to its reference point during a job.
+- If a `G10` command attempts to modify a locked offset, it will trigger an error.
 
 ---
 
-## `$487`, `$488`, `$489` – Spindle I/O Port Remapping
-Allows remapping of the primary spindle's control pins to different physical I/O ports.
+
+---
+
+## `$487`, `$488` – Spindle I/O Port Remapping
+Allows remapping of the optional on/off spindle (type 9 and 10) control pins to different physical I/O ports.
 
 :::info Context
 - This is an advanced hardware configuration setting.
@@ -4517,7 +4716,7 @@ Allows remapping of the primary spindle's control pins to different physical I/O
 |:--------|:----------------|
 | `$487`  | Spindle On/Enable Port |
 | `$488`  | Spindle Direction Port |
-| `$489`  | Spindle PWM Port |
+
 
 #### Tips & Tricks
 - You must know the I/O Port numbers for your specific controller.
@@ -5029,13 +5228,28 @@ Configures advanced options for the THC (Torch Height Control) plugin.
 
 ---
 
-## `$675` – Macro ATC Options
-Configures options for an Automatic Tool Changer (ATC) that is controlled by G-code macros.
+## `$675` – Macro ATC Options (mask)
+Configures advanced options for an Automatic Tool Changer (ATC) that is controlled by G-code macros.
 
 :::info Context
-- This setting is used when `$341` is set to a mode that triggers a macro for tool changes.
-- It can control behaviors like whether to automatically start the spindle after a tool change is complete.
+- This setting is a **bitmask** used when `$341` (Tool Change Mode) is configured to utilize G-code macros for tool changes.
+- It provides fine-grained control over specific behaviors during the macro-driven tool change process, such as handling `M6 T0` commands and error reporting for missing macros.
 :::
+
+| Bit | Value | Option | Description |
+|:---:|:-----:|:-------|:------------|
+| 0   | 1     | Execute M6 T0 | By default, an `M6 T0` command (tool change to tool 0) is not sent to the `tc.macro`. Setting this bit enables the `tc.macro` to execute for `M6 T0`. |
+| 1   | 2     | Fail M6 if tc.macro not found | If this bit is set, grblHAL will raise an error (alarm) on an `M6` command if the `tc.macro` file is not found on the SD card or if the SD card is not mounted. |
+
+#### Common Examples
+*   **Default behavior (M6 T0 ignored by macro, no macro file check):**
+    *   `$675=0`
+*   **Allow M6 T0 to trigger macro, and fail if macro not found:**
+    *   `$675=3` (1 for Execute M6 T0 + 2 for Fail M6 if tc.macro not found)
+
+#### Tips & Tricks
+- Use the "Fail M6 if tc.macro not found" option (`$675=2` or `3`) to ensure robust error handling in production environments where tool change macros are critical.
+- Ensure your `tc.macro` file is correctly named and located on the SD card if you are using macro-based ATC.
 
 ---
 
