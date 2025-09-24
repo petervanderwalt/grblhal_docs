@@ -4724,66 +4724,75 @@ Allows remapping of the optional on/off spindle (type 9 and 10) control pins to 
 
 ---
 
-
----
-
-## `$490` - `$499` – Macro M-Code Mapping
-Assigns custom M-codes (from M100 upwards) to run specific G-code programs from the SD card.
+## `$490` - `$499` – Macro M-Code Mapping (EEPROM/Flash)
+Assigns custom M-codes (from M100 upwards) to execute specific G-code sequences directly stored in the controller's settings.
 
 :::info Context
-- This is a powerful feature for creating custom M-codes that execute complex actions defined in a separate file.
+- This is a powerful feature primarily used by the **Keypad Macro plugin** to associate custom G-code sequences with M-codes, which can then be triggered by physical button presses (via `$500+` MacroPort inputs or a keypad plugin).
 - `$490` corresponds to `M100`, `$491` to `M101`, and so on up to `$499` for `M109`.
-- The value of the setting is the **filename** of the G-code macro to be executed.
+- The **value of the setting is the actual G-code sequence** to be executed, stored directly in the controller's EEPROM (or flash emulation). These stored macros have a **limited length** due to storage constraints.
+- Multiple G-code blocks can be defined within a single setting by separating them with a vertical bar (`|`).
 :::
 
-| Setting | M-Code |
-|:--------|:-------|
-| `$490`  | M100   |
-| `$491`  | M101   |
-| ...     | ...    |
-| `$499`  | M109   |
+| Setting | M-Code | Description |
+|:--------|:-------|:------------|
+| `$490`  | M100   | Executes the G-code sequence stored in setting $490 |
+| `$491`  | M101   | Executes the G-code sequence stored in setting $491 |
+| ...     | ...    | ...         |
+| `$499`  | M109   | Executes the G-code sequence stored in setting $499 |
 
 #### Common Examples
-*   **Run `toolchange.ngc` when M100 is called:**
-    *   `$490=toolchange.ngc`
-*   **Run `probe_center.ngc` when M101 is called:**
-    *   `$491=probe_center.ngc`
+*   **Move to a origin position when M100 is called:**
+    *   `$490=G90 G0 Z0 X0 Y0`
+*   **Perform a simple Z probe when M101 is called:**
+    *   `$491=G91 G38.2 Z-10 F100`
 
 #### Tips & Tricks
-- This allows you to create complex, reusable machine actions (like a full tool change sequence) and trigger them with a simple, single M-code.
-- The macro files must be present on the controller's SD card.
+- Due to length limitations of macros stored in settings, for **longer or more complex macros**, it is recommended to store them as `macro` files on the SD card. You can then call these SD card files from within an `$49x` macro using the `G65 P<filename>` command.
+- For example, if you have a `500.macro` file on the SD card, you could set `$490=G65 P500`.
+- These macros are most effective when combined with the MacroPort Input Mapping (`$500+`) or the Keypad plugin for physical button activation.
 
 ---
 
-## `$500` - `$509` – MacroPort Input Mapping
-Triggers a specific macro to run when a physical input pin changes state.
+---
+
+## `$590` - `$599` – Button Action Mapping (MacroPort)
+Assigns a specific system action to be performed when a physical input mapped to a MacroPort is triggered.
 
 :::info Context
-- This allows you to connect physical buttons directly to your controller to run complex G-code macros.
-- `$500` corresponds to the "MacroPort 0" input pin, `$501` to "MacroPort 1", and so on.
-- The value of the setting is the **M-code number** of the macro to be executed.
+- These settings define the action that grblHAL will take when a physical input pin (configured in `$500`-`$509`) for a given MacroPort index is activated.
+- This mapping allows physical buttons or external signals to trigger either custom G-code macros or predefined real-time system commands.
+- `$590` defines the action for MacroPort 0, `$591` for MacroPort 1, and so on, up to `$599` for MacroPort 9.
 :::
 
-| Setting | Input Pin |
-|:--------|:----------|
-| `$500`  | MacroPort 0 |
-| `$501`  | MacroPort 1 |
-| ...     | ...       |
-| `$509`  | MacroPort 9 |
+| Value | Action Description |
+|:-----:|:-------------------|
+| **0** | **Run Associated Macro:** Executes the G-code macro defined in the corresponding `$49x` setting (e.g., if `$590=0`, MacroPort 0 triggers the G-code from `$490`, which is M100). |
+| 1     | Cycle Start        | Initiates or resumes the G-code program (`0x81` real-time command). |
+| 2     | Feed Hold          | Pauses the current G-code program (`0x85` real-time command). |
+| 3     | Park               | Triggers the parking cycle (`0x84` real-time command). |
+| 4     | Reset              | Performs a soft reset of the controller (`0x18` real-time command). |
+| 5     | Spindle Stop (during feed hold) | Disables the spindle output if currently active during a feed hold. |
+| 6     | Mist Toggle        | Toggles the mist coolant output. |
+| 7     | Flood Toggle       | Toggles the flood coolant output. |
+| 8     | Probe Connected Toggle | Toggles the internal "probe connected" flag. |
+| 9     | Optional Stop Toggle | Toggles the optional stop (`M1`) functionality. |
+| 10    | Single Block Mode Toggle | Toggles single-block execution mode. |
 
 #### Common Examples
-*   **Pressing a button on Port 0 runs M70:**
-    *   `$500=70`
-*   **Pressing a button on Port 1 runs M71:**
-    *   `$501=71`
+*   **Pressing a button on MacroPort 0 runs its custom macro (M100):**
+    *   `$590=0` (`$490` contains the `M100` G-code)
+*   **Pressing a button on MacroPort 1 triggers a Feed Hold:**
+    *   `$591=2`
+*   **Pressing a button on MacroPort 2 triggers a Cycle Start:**
+    *   `$592=1`
 
 #### Tips & Tricks
-- This is different from `$590+` (Button Actions), which trigger built-in system actions. MacroPort triggers full G-code programs.
-- You must know the physical pin mapping for the MacroPort inputs on your specific controller board.
-
+- This system provides immense flexibility for customizing physical control panels and pendants.
+- You can mix and match, having some buttons trigger custom macros (value `0`) and others trigger built-in grblHAL functions (values `1`-`10`).
+- Ensure the G-code for any macro you intend to run (when `$59x=0`) is correctly defined in the corresponding `$49x` setting.
 
 ---
-
 
 ## `$510` - `$517` – Spindle Enable Mapping
 Assigns a specific spindle type to each of the 8 available spindle slots.
@@ -4836,6 +4845,10 @@ Sets the IP address of the MQTT Broker for IoT integration.
 - If your grblHAL build supports MQTT, this allows it to connect to an MQTT broker to publish status updates or receive commands.
 :::
 
+:::danger
+grblHAL has no higher level MQTT functionality, custom plugin code has to be added to make use of the protocol.
+:::
+
 | Value | Meaning |
 |:------|:--------|
 | String| The IP address of the MQTT Broker, e.g., "192.168.1.10". |
@@ -4848,6 +4861,11 @@ Sets the port number for connecting to the MQTT Broker.
 :::info Context
 - The standard MQTT port is 1883.
 :::
+
+:::danger
+grblHAL has no higher level MQTT functionality, custom plugin code has to be added to make use of the protocol.
+:::
+
 
 | Value | Meaning |
 |:------|:--------|
@@ -4862,6 +4880,11 @@ Sets the username for authenticating with the MQTT Broker.
 - If your MQTT Broker requires authentication, enter the username here.
 :::
 
+:::danger
+grblHAL has no higher level MQTT functionality, custom plugin code has to be added to make use of the protocol.
+:::
+
+
 | Value | Meaning |
 |:------|:--------|
 | String| The username for MQTT authentication. |
@@ -4875,6 +4898,11 @@ Sets the password for authenticating with the MQTT Broker.
 - If your MQTT Broker requires authentication, enter the password here.
 :::
 
+:::danger
+grblHAL has no higher level MQTT functionality, custom plugin code has to be added to make use of the protocol.
+:::
+
+
 | Value | Meaning |
 |:------|:--------|
 | String| The password for MQTT authentication. |
@@ -4887,13 +4915,13 @@ Enables debugging messages from the RS274/NGC Expressions inside Macros.
 :::info Context
 - This is a diagnostic tool for developers and advanced users writing Macros that uses **RS274/NGC expressions**.
 - The RS274/NGC interpreter is what enables powerful features like `O-words` (macros/subroutines), variables (e.g., `#100`), mathematical expressions, and flow control (`IF/ELSE`, `WHILE`).
-- When enabled, this setting allows you to use `(debug, ...)` logs from within your macros
-- It should be **disabled** during normal operation as it creates a large amount of serial traffic and can slow down execution.
+- When enabled, this setting allows `(debug, ...)` logs from within your macros to print to the Serial console
+- Debug output should be **disabled** during normal operation as it may confuse the end user, but is invaluable while developing/troubleshooting Macros
 :::
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
-| 0     | Disabled| Standard operation. No debug messages are sent. (Default) |
+| 0     | Disabled| Standard operation. No debug messages are printed to the Serial console. (Default) |
 | 1     | Enabled | Debugging messages for the RS274/NGC interpreter are sent to the console. |
 
 #### Common Examples
@@ -4907,13 +4935,29 @@ Enables debugging messages from the RS274/NGC Expressions inside Macros.
 #### Tips & Tricks
 - This setting is your best friend when trying to figure out why a complex macro or `O-word` subroutine isn't working as expected.
 
-## `$535` – Network MAC (Status Flag)
-Displays the MAC (Media Access Control) address of the primary network interface.
+---
+
+## `$535` – Network MAC Address Override
+Allows overriding the default MAC (Media Access Control) address of the primary network interface.
 
 :::info Context
-- This is a read-only hardware identifier for the network interface.
-- It is not a user-settable parameter.
+- While the MAC address is typically a hardware identifier, this setting makes it **user-settable**.
+- This is particularly useful when using network modules (such as certain Wiznet modules) that may come with a shared or non-unique MAC address, which can cause network conflicts if multiple devices are on the same network.
+- By setting `$535`, you can assign a unique MAC address to your grblHAL controller's primary network interface, preventing network issues.
 :::
+
+| Value | Meaning |
+|:------|:--------|
+| String| A unique 12-character hexadecimal string representing the MAC address (e.g., "00:11:22:AA:BB:CC"). |
+
+#### Common Examples
+*   **Assigning a custom MAC address to resolve conflicts:**
+    *   `$535=00:1A:C2:FF:EE:33`
+
+#### Tips & Tricks
+- This setting is vital for ensuring network stability and preventing IP conflicts when deploying multiple grblHAL controllers, especially with hardware known to have shared MAC addresses.
+- You can use online tools (e.g., [browserling.com/tools/random-mac](https://www.browserling.com/tools/random-mac)) to generate unique MAC addresses.
+- Alternatively, you might use the MAC address from a device not currently in use, such as an old router or network printer, which is often printed on the back of the device.
 
 ---
 
@@ -5168,13 +5212,29 @@ Settings used to pass parameters to a specialized machine kinematics module.
 
 ---
 
-## `$650` – Filesystem Options (FSOptions)
-Configures options related to the filesystem, typically on an SD card.
+## `$650` – Filesystem Options (mask)
+Configures various options related to the controller's filesystem, typically involving SD card and LittleFS behavior.
 
 :::info Context
-- This setting can control behaviors like whether to automatically run a file named `autoexec.g` on startup.
-- The exact options available are implementation-dependent.
+- This setting is a **bitmask** that controls fundamental behaviors of the grblHAL filesystem.
+- The exact options available are dependent on the available and configured file systems (e.g., SD card, internal LittleFS).
+- It is particularly useful for managing how macros, configuration files, and other machine-critical data are handled.
 :::
+
+| Bit | Value | Option | Description |
+|:---:|:-----:|:-------|:------------|
+| 0   | 1     | Auto Mount SD Card | Automatically mounts the SD card on controller startup. This is highly useful if tool change macros, startup scripts, or other essential files are stored on an SD card that is permanently inserted into the controller. |
+| 1   | 2     | Hide LittleFS | When set, the content of the internal LittleFS filesystem will not be listed (e.g., via the `$F` command or in the WebUI). This can be useful for blocking user access to content vital for machine operation, such as core tool change macros or protected configuration files. |
+
+#### Common Examples
+*   **Automatically mount SD card on startup:**
+    *   `$650=1`
+*   **Hide LittleFS content (e.g., to protect critical system macros):**
+    *   `$650=2`
+
+#### Tips & Tricks
+- If your machine relies on macros or other files stored on an SD card for automatic operation (e.g., on startup or for tool changes), enabling `Auto Mount SD Card` is essential for reliable function.
+- `Hide LittleFS` is an advanced security/protection feature for system builders who want to prevent accidental modification or viewing of sensitive internal files.
 
 ---
 
@@ -5184,11 +5244,10 @@ This range is reserved for individual stepper driver-specific configurations. Th
 ---
 
 ## `$671` – Invert Home Pins (mask)
-Inverts the logic for the homing switch inputs.
+Inverts the logic for the homing switch inputs
 
 :::info Context
-- This setting is a **duplicate** of `$5`. It is provided for legacy compatibility.
-- It is recommended to use `$5` for all new configurations.
+- For machines that have separate homing and limit switches. Few board maps support this.
 :::
 
 ---
@@ -5232,7 +5291,7 @@ Configures advanced options for the THC (Torch Height Control) plugin.
 Configures advanced options for an Automatic Tool Changer (ATC) that is controlled by G-code macros.
 
 :::info Context
-- This setting is a **bitmask** used when `$341` (Tool Change Mode) is configured to utilize G-code macros for tool changes.
+- It becomes available when tc.macro is found on the SD card / in LittleFS
 - It provides fine-grained control over specific behaviors during the macro-driven tool change process, such as handling `M6 T0` commands and error reporting for missing macros.
 :::
 
@@ -5242,7 +5301,7 @@ Configures advanced options for an Automatic Tool Changer (ATC) that is controll
 | 1   | 2     | Fail M6 if tc.macro not found | If this bit is set, grblHAL will raise an error (alarm) on an `M6` command if the `tc.macro` file is not found on the SD card or if the SD card is not mounted. |
 
 #### Common Examples
-*   **Default behavior (M6 T0 ignored by macro, no macro file check):**
+*   **Default behavior (M6T0 is not routed to tc.macro, it silently selects tool 0 - which may mean no tool):**
     *   `$675=0`
 *   **Allow M6 T0 to trigger macro, and fail if macro not found:**
     *   `$675=3` (1 for Execute M6 T0 + 2 for Fail M6 if tc.macro not found)
@@ -5253,12 +5312,34 @@ Configures advanced options for an Automatic Tool Changer (ATC) that is controll
 
 ---
 
+---
+
 ## `$676` – Reset Actions (mask)
-Configures additional actions to be performed when the controller is reset.
+Configures additional actions to be performed automatically when the controller undergoes a soft or hard reset.
 
 :::info Context
-- This is a bitmask allowing custom behavior on a soft or hard reset, such as clearing specific states or triggering a macro.
+- This setting is a **bitmask** that allows you to customize the behavior of grblHAL upon a reset event.
+- It is useful for ensuring the machine returns to a predictable and safe state, such as clearing specific status flags or overrides.
 :::
+
+| Bit | Value | Option | Description |
+|:---:|:-----:|:-------|:------------|
+| 0   | 1     | Clear homed status if position was lost | If set, the machine's "homed" status will be cleared upon reset if the controller detects that its position may have been lost (e.g., due to a power cycle). |
+| 1   | 2     | Clear offsets (except G92) | If set, all work coordinate system offsets (G54-G59.3) will be cleared upon reset, **except** for the G92 temporary offset. This forces the user to re-establish work zeros. |
+| 2   | 4     | Clear rapids override | Resets the rapid feed rate override to 100% upon reset. |
+| 3   | 8     | Clear feed override | Resets the programmed feed rate override to 100% upon reset. |
+
+#### Common Examples
+*   **Default (no options enabled, standard reset behavior):**
+    *   `$676=0`
+*   **Clear homed status if position lost, and clear all offsets (except G92):**
+    *   `$676=3` (1 for Clear homed status + 2 for Clear offsets)
+*   **Reset all overrides to 100% on reset:**
+    *   `$676=12` (4 for Clear rapids override + 8 for Clear feed override)
+
+#### Tips & Tricks
+- Carefully consider which options to enable based on your machine's safety requirements and workflow. Clearing offsets ensures a fresh start but requires re-zeroing.
+- Enabling "Clear homed status if position was lost" is a good safety measure, forcing a re-homing cycle if the machine's absolute position is uncertain.
 
 ---
 
@@ -5273,15 +5354,59 @@ Configures options for a "stepper spindle," where the spindle is driven by a ste
 
 ---
 
-## `$678` & `$679` – Relay Port Mapping
-Assigns a physical output port to control a relay for secondary probe functions.
+---
+
+## `$678` – Relay Port for Toolsetter
+Assigns a physical auxiliary digital output port to control a relay for the toolsetter.
 
 :::info Context
-- This allows grblHAL to control a relay in response to a probe event.
-- `$678`: Relay Port for Toolsetter
-- `$679`: Relay Port for Probe 2
-- A common use is to activate a cleaning air blast before a toolsetter probe.
+- This setting specifies which auxiliary digital output port will be used to activate a relay associated with the toolsetter.
+- A common use case is a mechanism to deploy/retract the toolsetter, or to select the toolsetter itself using a relay.
+- Set this value to `-1` to disable the relay output for the toolsetter.
+- **Probe selection is handled by the inbuilt `G65 P5 Q<n>` macro**, where `<n>` is the probe ID (e.g., `Q1` for toolsetter). The toolsetter can also be selected automatically during `@G59.3` tool changes.
 :::
+
+| Value | Meaning |
+|:-----:|:--------|
+| -1    | Disabled (no relay output for toolsetter) |
+| 0-N   | The hardware auxiliary digital output port number to control the toolsetter relay. |
+
+#### Common Examples
+*   **Default (Toolsetter relay disabled):**
+    *   `$678=-1`
+*   **Control a toolsetter relay via auxiliary port 2:**
+    *   `$678=2`
+
+#### Tips & Tricks
+- This feature requires your selected driver/board to provide at least one free auxiliary digital output port capable of driving the relay coil, either directly or via a buffer.
+- Ensure the relay's polarity and wiring match the expected output of the selected port (can be inverted with `$372`).
+
+---
+
+## `$679` – Relay Port for Secondary Probe
+Assigns a physical auxiliary digital output port to control a relay for the secondary probe.
+
+:::info Context
+- This setting specifies which auxiliary digital output port (by its hardware number) will be used to activate a relay associated with a secondary probe (e.g., a touch plate, or an additional part probe).
+- This can be used for deploying the probe or selecting between multiple probe inputs using a relay.
+- Set this value to `-1` to disable the relay output for the secondary probe.
+- **Probe selection is handled by the inbuilt `G65 P5 Q<n>` macro**, where `<n>` is the probe ID (e.g., `Q2` for secondary probe).
+:::
+
+| Value | Meaning |
+|:-----:|:--------|
+| -1    | Disabled (no relay output for secondary probe) |
+| 0-N   | The hardware auxiliary digital output port number to control the secondary probe relay. |
+
+#### Common Examples
+*   **Default (Secondary probe relay disabled):**
+    *   `$679=-1`
+*   **Control a secondary probe relay via auxiliary port 3:**
+    *   `$679=3`
+
+#### Tips & Tricks
+- This feature requires your selected driver/board to provide at least one free auxiliary digital output port capable of driving the relay coil.
+- This provides an advanced method for managing multiple probe devices on your machine, leveraging `G65 P5 Q<n>` for programmatic selection.
 
 ---
 
@@ -5290,6 +5415,8 @@ Sets a delay (in milliseconds) after the stepper motors are enabled before any m
 
 :::info Context
 - Some stepper drivers or motor configurations might require a short stabilization time after receiving the enable signal before they can reliably accept step pulses.
+- This delay is in addition to a standard 2 ms delay that drivers typically enforce.
+
 :::
 
 | Value (ms) | Description |
@@ -5299,12 +5426,29 @@ Sets a delay (in milliseconds) after the stepper motors are enabled before any m
 ---
 
 
-## `$681` – Modbus Stream Format
-Configures the data format used for Modbus streaming or reporting.
+## `$681` – Modbus Serial Format
+Configures the data bit and parity settings for Modbus RTU serial communication.
 
 :::info Context
-- This is an advanced setting for Modbus-enabled systems, defining how data values are encoded or presented in Modbus communications.
+- This is an advanced setting for Modbus-enabled systems, specifically defining the serial port parameters for Modbus RTU.
+- It is crucial that this setting **matches the serial communication settings of the Modbus slave device** (e.g., your VFD) to ensure proper data exchange and prevent communication errors.
 :::
+
+| Value | Description |
+|:-----:|:------------|
+| **0** | **8-bit No Parity:** Data is transmitted in 8 bits with no parity bit. |
+| **1** | **8-bit Even Parity:** Data is transmitted in 8 bits with an even parity bit for error checking. |
+| **2** | **8-bit Odd Parity:** Data is transmitted in 8 bits with an odd parity bit for error checking. |
+
+#### Common Examples
+*   **Default for many Modbus devices (no parity):**
+    *   `$681=0`
+*   **If your VFD specifies 8-bit even parity:**
+    *   `$681=1`
+
+#### Tips & Tricks
+- Always consult the manual for your Modbus device (e.g., VFD, control panel) to determine the correct serial format settings. Mismatched settings will lead to communication failures.
+- This setting works in conjunction with `$374` (Modbus Baud Rate) to establish a stable Modbus RTU link.
 
 ---
 
@@ -5496,102 +5640,143 @@ Configures the inputs for critical motor fault detection.
 
 ---
 
-## `$750` - `$759` – Event Action Mapping
-Assigns a specific action to be performed when a system event occurs.
+## `$750` - `$759` – Event Trigger Source Selection (Eventout Plugin)
+Configures which real-time system state change will activate each of the ten available Event Slots (0-9).
 
 :::info Context
-- This is the core of the grblHAL Event System, a powerful tool for automation. It allows you to trigger actions (like running a macro or toggling a pin) based on system events.
-- Each setting (`$750` to `$759`) corresponds to a specific event. The value you enter determines the action to take.
-- An action can be an M-code (`70` = `M70`), a system command (`1001` = `Run`), or a custom action.
+- This advanced feature is specifically implemented by the **`eventout` plugin** (often found in `Plugins_misc`). It enables highly responsive, direct hardware control based on various real-time machine states.
+- Each setting (`$750` to `$759`) corresponds to an **Event Slot (0-9)**. The **value you assign to each setting selects the source trigger** for that Event Slot from the predefined list of `EVENT_TRIGGERS`.
+- When an Event Slot is activated by its chosen trigger, it will control the auxiliary I/O port assigned to it via the corresponding `$76x` setting.
+- A value of `0` ("None") disables the trigger for that Event Slot.
 :::
 
-| Setting | Event Trigger |
-|:--------|:--------------|
-| `$750`  | On Tool Change (`M6`) |
-| `$751`  | On Program End (`M2`/`M30`) |
-| `$752`  | On Homing Cycle End (`$H`) |
-| `$753`  | On Coolant Change (Flood/Mist) |
-| `$754`  | On Spindle State Change (On/Off) |
-| `$755`  | On Jog Start |
-| `$756`  | On Jog End |
-| `$757`  | On Laser On |
-| `$758`  | On Laser Off |
-| `$759`  | On Startup |
+| Value | Event Trigger Source      | Description                               |
+|:-----:|:--------------------------|:------------------------------------------|
+| **0** | **None**                  | No trigger assigned to this Event Slot.   |
+| **1** | **Spindle enable (M3/M4)**| Activates when the primary spindle is commanded ON (`M3`/`M4`). |
+| **2** | **Laser enable (M3/M4)**  | Activates when the primary laser is commanded ON (`M3`/`M4`).   |
+| **3** | **Mist enable (M7)**      | Activates when mist coolant is commanded ON (`M7`).      |
+| **4** | **Flood enable (M8)**     | Activates when flood coolant is commanded ON (`M8`).     |
+| **5** | **Feed hold**             | Activates when the controller enters a Feed Hold state. |
+| **6** | **Alarm**                 | Activates when the controller enters an Alarm state.    |
+| **7** | **Spindle at speed**      | Activates when the spindle is confirmed to be at commanded speed (requires `$340` and encoder feedback for closed-loop systems). |
 
 #### Common Examples
-*   **Run a "tool change complete" macro (M80) after M6:**
-    *   `$750=80`
-*   **Run a "present workpiece" macro (M90) at the end of every job:**
-    *   `$751=90`
-*   **Run a "go to front" macro (M95) after homing is finished:**
-    *   `$752=95`
+*   **Activate Event Slot 0 when the Spindle is enabled:**
+    *   `$750=1`
+*   **Activate Event Slot 1 when the controller enters an Alarm state:**
+    *   `$751=6`
+*   **Activate Event Slot 2 when Flood coolant is enabled:**
+    *   `$752=4`
 
 #### Tips & Tricks
-- This is a highly flexible way to automate repetitive tasks. You can create complex G-code macros and have them triggered automatically by machine events.
+- This system allows you to create highly responsive, hardware-level automation by linking machine states to specific output pins.
+- The physical auxiliary output pin itself is assigned via the corresponding `$76x` setting.
+- Ensure the selected trigger source matches your intended automation logic. This is an advanced feature for users familiar with the `eventout` plugin.
 
 ---
 
-## `$760` - `$769` – Event I/O Port Mapping
-Assigns a physical I/O port to be controlled directly by a system event.
+## `$760` - `$769` – Event I/O Port Assignment (Eventout Plugin)
+Assigns a physical auxiliary digital output port to be controlled by each of the ten Event Slots (0-9).
 
 :::info Context
-- This allows an event to directly toggle a physical output pin, without needing a macro.
-- The setting (`$760`-`$769`) corresponds to the event number from the `$75x` block.
-- The value you enter is the I/O Port number you want to control.
+- This setting works in conjunction with `$750`-`$759` to provide direct hardware control based on real-time system states, as part of the **`eventout` plugin**.
+- Each setting (`$760` to `$769`) corresponds to an **Event Slot (0-9)**. The **value you assign specifies which auxiliary I/O Port** will be activated when its corresponding Event Slot becomes active (as determined by the trigger selected in `$75x`).
+- A value of `-1` disables the output control for that Event Slot.
 :::
 
-| Setting | Event to Map |
-|:--------|:-------------|
-| `$760`  | Event 0 (Tool Change) |
-| `$761`  | Event 1 (Program End) |
-| ...     | ... |
-| `$769`  | Event 9 (Startup) |
+| Setting | Controls Output for Event Slot | Assigns to Auxiliary I/O Port Number |
+|:--------|:-------------------------------|:-------------------------------------|
+| `$760`  | Event Slot 0 (Trigger defined by `$750`) | Hardware auxiliary output pin number |
+| `$761`  | Event Slot 1 (Trigger defined by `$751`) | Hardware auxiliary output pin number |
+| ...     | ...                            | ...                                  |
+| `$769`  | Event Slot 9 (Trigger defined by `$759`) | Hardware auxiliary output pin number |
 
 #### Common Examples
-*   **Toggle I/O Port 5 at the end of every program:**
-    *   Perhaps Port 5 is connected to a "job finished" indicator light.
-    *   `$761=5`
+*   **When Event Slot 0 is active, control auxiliary I/O Port 5:**
+    *   `$760=5` (If `$750=1`, then Port 5 activates when Spindle is enabled. This could trigger a dust collector).
+*   **When Event Slot 1 is active, control auxiliary I/O Port 7:**
+    *   `$761=7` (If `$751=6`, then Port 7 activates when the controller is in an Alarm state. This could trigger a warning light or a main power shutdown relay).
 
 #### Tips & Tricks
-- This is an advanced feature for deep hardware integration, providing faster I/O control than a macro.
-- You must know the I/O port numbers for your specific controller board.
+- This system enables sophisticated hardware-level responses. For example, you could activate a fume extractor (Port 7) whenever the laser is enabled (`$752=2`, `$762=7`).
+- You must know the auxiliary I/O port numbers for your specific controller board. Use the `$PINS` command to list available ports.
+- If an active-low signal is required for the connected device, you can use `$372` (Invert I/O Port Outputs) to invert the logic of the selected auxiliary port.
 
 ---
 
-## `$770` & `$771` – Spindle Offset X & Y
-Sets an X and Y offset for the currently active spindle.
+## `$770` – Laser X Offset
+Sets the X-axis offset for a non-default **laser spindle** from the primary spindle.
 
 :::info Context
-- This is a key feature for machines with multiple tools that are not parfocal (i.e., they have different X/Y positions relative to the main spindle).
-- It allows you to define the physical offset of a secondary tool (like a laser or engraving bit) from the primary tool.
-- When you switch to a tool that has an offset defined, grblHAL will automatically apply this offset to all subsequent moves.
+- This setting defines the X-axis distance from the primary spindle's tool center point to the laser's focal point.
+- It is a key feature for machines with multiple tools (e.g., a primary milling spindle and a secondary laser) that are not parfocal in the X-axis.
+- When you switch to a laser spindle (or a spindle designated as a laser), grblHAL will automatically apply this offset to all subsequent X-axis moves, effectively shifting the coordinate system to match the laser's position.
+- This value is an "X offset from current position for non-default laser spindle."
 :::
 
-| Setting | Description |
-|:--------|:------------|
-| `$770`  | **Spindle Offset X:** The X-axis distance from the primary spindle to this tool. |
-| `$771`  | **Spindle Offset Y:** The Y-axis distance from the primary spindle to this tool. |
+| Value (mm) | Description |
+|:----------:|:------------|
+| -N to +N   | The X-axis distance from the primary spindle to the laser spindle. |
 
 #### Common Examples
-*   **A laser is mounted 50.5mm to the right of the spindle:**
+*   **A laser is mounted 50.5mm to the right (positive X) of the primary spindle:**
     *   `$770=50.5`
-    *   `$771=0.0`
 
 #### Tips & Tricks
-- These offsets are applied *per spindle*. You would set them after selecting the appropriate spindle with `$SPINDLE=n`.
-- This feature is often used in conjunction with a camera for alignment.
+- This offset is applied per spindle. You would configure this for the specific laser spindle ID after selecting it (e.g., via `M104 Qx`).
 
 ---
 
-## `$772` – Spindle Offset Options
-Configures options for the spindle offset feature.
+## `$771` – Laser Y Offset
+Sets the Y-axis offset for a non-default **laser spindle** from the primary spindle.
 
 :::info Context
-- This setting is a **bitmask** that modifies the behavior of the spindle offset system.
-- The available options are implementation-dependent.
+- This setting defines the Y-axis distance from the primary spindle's tool center point to the laser's focal point.
+- It is a key feature for machines with multiple tools that are not parfocal in the Y-axis.
+- When you switch to a laser spindle, grblHAL will automatically apply this offset to all subsequent Y-axis moves, shifting the coordinate system to match the laser's position.
+- This value is a "Y offset from current position for non-default laser spindle."
 :::
 
+| Value (mm) | Description |
+|:----------:|:------------|
+| -N to +N   | The Y-axis distance from the primary spindle to the laser spindle. |
+
+#### Common Examples
+*   **A laser is mounted 10.0mm towards the front (positive Y) of the primary spindle:**
+    *   `$771=10.0`
+
+#### Tips & Tricks
+- Measure the precise physical offset between your primary spindle and your laser's focal point to ensure accurate cutting/engraving.
+- This offset works with `$770` to apply a complete (X,Y) shift for the laser.
+
 ---
+
+## `$772` – Laser Offset Options (mask)
+Configures options for how the laser offset feature behaves, particularly concerning work coordinate updates.
+
+:::info Context
+- This setting is a **bitmask** that modifies the behavior of the laser offset system, especially when changing between spindles.
+- It controls whether a `G92` offset is automatically applied or updated to maintain work position consistency when switching to or from a laser spindle.
+:::
+
+| Bit | Value | Option                     | Description                                                                                             |
+|:---:|:-----:|:---------------------------|:--------------------------------------------------------------------------------------------------------|
+| 0   | 1     | Keep new position          | If set, when a laser spindle with an offset is activated, the machine's work position shifts by the offset amount, meaning the G-code continues from the laser's perspective. |
+| 1   | 2     | Update G92 on spindle change | If set, when a laser spindle with an offset is activated, the internal `G92` offset is adjusted to keep the **work position identical** from the original spindle's perspective. |
+
+#### Common Examples
+*   **Default (no options, simple coordinate shift):**
+    *   `$772=0`
+*   **Update G92 offset to maintain work position consistency on spindle change:**
+    *   `$772=2` ("If update G92 offset is enabled then it is adjusted to keep the work position identical for the spindles.")
+
+#### Tips & Tricks
+- The "Update G92 on spindle change" option (`$772=2`) is generally preferred if you want your G-code programs to continue relative to the workpiece origin, regardless of which tool (spindle or laser) is active. This makes the tool change "transparent" to the work coordinates.
+- Test these options carefully with your setup to understand how your work zero behaves when switching between the primary spindle and the laser.
+
+---
+
 
 ## `$773` – `$779` – Reserved Spindle Offset Settings
 This range is explicitly reserved for future spindle offset-related settings.

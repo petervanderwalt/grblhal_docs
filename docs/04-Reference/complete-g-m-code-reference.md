@@ -22,9 +22,9 @@ Use the table of contents on the right to navigate, or use your browser's search
 
 2.  **Explicit is Better Than Implicit:** Don't assume the machine is in the correct state. Explicitly command `G90`/`G91`, `G20`/`G21`, and select your work offset (`G54`, etc.) in your program.
 
-3.  **Understand Modality:** Remember which commands are modal. Forgetting that a `G1` is active can lead to an unintended cutting move when you meant to make a rapid `G0` move. Forgetting a canned cycle (`G81`) is active can lead to unintended drilling. Always cancel modes (`G80`) when you are done with them.
+3.  **Understand Modality:** Remember which commands are modal. Forgetting that a `G1` is active can lead to an unintended cutting move when you meant to make a rapid `G0` move. Forgetting a canned cycle (`G81`) is active can lead to unintended drilling. Always cancel modes (use `G80` or `G0` / `G1` can also be used ) when you are done with them.
 
-4.  **Use `G53` for Safety:** When you need to move to a known, fixed machine position (like a tool change station or home), use `G53`. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A `G53 G0 Z0` is one of the safest commands in G-code.
+4.  **Use `G53` for Safety:** When you need to move to a known, fixed machine position (like a tool change station or home), use `G53`. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A `G53 G0 Z0` is one of the safest commands in G-code.  NB! **only use if the machine is homed! as G53 depends on machine coordinates**
 
 5.  **Comment Your Code:** Use parentheses `()` or semicolons `;` to add comments to your G-code. This is invaluable for documenting complex sections, manual tool changes, or special setups.
     ```gcode
@@ -78,13 +78,68 @@ Pre-selects a tool number for a subsequent `M6` tool change command.
   `M6 T5` (The `T5` here is often optional if the tool is already pre-selected)
 
 
-## `O` – Program Name / Subroutine Number
-Used to identify a subroutine (`O100`) or as a label for a program.
+## `O` – O-Code Subroutines and Labels
+
+The `O`-word (numeric) serves as a general label within a G-code file (e.g., for `GOTO` commands if supported by the sender). More significantly, grblHAL utilizes `O`-words to define and call subroutines stored in external files, largely following [LinuxCNC's "O-Code"](https://linuxcnc.org/docs/html/gcode/o-code.html) specification for file-based macros.
+
+**Syntax (Numeric Label):** `O<number>`  
+**Syntax (Subroutine Call - External File):** `O<name> call [L<repetitions>]`  
+**Syntax (Numeric Subroutine Call - External File):** `O<number> call [L<repetitions>]`
+
+:::info Context
+-   **Labels:** An `O<number>` on a line by itself can function as a target for a `GOTO` command within the G-code stream (the `GOTO` command itself is typically handled by the G-code sender, not grblHAL's core).
+-   **External File Subroutines (Macros):** This is grblHAL's primary method for direct controller-level O-code execution.
+    -   `O<name> call` (e.g., `Otool_probe call`) or `O<number> call` instructs grblHAL to look for and execute a specific file from storage (e.g., SD card, LittleFS).
+    -   The file name is derived from the `O`-word: `o<name>.macro` or `o<number>.macro` (the `.macro` extension is configurable, but common).
+    -   File lookup paths are specified in the grblHAL configuration's INI file, typically `PROGRAM_PREFIX` or `SUBROUTINE_PATH`.
+    -   File names must consist of lowercase letters, numbers, dashes (`-`), and underscores (`_`) only. The interpreter will convert uppercase letters in the `O<name>` to lowercase for the filename lookup (e.g., `O<MyFile> call` looks for `myfile.macro`).
+    -   An external subroutine file must contain a single subroutine definition, enclosed by `o<name> sub` and `o<name> endsub` (or `o<number> sub` and `o<number> endsub`).
+    -   The optional `L<repetitions>` parameter specifies how many times the subroutine file should be executed.
+-   **In-file Numeric Subroutines (`O<n> sub`...`endsub`):** While grblHAL's G-code parser recognizes the syntax for defining numeric subroutines directly within the main G-code file, their full execution control (e.g., call stack management, local variables) when called by `O<number> call` is typically a feature handled by the G-code sender software. grblHAL's core focuses on the external file execution for robustness and simplicity.
+:::
+
 #### Examples
-* **Define a subroutine named (or numbered) 100:**  
-  `O100`  
-  `( ... subroutine commands ... )`  
-  `M99` (return from subroutine)
+*   **Calling a named macro file (directly executed by grblHAL):**
+    ```gcode
+    (Main Program)
+    G53 G0 Z0
+    Otool_probe call (grblHAL executes 'tool_probe.macro' from storage)
+    ...
+    ```
+
+    **Example `tool_probe.macro` file content (must be named `tool_probe.macro` and located in the configured path):**
+    ```gcode
+    o<tool_probe> sub
+      ( Code for probing here, e.g., )
+      G91 G38.2 Z-20 F100
+      ( ... calculate offset ... )
+    o<tool_probe> endsub
+    M2 (Optional: M2 to reset/end the macro file after execution)
+    ```
+
+*   **Calling a numbered macro file (directly executed by grblHAL):**
+    ```gcode
+    (Main Program)
+    G53 G0 Z0
+    O123 call L2 (grblHAL executes 'o123.macro' twice from storage)
+    ...
+    ```
+
+    **Example `o123.macro` file content (must be named `o123.macro` and located in the configured path):**
+    ```gcode
+    o123 sub
+      ( Code for a specific operation, e.g., )
+      G1 X10 Y10 F500
+      G1 Z-2 F100
+    o123 endsub
+    M2
+    ```
+
+#### Tips & Tricks
+-   For **external file subroutines** (`O<name> call` or `O<number> call`), the `O<name/number> sub` and `O<name/number> endsub` lines within the file are mandatory.
+-   An `O<name/number> return` statement can be used for an early exit from an external subroutine file. When an external macro file finishes (either by `endsub` or `return`, or simply reaching the end of the file), execution returns to the line after the `O<name/number> call` in the main program.
+-   The use of `M2` or `M30` at the end of an external macro file is a common practice, especially for older CAM posts, but `endsub` is the explicit O-code mechanism.
+
 
 
 ---
@@ -217,7 +272,7 @@ Pauses the machine for a specified period of time. All axes stop moving, but oth
 
 :::info Context
 - **Non-Modal:** `G4` is active only for the block in which it appears.
-- **Purpose:** Useful for clearing chips at the bottom of a hole, allowing a spindle to reach full speed, or waiting for a tool change.
+- **Purpose:** Useful for clearing chips at the bottom of a hole, allowing a spindle to reach full speed, etc.
 :::
 
 | Parameter | Description |
@@ -282,10 +337,9 @@ These commands enable the machine to move along complex curves defined by contro
 These commands are used exclusively in lathe operations to define whether X-axis movements are interpreted as changes in the workpiece's radius or diameter.
 
 :::info Context
-- **Modal:** Part of the Lathe Mode group. Only active if grblHAL is compiled with lathe support (setting `$22=2`).
+- **Modal:** Part of the Lathe Mode group. Only active if grblHAL is configured with lathe support (setting `$22=2`).
 - **`G7` (Diameter Mode):** All X-axis coordinates and movements are interpreted as diameters. If you command `G1 X50`, the tool moves to a position where the workpiece diameter will be 50 units.
 - **`G8` (Radius Mode):** All X-axis coordinates and movements are interpreted as radii. If you command `G1 X25`, the tool moves to a position where the workpiece radius will be 25 units (meaning a 50-unit diameter).
-- **Setting:** The mode can be set via the controller if it's a grblHAL controller by setting the Mode of operation to Lathe mode (`$22=2`).
 :::
 
 | Command | X-Axis Interpretation |
@@ -417,6 +471,7 @@ Sets the G-code interpreter's units for all position, feed rate, and offset data
 #### Tips & Tricks
 - It is critical safety practice to include either `G20` or `G21` at the very beginning of every G-code file. This prevents misinterpreting a 10mm move as a 10-inch move, which could cause a crash.
 - This setting affects how *grblHAL interprets G-code*, but does not change the machine's internal step/mm settings (`$100`, etc.).
+- Also checkout `$13` [Report in Inches (boolean)](../Reference/complete-settings-reference/#13--report-in-inches-boolean)
 
 ---
 
