@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.8.1">
 <title data-rh="true">Complete G-code &amp; M-code Reference | grblHAL Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Complete G-code &amp; M-code Reference | grblHAL Documentation"><meta data-rh="true" name="description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes."><meta data-rh="true" property="og:description" content="A comprehensive list of all grblHAL G-code and M-code commands, including core functions, plugins, and driver-specific codes."><link data-rh="true" rel="icon" href="/grblhal_docs/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Complete G-code & M-code Reference","item":"https://your-docusaurus-site.com/grblhal_docs/Reference/complete-g-m-code-reference"}]}</script><link rel="stylesheet" href="/grblhal_docs/assets/css/styles.c8fe8b1f.css">
-<script src="/grblhal_docs/assets/js/runtime~main.ac4df206.js" defer="defer"></script>
+<script src="/grblhal_docs/assets/js/runtime~main.50b0ef39.js" defer="defer"></script>
 <script src="/grblhal_docs/assets/js/main.ce264444.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -25,10 +25,10 @@
 <p><strong>Explicit is Better Than Implicit:</strong> Don&#x27;t assume the machine is in the correct state. Explicitly command <code>G90</code>/<code>G91</code>, <code>G20</code>/<code>G21</code>, and select your work offset (<code>G54</code>, etc.) in your program.</p>
 </li>
 <li>
-<p><strong>Understand Modality:</strong> Remember which commands are modal. Forgetting that a <code>G1</code> is active can lead to an unintended cutting move when you meant to make a rapid <code>G0</code> move. Forgetting a canned cycle (<code>G81</code>) is active can lead to unintended drilling. Always cancel modes (<code>G80</code>) when you are done with them.</p>
+<p><strong>Understand Modality:</strong> Remember which commands are modal. Forgetting that a <code>G1</code> is active can lead to an unintended cutting move when you meant to make a rapid <code>G0</code> move. Forgetting a canned cycle (<code>G81</code>) is active can lead to unintended drilling. Always cancel modes (use <code>G80</code> or <code>G0</code> / <code>G1</code> can also be used ) when you are done with them.</p>
 </li>
 <li>
-<p><strong>Use <code>G53</code> for Safety:</strong> When you need to move to a known, fixed machine position (like a tool change station or home), use <code>G53</code>. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A <code>G53 G0 Z0</code> is one of the safest commands in G-code.</p>
+<p><strong>Use <code>G53</code> for Safety:</strong> When you need to move to a known, fixed machine position (like a tool change station or home), use <code>G53</code>. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A <code>G53 G0 Z0</code> is one of the safest commands in G-code.  NB! <strong>only use if the machine is homed! as G53 depends on machine coordinates</strong></p>
 </li>
 <li>
 <p><strong>Comment Your Code:</strong> Use parentheses <code>()</code> or semicolons <code>;</code> to add comments to your G-code. This is invaluable for documenting complex sections, manual tool changes, or special setups.</p>
@@ -67,14 +67,45 @@
 <code>( ... some cutting operations ... )</code><br>
 <code>M6 T5</code> (The <code>T5</code> here is often optional if the tool is already pre-selected)</li>
 </ul>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="o--program-name--subroutine-number"><code>O</code> – Program Name / Subroutine Number<a href="#o--program-name--subroutine-number" class="hash-link" aria-label="Direct link to o--program-name--subroutine-number" title="Direct link to o--program-name--subroutine-number">​</a></h2>
-<p>Used to identify a subroutine (<code>O100</code>) or as a label for a program.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="o--o-code-subroutines-and-labels"><code>O</code> – O-Code Subroutines and Labels<a href="#o--o-code-subroutines-and-labels" class="hash-link" aria-label="Direct link to o--o-code-subroutines-and-labels" title="Direct link to o--o-code-subroutines-and-labels">​</a></h2>
+<p>The <code>O</code>-word (numeric) serves as a general label within a G-code file (e.g., for <code>GOTO</code> commands if supported by the sender). More significantly, grblHAL utilizes <code>O</code>-words to define and call subroutines stored in external files, largely following <a href="https://linuxcnc.org/docs/html/gcode/o-code.html" target="_blank" rel="noopener noreferrer">LinuxCNC&#x27;s &quot;O-Code&quot;</a> specification for file-based macros.</p>
+<p><strong>Syntax (Numeric Label):</strong> <code>O&lt;number&gt;</code><br>
+<strong>Syntax (Subroutine Call - External File):</strong> <code>O&lt;name&gt; call [L&lt;repetitions&gt;]</code><br>
+<strong>Syntax (Numeric Subroutine Call - External File):</strong> <code>O&lt;number&gt; call [L&lt;repetitions&gt;]</code></p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
+<li><strong>Labels:</strong> An <code>O&lt;number&gt;</code> on a line by itself can function as a target for a <code>GOTO</code> command within the G-code stream (the <code>GOTO</code> command itself is typically handled by the G-code sender, not grblHAL&#x27;s core).</li>
+<li><strong>External File Subroutines (Macros):</strong> This is grblHAL&#x27;s primary method for direct controller-level O-code execution.<!-- -->
+<ul>
+<li><code>O&lt;name&gt; call</code> (e.g., <code>Otool_probe call</code>) or <code>O&lt;number&gt; call</code> instructs grblHAL to look for and execute a specific file from storage (e.g., SD card, LittleFS).</li>
+<li>The file name is derived from the <code>O</code>-word: <code>o&lt;name&gt;.macro</code> or <code>o&lt;number&gt;.macro</code> (the <code>.macro</code> extension is configurable, but common).</li>
+<li>File lookup paths are specified in the grblHAL configuration&#x27;s INI file, typically <code>PROGRAM_PREFIX</code> or <code>SUBROUTINE_PATH</code>.</li>
+<li>File names must consist of lowercase letters, numbers, dashes (<code>-</code>), and underscores (<code>_</code>) only. The interpreter will convert uppercase letters in the <code>O&lt;name&gt;</code> to lowercase for the filename lookup (e.g., <code>O&lt;MyFile&gt; call</code> looks for <code>myfile.macro</code>).</li>
+<li>An external subroutine file must contain a single subroutine definition, enclosed by <code>o&lt;name&gt; sub</code> and <code>o&lt;name&gt; endsub</code> (or <code>o&lt;number&gt; sub</code> and <code>o&lt;number&gt; endsub</code>).</li>
+<li>The optional <code>L&lt;repetitions&gt;</code> parameter specifies how many times the subroutine file should be executed.</li>
+</ul>
+</li>
+<li><strong>In-file Numeric Subroutines (<code>O&lt;n&gt; sub</code>...<code>endsub</code>):</strong> While grblHAL&#x27;s G-code parser recognizes the syntax for defining numeric subroutines directly within the main G-code file, their full execution control (e.g., call stack management, local variables) when called by <code>O&lt;number&gt; call</code> is typically a feature handled by the G-code sender software. grblHAL&#x27;s core focuses on the external file execution for robustness and simplicity.</li>
+</ul></div></div>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="examples-3">Examples<a href="#examples-3" class="hash-link" aria-label="Direct link to Examples" title="Direct link to Examples">​</a></h4>
 <ul>
-<li><strong>Define a subroutine named (or numbered) 100:</strong><br>
-<code>O100</code><br>
-<code>( ... subroutine commands ... )</code><br>
-<code>M99</code> (return from subroutine)</li>
+<li>
+<p><strong>Calling a named macro file (directly executed by grblHAL):</strong></p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">(Main Program)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G53 G0 Z0</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">Otool_probe call (grblHAL executes &#x27;tool_probe.macro&#x27; from storage)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">...</span><br></span></code></pre></div></div>
+<p><strong>Example <code>tool_probe.macro</code> file content (must be named <code>tool_probe.macro</code> and located in the configured path):</strong></p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">o&lt;tool_probe&gt; sub</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  ( Code for probing here, e.g., )</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  G91 G38.2 Z-20 F100</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  ( ... calculate offset ... )</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">o&lt;tool_probe&gt; endsub</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M2 (Optional: M2 to reset/end the macro file after execution)</span><br></span></code></pre></div></div>
+</li>
+<li>
+<p><strong>Calling a numbered macro file (directly executed by grblHAL):</strong></p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">(Main Program)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">G53 G0 Z0</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">O123 call L2 (grblHAL executes &#x27;o123.macro&#x27; twice from storage)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">...</span><br></span></code></pre></div></div>
+<p><strong>Example <code>o123.macro</code> file content (must be named <code>o123.macro</code> and located in the configured path):</strong></p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">o123 sub</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  ( Code for a specific operation, e.g., )</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  G1 X10 Y10 F500</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  G1 Z-2 F100</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">o123 endsub</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M2</span><br></span></code></pre></div></div>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks">Tips &amp; Tricks<a href="#tips--tricks" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<ul>
+<li>For <strong>external file subroutines</strong> (<code>O&lt;name&gt; call</code> or <code>O&lt;number&gt; call</code>), the <code>O&lt;name/number&gt; sub</code> and <code>O&lt;name/number&gt; endsub</code> lines within the file are mandatory.</li>
+<li>An <code>O&lt;name/number&gt; return</code> statement can be used for an early exit from an external subroutine file. When an external macro file finishes (either by <code>endsub</code> or <code>return</code>, or simply reaching the end of the file), execution returns to the line after the <code>O&lt;name/number&gt; call</code> in the main program.</li>
+<li>The use of <code>M2</code> or <code>M30</code> at the end of an external macro file is a common practice, especially for older CAM posts, but <code>endsub</code> is the explicit O-code mechanism.</li>
 </ul>
 <hr>
 <h1>G-Codes</h1>
@@ -107,7 +138,7 @@
 <code>G90 G0 X15.5 Y32.75 Z-2.0 B45 C-180</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks">Tips &amp; Tricks<a href="#tips--tricks" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-1">Tips &amp; Tricks<a href="#tips--tricks-1" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Always ensure the path is clear before executing a <code>G0</code> command to avoid collisions. It&#x27;s common practice to retract the Z-axis to a safe height first.</li>
 <li><code>G0</code> is functionally similar to a <code>G1</code> move with the feed rate set to maximum, but <code>G0</code> is the standard, more explicit, and safer way to command a rapid move.</li>
@@ -140,7 +171,7 @@
 <code>G1 X50 Y25 Z-5 A90 B45 C180 F150</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-1">Tips &amp; Tricks<a href="#tips--tricks-1" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-2">Tips &amp; Tricks<a href="#tips--tricks-2" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The <code>F</code> value is modal. Once you set it, all subsequent <code>G1</code> moves will use that feed rate until a new <code>F</code> value is commanded.</li>
 <li>To cut a simple line, you only need to specify the axes that are changing. <code>G1 X100</code> will move only the X-axis if the machine is already at the correct Y and Z position.</li>
@@ -180,7 +211,7 @@
 <code>G17 G90</code><br>
 <code>G2 X10 Y10 Z-5 I10 J0 F150</code> (Moves in an arc on XY while also moving down on Z)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-2">Tips &amp; Tricks<a href="#tips--tricks-2" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-3">Tips &amp; Tricks<a href="#tips--tricks-3" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><strong><code>IJK</code> mode is generally preferred</strong> as it&#x27;s mathematically unambiguous. <code>R</code> mode can sometimes describe two possible arcs between two points; grblHAL follows the standard convention (positive <code>R</code> for the shorter arc, negative <code>R</code> for the longer arc).</li>
 <li>Using <code>IJK</code> in <code>G91</code> (incremental) mode is very powerful for creating repeating patterns. The offsets are still calculated from the start point of the arc.</li>
@@ -194,7 +225,7 @@
 <p>Pauses the machine for a specified period of time. All axes stop moving, but other machine functions (like spindle or coolant) remain in their current state.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
 <li><strong>Non-Modal:</strong> <code>G4</code> is active only for the block in which it appears.</li>
-<li><strong>Purpose:</strong> Useful for clearing chips at the bottom of a hole, allowing a spindle to reach full speed, or waiting for a tool change.</li>
+<li><strong>Purpose:</strong> Useful for clearing chips at the bottom of a hole, allowing a spindle to reach full speed, etc.</li>
 </ul></div></div>
 <table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>P</strong></td><td>Dwell time in seconds.</td></tr></tbody></table>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-2">Common Examples<a href="#common-examples-2" class="hash-link" aria-label="Direct link to Common Examples" title="Direct link to Common Examples">​</a></h4>
@@ -210,7 +241,7 @@
 <code>G0 Z5</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-3">Tips &amp; Tricks<a href="#tips--tricks-3" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-4">Tips &amp; Tricks<a href="#tips--tricks-4" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The <code>P</code> value can be a decimal.</li>
 <li>Dwell commands are executed in order, so the machine will finish any preceding motion before the pause begins.</li>
@@ -236,7 +267,7 @@
 <code>G0 X0 Y0</code> (Start point)<br>
 <code>G5 X20 Y10 I10 J15 F100</code> (Move to X20 Y10, with control point X10 Y15)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-4">Tips &amp; Tricks<a href="#tips--tricks-4" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-5">Tips &amp; Tricks<a href="#tips--tricks-5" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Spline commands are typically generated by CAM software for free-form surface machining (e.g., 3D carving, mold making) where smooth transitions are critical.</li>
 <li>Manual programming of splines is complex due to the mathematical nature of control points.</li>
@@ -251,10 +282,9 @@
 </blockquote>
 <p>These commands are used exclusively in lathe operations to define whether X-axis movements are interpreted as changes in the workpiece&#x27;s radius or diameter.</p>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Context</div><div class="admonitionContent_BuS1"><ul>
-<li><strong>Modal:</strong> Part of the Lathe Mode group. Only active if grblHAL is compiled with lathe support (setting <code>$22=2</code>).</li>
+<li><strong>Modal:</strong> Part of the Lathe Mode group. Only active if grblHAL is configured with lathe support (setting <code>$22=2</code>).</li>
 <li><strong><code>G7</code> (Diameter Mode):</strong> All X-axis coordinates and movements are interpreted as diameters. If you command <code>G1 X50</code>, the tool moves to a position where the workpiece diameter will be 50 units.</li>
 <li><strong><code>G8</code> (Radius Mode):</strong> All X-axis coordinates and movements are interpreted as radii. If you command <code>G1 X25</code>, the tool moves to a position where the workpiece radius will be 25 units (meaning a 50-unit diameter).</li>
-<li><strong>Setting:</strong> The mode can be set via the controller if it&#x27;s a grblHAL controller by setting the Mode of operation to Lathe mode (<code>$22=2</code>).</li>
 </ul></div></div>
 <table><thead><tr><th>Command</th><th>X-Axis Interpretation</th></tr></thead><tbody><tr><td><strong><code>G7</code></strong></td><td>Diameter</td></tr><tr><td><strong><code>G8</code></strong></td><td>Radius</td></tr></tbody></table>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-examples-lathe">Common Examples (Lathe)<a href="#common-examples-lathe" class="hash-link" aria-label="Direct link to Common Examples (Lathe)" title="Direct link to Common Examples (Lathe)">​</a></h4>
@@ -272,7 +302,7 @@
 <code>G1 X0 F0.1</code> (Face to center)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-5">Tips &amp; Tricks<a href="#tips--tricks-5" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-6">Tips &amp; Tricks<a href="#tips--tricks-6" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Always explicitly set <code>G7</code> or <code>G8</code> at the beginning of a lathe program to avoid misinterpreting X-axis movements.</li>
 <li>Most CAM software for lathes will output G-code in diameter mode (<code>G7</code>).</li>
@@ -304,7 +334,7 @@
 <code>G53 G0 X300 Y150</code> (Move to the desired origin in machine coordinates)<br>
 <code>G10 L20 P3 X0 Y0 Z5</code> (Set the G56 origin. The current XY is now G56&#x27;s X0Y0. Z is set to 5)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-6">Tips &amp; Tricks<a href="#tips--tricks-6" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-7">Tips &amp; Tricks<a href="#tips--tricks-7" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><code>G10</code> is extremely powerful for automated setups, especially with multiple identical fixtures.</li>
 <li>The values are stored persistently in grblHAL&#x27;s memory, so they survive a reset.</li>
@@ -339,7 +369,7 @@
 <code>G3 X20 Z-5 I10 K0 F250</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-7">Tips &amp; Tricks<a href="#tips--tricks-7" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-8">Tips &amp; Tricks<a href="#tips--tricks-8" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Always explicitly set your plane at the beginning of a program or after a tool change to avoid unexpected arc movements.</li>
 <li>Even if you are not cutting arcs, some canned cycles may behave differently depending on the active plane.</li>
@@ -372,10 +402,11 @@
 <code>G1 X4 F20</code> (Moves to X=4in at 20in/min)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-8">Tips &amp; Tricks<a href="#tips--tricks-8" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-9">Tips &amp; Tricks<a href="#tips--tricks-9" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>It is critical safety practice to include either <code>G20</code> or <code>G21</code> at the very beginning of every G-code file. This prevents misinterpreting a 10mm move as a 10-inch move, which could cause a crash.</li>
 <li>This setting affects how <em>grblHAL interprets G-code</em>, but does not change the machine&#x27;s internal step/mm settings (<code>$100</code>, etc.).</li>
+<li>Also checkout <code>$13</code> <a href="/grblhal_docs/Reference/complete-settings-reference/#13--report-in-inches-boolean">Report in Inches (boolean)</a></li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="g28-g30--go-to-pre-defined-position"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position<a href="#g28-g30--go-to-pre-defined-position" class="hash-link" aria-label="Direct link to g28-g30--go-to-pre-defined-position" title="Direct link to g28-g30--go-to-pre-defined-position">​</a></h2>
@@ -409,7 +440,7 @@
 <code>G30</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-9">Tips &amp; Tricks<a href="#tips--tricks-9" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-10">Tips &amp; Tricks<a href="#tips--tricks-10" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The pre-defined positions are stored in machine coordinates.</li>
 <li>A common use case is <code>G53 G0 Z0</code> followed by <code>G28</code>. This ensures the Z-axis is fully retracted in machine coordinates before moving to the <code>G28</code> XY position, which is a very safe sequence.</li>
@@ -440,7 +471,7 @@
 <code>G30.1</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-10">Tips &amp; Tricks<a href="#tips--tricks-10" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-11">Tips &amp; Tricks<a href="#tips--tricks-11" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Before running <code>G28.1</code> or <code>G30.1</code>, it&#x27;s best to move the machine using <code>G53</code> (move in machine coordinates) to ensure you are setting the position precisely where you want it, independent of any work offsets.</li>
 </ul>
@@ -477,7 +508,7 @@
 <em>Record position and calculate center</em></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-11">Tips &amp; Tricks<a href="#tips--tricks-11" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-12">Tips &amp; Tricks<a href="#tips--tricks-12" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Upon successful probing, grblHAL reports the trigger position, which can be accessed via <code>?</code> status reports or parsed by a GUI.</li>
 <li>Use a slow feed rate (<code>F</code>) for probing to get accurate results and prevent damage to the probe tip. A common practice is to perform a fast probe to find the surface, back off slightly, then perform a second, much slower probe for high accuracy.</li>
@@ -535,7 +566,7 @@
 <code>G43 H1</code> (Apply its stored offset)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-12">Tips &amp; Tricks<a href="#tips--tricks-12" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-13">Tips &amp; Tricks<a href="#tips--tricks-13" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><code>G49</code> should be commanded before any tool change (<code>M6</code>) and at the end of a program.</li>
 <li><code>G43.1</code> in grblHAL applies the offset directly. For example, after probing a new tool, a macro can calculate the difference and issue the correct <code>G43.1</code> command.</li>
@@ -572,7 +603,7 @@
 <code>G50</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-13">Tips &amp; Tricks<a href="#tips--tricks-13" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-14">Tips &amp; Tricks<a href="#tips--tricks-14" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Scaling applies to all subsequent motion commands until <code>G50</code> is issued.</li>
 <li>It&#x27;s a powerful feature for design adjustments or creating mirrored parts without complex CAM operations.</li>
@@ -601,7 +632,7 @@
 <code>G53 G0 X-10 Y-10</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-14">Tips &amp; Tricks<a href="#tips--tricks-14" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-15">Tips &amp; Tricks<a href="#tips--tricks-15" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><code>G53</code> is the most reliable way to move to a known, fixed position on the machine (like a tool change station or probing location) because it is not affected by any offsets.</li>
 <li>The next block of G-code will revert to the previously active work coordinate system.</li>
@@ -650,7 +681,7 @@
 <code>(run the same g-code for part 2)</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-15">Tips &amp; Tricks<a href="#tips--tricks-15" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-16">Tips &amp; Tricks<a href="#tips--tricks-16" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The origins for each WCS are set using the <code>G10 L2</code> or <code>G10 L20</code> commands or through the GUI by &quot;zeroing&quot; the axes.</li>
 <li>WCS values are stored persistently.</li>
@@ -676,7 +707,7 @@
 <code>G61</code><br>
 <code>(G-code for drawing)</code></li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-16">Tips &amp; Tricks<a href="#tips--tricks-16" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-17">Tips &amp; Tricks<a href="#tips--tricks-17" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>For most applications (2D profiling, 3D carving), <code>G64</code> is the preferred mode as it results in faster and smoother operation.</li>
 <li>Use <code>G61</code> only when absolute corner sharpness is required, such as inlays or mechanical parts with tight tolerances. Be aware that it can leave &quot;witness marks&quot; or small circular divots at each corner on some materials due to the momentary stop.</li>
@@ -718,7 +749,7 @@
 <code>G65 P100 A8.0 B150</code> (Call P100.macro, drill 8mm deep at 150mm/min)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-17">Tips &amp; Tricks<a href="#tips--tricks-17" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-18">Tips &amp; Tricks<a href="#tips--tricks-18" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><code>G65</code> is a powerful tool for creating reusable, modular G-code for complex operations.</li>
 <li>Variables are assigned to arguments based on their letter, e.g., <code>A</code> is typically <code>#1</code>, <code>B</code> is <code>#2</code>, <code>X</code> is <code>#24</code>, etc.</li>
@@ -827,7 +858,7 @@
 <code>G1 Y-30</code> (Move down 30)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-18">Tips &amp; Tricks<a href="#tips--tricks-18" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-19">Tips &amp; Tricks<a href="#tips--tricks-19" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Most CAM software generates code in <code>G90</code> (Absolute) mode.</li>
 <li><code>G91</code> is extremely useful for writing simple, repeatable subroutines and macros, such as probing routines or patterns, because they work correctly regardless of where they are started.</li>
@@ -858,7 +889,7 @@
 ...
 <code>G92.1</code> (Clear the offset and return to the underlying G54/etc. system)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-19">Tips &amp; Tricks<a href="#tips--tricks-19" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-20">Tips &amp; Tricks<a href="#tips--tricks-20" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li><strong>Warning:</strong> <code>G92</code> offsets are easy to forget about and can lead to unexpected crashes. It&#x27;s often safer to use a dedicated Work Coordinate System like <code>G55</code> for temporary setups.</li>
 <li>A <code>G92</code> offset is applied <em>on top of</em> the active G54-G59 WCS.</li>
@@ -916,7 +947,7 @@
 <code>G96 S150 M3</code> (Turn on CSS mode at 150 m/min)
 <code>G1 X0 F0.2</code> (As X moves from a large diameter to zero, RPM will increase to maintain S150)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-20">Tips &amp; Tricks<a href="#tips--tricks-20" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-21">Tips &amp; Tricks<a href="#tips--tricks-21" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Always use <code>G97</code> for drilling, tapping, and threading operations, as a constant, known RPM is required. <code>G97 S800 M3</code>.</li>
 <li><code>G96</code> provides a better surface finish and improved tool life on lathes when diameter is changing significantly.</li>
@@ -1031,7 +1062,7 @@
 <code>S500 M4</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-21">Tips &amp; Tricks<a href="#tips--tricks-21" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-22">Tips &amp; Tricks<a href="#tips--tricks-22" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>It&#x27;s good practice to command the <code>S</code> word on the same line or just before the <code>M3</code>/<code>M4</code> command.</li>
 <li>The controller will wait for the spindle to reach the commanded speed before executing the next motion command if &quot;Wait for Spindle at Speed&quot; is enabled in the settings. This is crucial for tapping and heavy cuts.</li>
@@ -1070,7 +1101,7 @@
 <code>T2 M6</code> (Select tool 2 and pause. A message &quot;Change to tool 2&quot; may appear in the GUI)</p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-22">Tips &amp; Tricks<a href="#tips--tricks-22" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-23">Tips &amp; Tricks<a href="#tips--tricks-23" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The <code>T</code> word only <em>selects</em> the tool. <code>M6</code> is the command that <em>executes</em> the change.</li>
 <li>The logic for the tool change process (both manual and automatic) is often defined in a system macro file, typically named <code>tc.macro</code> (tool change) or <code>P200.macro</code> (for RapidChange ATC) located on the controller&#x27;s SD card or accessible by the sender. This allows for extensive customization of the tool change procedure. For an example, see projects like <a href="https://services.rapidchangeatc.com/docs/" target="_blank" rel="noopener noreferrer">Rapidchange ATC</a>.</li>
@@ -1108,7 +1139,7 @@
 <code>M9</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-23">Tips &amp; Tricks<a href="#tips--tricks-23" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-24">Tips &amp; Tricks<a href="#tips--tricks-24" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>The specific physical pins used for coolant are defined in the driver board&#x27;s configuration file.</li>
 <li>These outputs can be repurposed to control other accessories, like a vacuum clamp or an air blast, if coolant is not used.</li>
@@ -1170,7 +1201,7 @@
 <code>M48</code></p>
 </li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-24">Tips &amp; Tricks<a href="#tips--tricks-24" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-25">Tips &amp; Tricks<a href="#tips--tricks-25" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Use these commands sparingly and only when absolute control over speed or feed is required, as they limit operator intervention.</li>
 <li>Always remember to re-enable overrides with <code>M48</code> after the critical operation is complete.</li>
@@ -1196,7 +1227,7 @@
 <code>(Critical cutting moves)</code><br>
 <code>M56 P1</code> (Re-enable parking)</li>
 </ul>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-25">Tips &amp; Tricks<a href="#tips--tricks-25" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="tips--tricks-26">Tips &amp; Tricks<a href="#tips--tricks-26" class="hash-link" aria-label="Direct link to Tips &amp; Tricks" title="Direct link to Tips &amp; Tricks">​</a></h4>
 <ul>
 <li>Use <code>M56</code> when you need to prevent the machine from automatically moving to a park position during operations where such a move would be undesirable or unsafe.</li>
 <li>Always re-enable parking motion when it&#x27;s safe and beneficial, such as before tool changes or at program end.</li>
@@ -1440,6 +1471,6 @@
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="plugin-encoder-plugin_encoder">Plugin: Encoder (<code>Plugin_encoder</code>)<a href="#plugin-encoder-plugin_encoder" class="hash-link" aria-label="Direct link to plugin-encoder-plugin_encoder" title="Direct link to plugin-encoder-plugin_encoder">​</a></h2>
 <p>Repo: <code>https://github.com/grblHAL/Plugin_encoder</code></p>
-<table><thead><tr><th>M-Code</th><th>Syntax</th><th>Description</th></tr></thead><tbody><tr><td><code>M114</code></td><td><code>M114</code></td><td>Report current position (includes spindle encoder if available)</td></tr></tbody></table></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/04-Reference/complete-g-m-code-reference.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Machine-Calibration/backlash-compensation"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Backlash Compensation</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Reference/complete-settings-reference"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Complete Settings Reference</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#f--feed-rate" class="table-of-contents__link toc-highlight"><code>F</code> – Feed Rate</a></li><li><a href="#s--spindle-speed" class="table-of-contents__link toc-highlight"><code>S</code> – Spindle Speed</a></li><li><a href="#t--tool-select" class="table-of-contents__link toc-highlight"><code>T</code> – Tool Select</a></li><li><a href="#o--program-name--subroutine-number" class="table-of-contents__link toc-highlight"><code>O</code> – Program Name / Subroutine Number</a></li><li><a href="#g0--rapid-positioning" class="table-of-contents__link toc-highlight"><code>G0</code> – Rapid Positioning</a></li><li><a href="#g1--linear-interpolation" class="table-of-contents__link toc-highlight"><code>G1</code> – Linear Interpolation</a></li><li><a href="#g2--g3--arc--helical-interpolation" class="table-of-contents__link toc-highlight"><code>G2</code> &amp; <code>G3</code> – Arc / Helical Interpolation</a></li><li><a href="#g4--dwell" class="table-of-contents__link toc-highlight"><code>G4</code> – Dwell</a></li><li><a href="#g5-g51--spline-interpolation" class="table-of-contents__link toc-highlight"><code>G5</code>, <code>G5.1</code> – Spline Interpolation</a></li><li><a href="#g7-g8--lathe-diameter--radius-mode" class="table-of-contents__link toc-highlight"><code>G7</code>, <code>G8</code> – Lathe Diameter / Radius Mode</a></li><li><a href="#g10-l2--g10-l20--set-coordinate-system-data" class="table-of-contents__link toc-highlight"><code>G10 L2</code> &amp; <code>G10 L20</code> – Set Coordinate System Data</a></li><li><a href="#g17-g18-g19--plane-selection" class="table-of-contents__link toc-highlight"><code>G17</code>, <code>G18</code>, <code>G19</code> – Plane Selection</a></li><li><a href="#g20-g21--unit-selection" class="table-of-contents__link toc-highlight"><code>G20</code>, <code>G21</code> – Unit Selection</a></li><li><a href="#g28-g30--go-to-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position</a></li><li><a href="#g281-g301--set-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28.1</code>, <code>G30.1</code> – Set Pre-Defined Position</a></li><li><a href="#g382-g383-g384-g385--probing" class="table-of-contents__link toc-highlight"><code>G38.2</code>, <code>G38.3</code>, <code>G38.4</code>, <code>G38.5</code> – Probing</a></li><li><a href="#g40--cancel-cutter-radius-compensation" class="table-of-contents__link toc-highlight"><code>G40</code> – Cancel Cutter Radius Compensation</a></li><li><a href="#g431-g432-g49--tool-length-offsets" class="table-of-contents__link toc-highlight"><code>G43.1</code>, <code>G43.2</code>, <code>G49</code> – Tool Length Offsets</a></li><li><a href="#g50-g51--coordinate-system-scaling" class="table-of-contents__link toc-highlight"><code>G50</code>, <code>G51</code> – Coordinate System Scaling</a></li><li><a href="#g53--move-in-machine-coordinates" class="table-of-contents__link toc-highlight"><code>G53</code> – Move in Machine Coordinates</a></li><li><a href="#g54-to-g593--work-coordinate-systems-wcs" class="table-of-contents__link toc-highlight"><code>G54</code> to <code>G59.3</code> – Work Coordinate Systems (WCS)</a></li><li><a href="#g61-g611--path-control-mode" class="table-of-contents__link toc-highlight"><code>G61</code>, <code>G61.1</code> – Path Control Mode</a></li><li><a href="#g65--subprogram-call-with-arguments" class="table-of-contents__link toc-highlight"><code>G65</code> – Subprogram Call with Arguments</a></li><li><a href="#g76-g81-to-g89--canned-cycles" class="table-of-contents__link toc-highlight"><code>G76</code>, <code>G81</code> to <code>G89</code> – Canned Cycles</a></li><li><a href="#g80--cancel-canned-cycle" class="table-of-contents__link toc-highlight"><code>G80</code> – Cancel Canned Cycle</a></li><li><a href="#g90-g91--distance-mode" class="table-of-contents__link toc-highlight"><code>G90</code>, <code>G91</code> – Distance Mode</a></li><li><a href="#g92-g921-g922--coordinate-system-offset" class="table-of-contents__link toc-highlight"><code>G92</code>, <code>G92.1</code>, <code>G92.2</code> – Coordinate System Offset</a></li><li><a href="#g93-g94-g95--feed-rate-mode" class="table-of-contents__link toc-highlight"><code>G93</code>, <code>G94</code>, <code>G95</code> – Feed Rate Mode</a></li><li><a href="#g96-g97--spindle-speed-mode" class="table-of-contents__link toc-highlight"><code>G96</code>, <code>G97</code> – Spindle Speed Mode</a></li><li><a href="#g98-g99--canned-cycle-return-mode" class="table-of-contents__link toc-highlight"><code>G98</code>, <code>G99</code> – Canned Cycle Return Mode</a></li><li><a href="#m0-m1-m2-m30--program-flow--stopping" class="table-of-contents__link toc-highlight"><code>M0</code>, <code>M1</code>, <code>M2</code>, <code>M30</code> – Program Flow &amp; Stopping</a></li><li><a href="#m3-m4-m5--spindle-control" class="table-of-contents__link toc-highlight"><code>M3</code>, <code>M4</code>, <code>M5</code> – Spindle Control</a></li><li><a href="#m6--tool-change" class="table-of-contents__link toc-highlight"><code>M6</code> – Tool Change</a></li><li><a href="#m7-m8-m9--coolant-control" class="table-of-contents__link toc-highlight"><code>M7</code>, <code>M8</code>, <code>M9</code> – Coolant Control</a></li><li><a href="#m48-m49--override-control" class="table-of-contents__link toc-highlight"><code>M48</code>, <code>M49</code> – Override Control</a></li><li><a href="#m50-m51-m53--feed-spindle-rapid-override-control" class="table-of-contents__link toc-highlight"><code>M50</code>, <code>M51</code>, <code>M53</code> – Feed, Spindle, Rapid Override Control</a></li><li><a href="#m56--parking-motion-override" class="table-of-contents__link toc-highlight"><code>M56</code> – Parking Motion Override</a></li><li><a href="#m62-m63-m64-and--m65--synchronized-and-asynchronous-io" class="table-of-contents__link toc-highlight"><code>M62</code>, <code>M63</code>, <code>M64</code> and  <code>M65</code> – Synchronized and Asynchronous I/O</a></li><li><a href="#m66--wait-for-input-signal" class="table-of-contents__link toc-highlight"><code>M66</code> – Wait for Input Signal</a></li><li><a href="#m67-m68--set-analog-output" class="table-of-contents__link toc-highlight"><code>M67</code>, <code>M68</code> – Set Analog Output</a></li><li><a href="#m70-m71-m72-m73--modal-state-saverestore" class="table-of-contents__link toc-highlight"><code>M70</code>, <code>M71</code>, <code>M72</code>, <code>M73</code> – Modal State Save/Restore</a></li><li><a href="#m99--return-from-subprogram" class="table-of-contents__link toc-highlight"><code>M99</code> – Return from Subprogram</a></li><li><a href="#m220--set-feed-rate-override-percentage" class="table-of-contents__link toc-highlight"><code>M220</code> – Set Feed Rate Override Percentage</a></li><li><a href="#m280--set-servo-position" class="table-of-contents__link toc-highlight"><code>M280</code> – Set Servo Position</a></li><li><a href="#m400--finish-moves" class="table-of-contents__link toc-highlight"><code>M400</code> – Finish Moves</a></li><li><a href="#plugin-plasma--torch-height-control-thc" class="table-of-contents__link toc-highlight">Plugin: Plasma / Torch Height Control (THC)</a></li><li><a href="#plugin-fan-control-plugin_fans" class="table-of-contents__link toc-highlight">Plugin: Fan Control (<code>Plugin_fans</code>)</a></li><li><a href="#plugin-rgb-led-strip---plugins_misc" class="table-of-contents__link toc-highlight">Plugin: RGB LED Strip - <code>Plugins_misc</code></a></li><li><a href="#plugin-feed-override-plugins_misc" class="table-of-contents__link toc-highlight">Plugin: Feed Override (<code>Plugins_misc</code>)</a></li><li><a href="#plugin-servo-control-plugins_misc" class="table-of-contents__link toc-highlight">Plugin: Servo Control (<code>Plugins_misc</code>)</a></li><li><a href="#plugin-openpnp-plugin_openpnp" class="table-of-contents__link toc-highlight">Plugin: OpenPNP (<code>Plugin_OpenPNP</code>)</a></li><li><a href="#plugin-motor--trinamic-plugins_motor" class="table-of-contents__link toc-highlight">Plugin: Motor / Trinamic (<code>Plugins_motor</code>)</a></li><li><a href="#plugin-spindle-plugins_spindle" class="table-of-contents__link toc-highlight">Plugin: Spindle (<code>Plugins_spindle</code>)</a></li><li><a href="#plugin-encoder-plugin_encoder" class="table-of-contents__link toc-highlight">Plugin: Encoder (<code>Plugin_encoder</code>)</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
+<table><thead><tr><th>M-Code</th><th>Syntax</th><th>Description</th></tr></thead><tbody><tr><td><code>M114</code></td><td><code>M114</code></td><td>Report current position (includes spindle encoder if available)</td></tr></tbody></table></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/04-Reference/complete-g-m-code-reference.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Machine-Calibration/backlash-compensation"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Backlash Compensation</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Reference/complete-settings-reference"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Complete Settings Reference</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#f--feed-rate" class="table-of-contents__link toc-highlight"><code>F</code> – Feed Rate</a></li><li><a href="#s--spindle-speed" class="table-of-contents__link toc-highlight"><code>S</code> – Spindle Speed</a></li><li><a href="#t--tool-select" class="table-of-contents__link toc-highlight"><code>T</code> – Tool Select</a></li><li><a href="#o--o-code-subroutines-and-labels" class="table-of-contents__link toc-highlight"><code>O</code> – O-Code Subroutines and Labels</a></li><li><a href="#g0--rapid-positioning" class="table-of-contents__link toc-highlight"><code>G0</code> – Rapid Positioning</a></li><li><a href="#g1--linear-interpolation" class="table-of-contents__link toc-highlight"><code>G1</code> – Linear Interpolation</a></li><li><a href="#g2--g3--arc--helical-interpolation" class="table-of-contents__link toc-highlight"><code>G2</code> &amp; <code>G3</code> – Arc / Helical Interpolation</a></li><li><a href="#g4--dwell" class="table-of-contents__link toc-highlight"><code>G4</code> – Dwell</a></li><li><a href="#g5-g51--spline-interpolation" class="table-of-contents__link toc-highlight"><code>G5</code>, <code>G5.1</code> – Spline Interpolation</a></li><li><a href="#g7-g8--lathe-diameter--radius-mode" class="table-of-contents__link toc-highlight"><code>G7</code>, <code>G8</code> – Lathe Diameter / Radius Mode</a></li><li><a href="#g10-l2--g10-l20--set-coordinate-system-data" class="table-of-contents__link toc-highlight"><code>G10 L2</code> &amp; <code>G10 L20</code> – Set Coordinate System Data</a></li><li><a href="#g17-g18-g19--plane-selection" class="table-of-contents__link toc-highlight"><code>G17</code>, <code>G18</code>, <code>G19</code> – Plane Selection</a></li><li><a href="#g20-g21--unit-selection" class="table-of-contents__link toc-highlight"><code>G20</code>, <code>G21</code> – Unit Selection</a></li><li><a href="#g28-g30--go-to-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28</code>, <code>G30</code> – Go to Pre-Defined Position</a></li><li><a href="#g281-g301--set-pre-defined-position" class="table-of-contents__link toc-highlight"><code>G28.1</code>, <code>G30.1</code> – Set Pre-Defined Position</a></li><li><a href="#g382-g383-g384-g385--probing" class="table-of-contents__link toc-highlight"><code>G38.2</code>, <code>G38.3</code>, <code>G38.4</code>, <code>G38.5</code> – Probing</a></li><li><a href="#g40--cancel-cutter-radius-compensation" class="table-of-contents__link toc-highlight"><code>G40</code> – Cancel Cutter Radius Compensation</a></li><li><a href="#g431-g432-g49--tool-length-offsets" class="table-of-contents__link toc-highlight"><code>G43.1</code>, <code>G43.2</code>, <code>G49</code> – Tool Length Offsets</a></li><li><a href="#g50-g51--coordinate-system-scaling" class="table-of-contents__link toc-highlight"><code>G50</code>, <code>G51</code> – Coordinate System Scaling</a></li><li><a href="#g53--move-in-machine-coordinates" class="table-of-contents__link toc-highlight"><code>G53</code> – Move in Machine Coordinates</a></li><li><a href="#g54-to-g593--work-coordinate-systems-wcs" class="table-of-contents__link toc-highlight"><code>G54</code> to <code>G59.3</code> – Work Coordinate Systems (WCS)</a></li><li><a href="#g61-g611--path-control-mode" class="table-of-contents__link toc-highlight"><code>G61</code>, <code>G61.1</code> – Path Control Mode</a></li><li><a href="#g65--subprogram-call-with-arguments" class="table-of-contents__link toc-highlight"><code>G65</code> – Subprogram Call with Arguments</a></li><li><a href="#g76-g81-to-g89--canned-cycles" class="table-of-contents__link toc-highlight"><code>G76</code>, <code>G81</code> to <code>G89</code> – Canned Cycles</a></li><li><a href="#g80--cancel-canned-cycle" class="table-of-contents__link toc-highlight"><code>G80</code> – Cancel Canned Cycle</a></li><li><a href="#g90-g91--distance-mode" class="table-of-contents__link toc-highlight"><code>G90</code>, <code>G91</code> – Distance Mode</a></li><li><a href="#g92-g921-g922--coordinate-system-offset" class="table-of-contents__link toc-highlight"><code>G92</code>, <code>G92.1</code>, <code>G92.2</code> – Coordinate System Offset</a></li><li><a href="#g93-g94-g95--feed-rate-mode" class="table-of-contents__link toc-highlight"><code>G93</code>, <code>G94</code>, <code>G95</code> – Feed Rate Mode</a></li><li><a href="#g96-g97--spindle-speed-mode" class="table-of-contents__link toc-highlight"><code>G96</code>, <code>G97</code> – Spindle Speed Mode</a></li><li><a href="#g98-g99--canned-cycle-return-mode" class="table-of-contents__link toc-highlight"><code>G98</code>, <code>G99</code> – Canned Cycle Return Mode</a></li><li><a href="#m0-m1-m2-m30--program-flow--stopping" class="table-of-contents__link toc-highlight"><code>M0</code>, <code>M1</code>, <code>M2</code>, <code>M30</code> – Program Flow &amp; Stopping</a></li><li><a href="#m3-m4-m5--spindle-control" class="table-of-contents__link toc-highlight"><code>M3</code>, <code>M4</code>, <code>M5</code> – Spindle Control</a></li><li><a href="#m6--tool-change" class="table-of-contents__link toc-highlight"><code>M6</code> – Tool Change</a></li><li><a href="#m7-m8-m9--coolant-control" class="table-of-contents__link toc-highlight"><code>M7</code>, <code>M8</code>, <code>M9</code> – Coolant Control</a></li><li><a href="#m48-m49--override-control" class="table-of-contents__link toc-highlight"><code>M48</code>, <code>M49</code> – Override Control</a></li><li><a href="#m50-m51-m53--feed-spindle-rapid-override-control" class="table-of-contents__link toc-highlight"><code>M50</code>, <code>M51</code>, <code>M53</code> – Feed, Spindle, Rapid Override Control</a></li><li><a href="#m56--parking-motion-override" class="table-of-contents__link toc-highlight"><code>M56</code> – Parking Motion Override</a></li><li><a href="#m62-m63-m64-and--m65--synchronized-and-asynchronous-io" class="table-of-contents__link toc-highlight"><code>M62</code>, <code>M63</code>, <code>M64</code> and  <code>M65</code> – Synchronized and Asynchronous I/O</a></li><li><a href="#m66--wait-for-input-signal" class="table-of-contents__link toc-highlight"><code>M66</code> – Wait for Input Signal</a></li><li><a href="#m67-m68--set-analog-output" class="table-of-contents__link toc-highlight"><code>M67</code>, <code>M68</code> – Set Analog Output</a></li><li><a href="#m70-m71-m72-m73--modal-state-saverestore" class="table-of-contents__link toc-highlight"><code>M70</code>, <code>M71</code>, <code>M72</code>, <code>M73</code> – Modal State Save/Restore</a></li><li><a href="#m99--return-from-subprogram" class="table-of-contents__link toc-highlight"><code>M99</code> – Return from Subprogram</a></li><li><a href="#m220--set-feed-rate-override-percentage" class="table-of-contents__link toc-highlight"><code>M220</code> – Set Feed Rate Override Percentage</a></li><li><a href="#m280--set-servo-position" class="table-of-contents__link toc-highlight"><code>M280</code> – Set Servo Position</a></li><li><a href="#m400--finish-moves" class="table-of-contents__link toc-highlight"><code>M400</code> – Finish Moves</a></li><li><a href="#plugin-plasma--torch-height-control-thc" class="table-of-contents__link toc-highlight">Plugin: Plasma / Torch Height Control (THC)</a></li><li><a href="#plugin-fan-control-plugin_fans" class="table-of-contents__link toc-highlight">Plugin: Fan Control (<code>Plugin_fans</code>)</a></li><li><a href="#plugin-rgb-led-strip---plugins_misc" class="table-of-contents__link toc-highlight">Plugin: RGB LED Strip - <code>Plugins_misc</code></a></li><li><a href="#plugin-feed-override-plugins_misc" class="table-of-contents__link toc-highlight">Plugin: Feed Override (<code>Plugins_misc</code>)</a></li><li><a href="#plugin-servo-control-plugins_misc" class="table-of-contents__link toc-highlight">Plugin: Servo Control (<code>Plugins_misc</code>)</a></li><li><a href="#plugin-openpnp-plugin_openpnp" class="table-of-contents__link toc-highlight">Plugin: OpenPNP (<code>Plugin_OpenPNP</code>)</a></li><li><a href="#plugin-motor--trinamic-plugins_motor" class="table-of-contents__link toc-highlight">Plugin: Motor / Trinamic (<code>Plugins_motor</code>)</a></li><li><a href="#plugin-spindle-plugins_spindle" class="table-of-contents__link toc-highlight">Plugin: Spindle (<code>Plugins_spindle</code>)</a></li><li><a href="#plugin-encoder-plugin_encoder" class="table-of-contents__link toc-highlight">Plugin: Encoder (<code>Plugin_encoder</code>)</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
