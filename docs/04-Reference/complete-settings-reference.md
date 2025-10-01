@@ -40,6 +40,7 @@ If too short, drivers may **miss steps**. If too long, it can **limit maximum st
 - Always start **low** (e.g. 2 µs) and only increase if you see reliability issues.  
 - A higher value reduces maximum achievable step frequency.  
 - If `$29` (Pulse Delay) is used, the **effective pulse width** is `$29 (Pulse Delay) + $0 (Pulse on time) + $0 (Pulse off time)`.  
+- Pulse off time is variable, it is the time between the pulses. This is capped to a minimum of 2 µs. So 1 / ($29+ $0 + 2) is the max theoretical step frequency - which may be higher than what the controller is capable of.
 - Pulse Off Time is hard-coded to 2 µs minimum. It is only relevant when approaching the maximum possible step rate. Later versions of most drivers will limit the max rate instead of lowering the the off-time, where earlier drivers would break down.
 
 ---
@@ -256,6 +257,8 @@ If your probe shows **triggered when it's not making contact**, invert it here.
 :::info Context
 - In most builds: `$6` is a simple **boolean** (0=normal, 1=invert).  
 - In grblHAL builds with **multiple probes enabled**, `$6` becomes a **bitmask**: each probe input can be inverted independently.  
+- Related settings:  
+  - `$65` – Probing Options (mask)
 :::
 
 ### Single-Probe Mode (default)
@@ -265,11 +268,11 @@ If your probe shows **triggered when it's not making contact**, invert it here.
 | **1** | Inverted (active-low probe trigger) |
 
 ### Multi-Probe Mode (bitmask)
-| Probe | Bit Value | Description |
-|-------|-----------|-------------|
-| Probe 1 | 1   | Invert Probe 1 input |
-| Probe 2 | 2   | Invert Probe 2 input |
-| Probe 3 | 4   | Invert Probe 3 input |
+| Probe           | Bit Value | Description |
+|-----------------|-----------|-------------|
+| Primary Probe   | 1   | Invert Primary Probe input |
+| Toolsetter      | 2   | Invert Toolsetter input |
+| Secondary Probe | 4   | Invert Secondary Probe input |
 
 #### Common Examples
 * **Default wiring (NO probe):**  
@@ -287,6 +290,7 @@ If your probe shows **triggered when it's not making contact**, invert it here.
 #### Tips & Tricks
 - If `$6` is wrong, probing will either **alarm immediately** or **never trigger**.  
 - Multi-probe configs are common in **toolsetter + touch plate** setups.  
+- With Multi Probe configs, checkout `G65P5` in [https://github.com/grblHAL/core/wiki/Expressions-and-flow-control#inbuilt-g65-macros](https://github.com/grblHAL/core/wiki/Expressions-and-flow-control#inbuilt-g65-macros)
 
 
 ---
@@ -298,6 +302,7 @@ For example, on a dual-Y gantry machine, you may need one motor to spin in the o
 
 :::info Context
 - Only applies if you have **ganged axes** (e.g., dual-Y or dual-Z).  
+- This inversion is applied after any configured inversions in `$3 - Direction Invert (mask)`
 - Expressed as a bitmask **per axis**  
 - Only **X**, **Y** and **Z** can be ganged
 :::
@@ -399,6 +404,16 @@ This allows you to customize what grblHAL streams back to the host.
 - Some GUIs may rely on specific fields (e.g. offsets, parser state).  
 - `Parser state` is not included inline, but sent separately on changes.  
 - `Run substatus` can be used as a simple **probe protection** indicator.  
+
+:::danger "Run Substatus" Information
+- Do not enable the `Run Substatus` option unless the sender can handle it.
+:::
+
+:::tip "Run Substatus" Information
+- The `Run Substatus` option adds `:<n>` to the status where `<n>` can be `1` for feed hold pending and `2` for probing. E.g. `Run:2` indicates that the current motion is for probing.
+- Feed hold pending (`Run:1`) is output when a feed hold is asked for during spindle synchronized motion, the hold will be executed after the synced motion is complete.
+- If used for probe protection the sender will have to cancel the current motion if the probe is triggered when the substate is not `Run:2`.
+:::
 
 ---
 
@@ -686,9 +701,7 @@ Enables a safety feature that prevents the machine from moving beyond its config
 ##### Tips & Tricks
 - Always enable soft limits once your machine is properly configured. It's free insurance against typos in G-code or jogging mistakes.
 - Avoid jogging mistakes by also setting `$40=1` - this will limit jogging commands to remain within the working area
-- If you get a "soft limit" error, it means your G-code is trying to move outside the machine's work area defined by `$130-$135`.  It usually means you either forgot to home, Homing isn't working correctly, or your job/jog move really does exceed the machine's working envelope
-
----
+- If you get a `Alarm 2`, it means your G-code is trying to move outside the machine's work area defined by `$130-$135`.  It usually means you either forgot to home, Homing isn't working correctly, or your job/jog move really does exceed the machine's working envelope
 
 ---
 
@@ -733,7 +746,7 @@ Configures the behavior of the homing cycle.
 
 :::info Context
 - This setting **enables and configures homing options only**.
-- It does **not** control which axes are homed. That is managed by the Homing Pass settings, starting with `$43`.
+- It does **not** control which axes are homed. That is managed by the Homing Phase settings, starting with `$44`.
 - This is a **bitmask**: add together the values of the options you want to enable.
 :::
 
@@ -759,6 +772,11 @@ Configures the behavior of the homing cycle.
 - Homing is one of the most important features to configure for a reliable machine.  All offsets and coordinate systems depends on a reliably established Machine coordinate system.  Without homing several features will feel like they don't work quite correctly.
 - For a new machine, start with just `$22=1` and then add more options once you have confirmed the basic cycle works.
 - The machine can be homed **without homing switches** by setting bit 0, 1 and 5 and setting all homing sequences to 0. Jog to the home position and send $H. Operations relying on axes homed (soft limits, …) will now work as if the machine has been homed
+
+:::tip
+- Per-Axis Feedrates enables axis settings `$18x` and `$19x`, `$24` and `$25` will be disabled (not reported).
+- You may have to restart the sender to make the change visible.
+:::
 
 ---
 
@@ -895,7 +913,7 @@ Sets the distance each axis moves *away* from the limit switches after they have
 
 ##### Tips & Tricks
 - This value must be large enough to fully release your mechanical switches.
-- The switch's trigger point itself is used to calculate Machine Zero, not where the machine comes to rest after homing
+- Pulloff is not taken into account for manually homed axes, only axes homed using homing switches
 
 ---
 
@@ -932,7 +950,7 @@ Adds an extra delay between the direction pin being set and the step pulse being
 | Value (µs) | Meaning | Description |
 |:----------:|:--------|:------------|
 | 0          | None    | Correct for nearly all modern drivers (Trinamic, TB6600, etc.). |
-| 1-10       | Short Delay | May be required for some drivers with slow opto-isolators. |
+| 1-10       | Short Delay | May be required for some drivers with opto-isolators (DMA420A, DQ542MA, DM556T) |
 
 #### Common Examples
 *   **Modern Digital Drivers (Default):**
@@ -941,6 +959,13 @@ Adds an extra delay between the direction pin being set and the step pulse being
 ##### Tips & Tricks
 - Only add a delay here if you are experiencing randomly missed steps on fast direction changes and have already ruled out mechanical issues and acceleration (`$12x`) being too high.
 - This delay can slightly limit the maximum achievable step rate.
+
+:::info Notes
+
+- From the `DM556T` documentation (Stepperonline version): DIR signal: This signal has low/high voltage levels to represent two directions of motor rotation. Minimal direction setup time of `5μs`.
+- Chinese knock-offs like `DMA420A` and `DQ542MA` may require even longer setup times
+- Complicating this is that the AMASS algorithm will often output the direction change before the next step - possibly masking that this delay is required - but it is good practice to configure required delay correctly
+:::
 
 ---
 
@@ -1047,6 +1072,7 @@ Sets the frequency of the **primary** PWM signal, used for spindle, laser, or se
 #### Tips & Tricks
 - **Always** check the documentation for your specific hardware. There is no "universal" correct value.
 - If your spindle speed is erratic or a servo jitters, this is one of the first settings to verify.
+- The response time increases with lower frequencies, e.g. for high speed grayscale laser engravings a higher frequency may be beneficial.
 
 ---
 
@@ -1057,7 +1083,7 @@ The raw PWM value to be output from the **primary** channel when the spindle is 
 - This setting is part of a group (`$34`, `$35`, `$36`) that maps the `S` command range to a raw PWM output range. The size of this range is driver-dependent (e.g., 0-255 or 0-1000).
 - This value corresponds to 0% duty cycle, which should be `0` for most applications.
 - Related settings:  
-  - `$734`
+  - `$734 PWM2 Spindle PWM Off Values`
 :::
 
 #### Common Examples
@@ -1074,7 +1100,7 @@ The raw PWM value for the **primary** channel corresponding to the minimum spind
 - **For VFDs/Lasers:** It linearizes the output for controllers that have a "dead zone" at the low end.
 - **For R/C Servos:** This value creates the minimum pulse width (e.g., 1.0ms).
 - Related settings:  
-  - `$735`
+  - `$735 PWM2 Spindle PWM Min Values`
 
 :::
 
@@ -1093,7 +1119,7 @@ The raw PWM value for the **primary** channel corresponding to the maximum spind
 - For VFDs/Lasers, this should almost always be the maximum value of the PWM range (e.g., 255 or 1000) to allow for 100% power.
 - For R/C Servos, this value creates the maximum pulse width (e.g., 2.0ms).
 - Related settings:  
-  - `$736`
+  - `$736 PWM2 Spindle PWM Max Values`
 
 :::
 
@@ -1147,7 +1173,7 @@ Specifies which axes should ignore the `$1` idle delay and remain energized at a
 Informs grblHAL how many pulses it will receive from a spindle encoder for one full revolution.
 
 :::info Context
-- This is an advanced feature required for **spindle-synchronized motion**, such as G33 rigid tapping and lathe threading.
+- This is an advanced feature required for **spindle-synchronized motion**, such as G33 spindle synchronized motion and lathe threading.
 - It does **not** control spindle speed; it provides high-resolution positional feedback of the spindle's rotation.
 - It requires a physical encoder mounted to the spindle.
 - It can also be used for **Spindle at Speed** automatic spin up/spin down delay if `$340` is set `> 0`.
@@ -1207,7 +1233,7 @@ Prevents jogging moves from exceeding the machine's software travel limits (`$13
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | Disabled| Jogging commands can be sent regardless of software limits. |
-| 1     | Enabled | Jogging commands that would exceed the machine's workspace are blocked. |
+| 1     | Enabled | Jogging commands that would exceed the machine's workspace are clamped/trimmed. |
 
 #### Common Examples
 *   **During Initial Setup (before homing works):**
@@ -1232,6 +1258,8 @@ Configures and enables the single-axis parking motion.
   - When the Event Plugin calls a Park Event
 - If bit 2 is set, you can use **M56** to enable/disable parking override control at runtime.  
 - This is a **bitmask**: add together the values of the options you want to enable.  
+- Related settings:  
+  - `$61 Safety Door Options (mask)`
 :::
 
 | Bit | Value | Option |
@@ -1430,34 +1458,7 @@ Sets the smallest incremental distance for step-style jogging.
     *   `$53=0.001`
 
 #### Tips & Tricks
-- This setting is crucial for precise zeroing and probing.
-- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
-
----
-
----
-
-## `$53` – Jog Step Distance
-Sets the smallest incremental distance for step-style jogging.
-
-:::info Context
-- This optional, driver-specific setting defines the distance for each "click" or "step" of a jog command when the "step" (or "x1") increment is selected.
-- It's typically used for very fine adjustments, like 0.01mm or 0.001mm.
-:::
-
-| Value (mm) | Description |
-|:----------:|:------------|
-| 0.001 - N  | The incremental distance for the smallest jog step. |
-
-#### Common Examples
-*   **Default for fine adjustments:**
-    *   `$53=0.01`
-*   **For ultra-fine positioning:**
-    *   `$53=0.001`
-
-#### Tips & Tricks
-- This setting is crucial for precise zeroing and probing.
-- If `$40` (Limit Jog Commands) is enabled, you can safely set this value to be quite large if needed, as jogging commands will be clamped to stay within the machine's configured workspace, preventing accidental overtravel.
+- This setting is crucial for precise zeroing and manual probing.
 
 ---
 
@@ -1530,8 +1531,8 @@ Sets an incremental distance for a pull-out move when parking, and a correspondi
 * **No Pull-out/Plunge (Default):**  
   `$56=0.0` → parking goes directly to the target (`$58`), resuming goes directly back without any slow retract/plunge.
 
-* **Gentle 2mm Lift for Tool Change:**  
-  `$56=2.0` (assuming Z+ is up) → when parking is triggered, Z lifts 2mm slowly, then rapids to the parking coordinate. On resume it rapids back near the work, then slowly plunges down 2mm to resume cutting.
+* **Gentle 5mm Lift:**  
+  `$56=5.0` When parking is triggered, Z lifts 5mm slowly, then rapids to the parking coordinate. On resume it rapids back near the work, then slowly plunges down 5mm to resume cutting.
 
 #### Tips & Tricks
 - This is ideal for safely disengaging and re-engaging the tool without gouging.  
@@ -1606,9 +1607,7 @@ Sets the feed rate for the main fast move to and from the parking coordinate.
   `$59=1500.0`
 
 #### Tips & Tricks
-- Do not exceed the axis’ maximum rate (`$112` if Z).  
 - This setting affects only the long travel, not the careful pull-out or plunge.  
-
 
 ---
 
@@ -1791,18 +1790,27 @@ Configures advanced options for probing cycles (`G38.x`).
 ---
 
 ## `$66` - `$69` – Piecewise Linear Spindle Compensation
-Configures a multi-point calibration curve to correct a non-linear response from a spindle controller or VFD.
+Configures a multi-point calibration curve to correct a non-linear speed response from a PWM-controlled spindle or VFD.
 
 :::info Context
-- This is an advanced feature for fine-tuning spindle speed accuracy when using PWM-to-analog (0-10V) converters.
-- Some converters are not perfectly linear (e.g., 50% PWM might give 4.8V instead of 5.0V). This feature allows you to create a "correction map".
-- Each setting defines a point on this map. `$66` is the first point, `$69` is the last.
-- The format for each setting is a packed value: `(RPM << 16) | PWM`.
+- This is an advanced feature for fine-tuning spindle speed accuracy, especially when using PWM-to-analog (0-10V) converters or direct PWM drivers that exhibit non-linear behavior.
+- It allows you to create a "correction map" by defining multiple calibration points. Each point corrects a specific input `S` value (RPM) to its corresponding desired raw PWM output.
+- The settings (`$66`, `$67`, `$68`, `$69`) are **strings, where each string contains a comma-separated list of values** representing the calibration points.
+- The format for each point within the string is `RPM,PWM_VALUE`, allowing for a piecewise linear interpolation.
 :::
 
+#### Example of String Format (Conceptual)
+*   `$66=5000,100,10000,200`
+    *   This sets two calibration points:
+        *   At `S=5000 RPM`, output raw PWM `100`.
+        *   At `S=10000 RPM`, output raw PWM `200`.
+
 #### Tips & Tricks
-- This is a highly advanced feature. For most users, ensuring `$30`, `$31`, `$35`, and `$36` are set correctly is sufficient.
-- To use this, you would need to measure your spindle's actual RPM at various PWM outputs and then calculate the correction points, which is a complex process.
+- This is a highly advanced feature. For most users, ensuring `$30` (Max Spindle Speed), `$31` (Min Spindle Speed), `$35` (PWM Min Value), and `$36` (PWM Max Value) are set correctly is sufficient.
+- To generate the precise values for these settings, you would typically:
+    1.  Measure your spindle's actual RPM at various PWM outputs.
+    2.  Use a calibration script, such as the [fit_nonlinear_spindle.py script from grbl's documentation](https://github.com/gnea/grbl/blob/master/doc/script/fit_nonlinear_spindle.py), to calculate the optimal correction points based on your measurements.
+- The `fit_nonlinear_spindle.py` script calculates the string values for these settings.
 
 ---
 
