@@ -4760,45 +4760,6 @@ Assigns custom M-codes (from M100 upwards) to execute specific G-code sequences 
 - For example, if you have a `500.macro` file on the SD card, you could set `$490=G65 P500`.
 - These macros are most effective when combined with the MacroPort Input Mapping (`$500+`) or the Keypad plugin for physical button activation.
 
----
-
----
-
-## `$590` - `$599` – Button Action Mapping (MacroPort)
-Assigns a specific system action to be performed when a physical input mapped to a MacroPort is triggered.
-
-:::info Context
-- These settings define the action that grblHAL will take when a physical input pin (configured in `$500`-`$509`) for a given MacroPort index is activated.
-- This mapping allows physical buttons or external signals to trigger either custom G-code macros or predefined real-time system commands.
-- `$590` defines the action for MacroPort 0, `$591` for MacroPort 1, and so on, up to `$599` for MacroPort 9.
-:::
-
-| Value | Action Description |
-|:-----:|:-------------------|
-| **0** | **Run Associated Macro:** Executes the G-code macro defined in the corresponding `$49x` setting (e.g., if `$590=0`, MacroPort 0 triggers the G-code from `$490`, which is M100). |
-| 1     | Cycle Start        | Initiates or resumes the G-code program (`0x81` real-time command). |
-| 2     | Feed Hold          | Pauses the current G-code program (`0x85` real-time command). |
-| 3     | Park               | Triggers the parking cycle (`0x84` real-time command). |
-| 4     | Reset              | Performs a soft reset of the controller (`0x18` real-time command). |
-| 5     | Spindle Stop (during feed hold) | Disables the spindle output if currently active during a feed hold. |
-| 6     | Mist Toggle        | Toggles the mist coolant output. |
-| 7     | Flood Toggle       | Toggles the flood coolant output. |
-| 8     | Probe Connected Toggle | Toggles the internal "probe connected" flag. |
-| 9     | Optional Stop Toggle | Toggles the optional stop (`M1`) functionality. |
-| 10    | Single Block Mode Toggle | Toggles single-block execution mode. |
-
-#### Common Examples
-*   **Pressing a button on MacroPort 0 runs its custom macro (M100):**
-    *   `$590=0` (`$490` contains the `M100` G-code)
-*   **Pressing a button on MacroPort 1 triggers a Feed Hold:**
-    *   `$591=2`
-*   **Pressing a button on MacroPort 2 triggers a Cycle Start:**
-    *   `$592=1`
-
-#### Tips & Tricks
-- This system provides immense flexibility for customizing physical control panels and pendants.
-- You can mix and match, having some buttons trigger custom macros (value `0`) and others trigger built-in grblHAL functions (values `1`-`10`).
-- Ensure the G-code for any macro you intend to run (when `$59x=0`) is correctly defined in the corresponding `$49x` setting.
 
 ---
 
@@ -5173,24 +5134,41 @@ This range is reserved for further configuration options specific to external co
 
 ---
 
-## `$590` – `$599` – Button Action Mapping
-Assigns a specific system action to be performed when a physical input button is pressed.
+## `$590` - `$599` – Button Action Mapping (MacroPort)
+Assigns a specific system action to be performed when a physical input mapped to a MacroPort is triggered.
 
 :::info Context
-- This allows direct mapping of physical buttons to internal grblHAL commands (e.g., `Reset`, `Feed Hold`, `Cycle Start`, `Home`).
-- This differs from `MacroPort` mapping (`$500+`) which triggers custom G-code macros.
-- Each setting corresponds to a button input (e.g., `$590` for Button 0, `$591` for Button 1, etc.). The value is an index representing the action.
+- These settings define the action that grblHAL will take when a physical input pin (configured in `$500`-`$509`) for a given MacroPort index is activated.
+- This mapping allows physical buttons or external signals to trigger either custom G-code macros or predefined real-time system commands.
+- `$590` defines the action for MacroPort 0, `$591` for MacroPort 1, and so on, up to `$599` for MacroPort 9.
 :::
 
-| Setting | Input Button |
-|:--------|:-------------|
-| `$590`  | Button 0     |
-| `$591`  | Button 1     |
-| ...     | ...          |
-| `$599`  | Button 9     |
+| Value | Action Description |
+|:-----:|:-------------------|
+| **0** | **Run Associated Macro:** Executes the G-code macro defined in the corresponding `$49x` setting (e.g., if `$590=0`, MacroPort 0 triggers the G-code from `$490`, which is M100). |
+| 1     | Cycle Start        | Initiates or resumes the G-code program (`0x81` real-time command). |
+| 2     | Feed Hold          | Pauses the current G-code program (`0x85` real-time command). |
+| 3     | Park               | Triggers the parking cycle (`0x84` real-time command). |
+| 4     | Reset              | Performs a soft reset of the controller (`0x18` real-time command). |
+| 5     | Spindle Stop (during feed hold) | Disables the spindle output if currently active during a feed hold. |
+| 6     | Mist Toggle        | Toggles the mist coolant output. |
+| 7     | Flood Toggle       | Toggles the flood coolant output. |
+| 8     | Probe Connected Toggle | Toggles the internal "probe connected" flag. |
+| 9     | Optional Stop Toggle | Toggles the optional stop (`M1`) functionality. |
+| 10    | Single Block Mode Toggle | Toggles single-block execution mode. |
+
+#### Common Examples
+*   **Pressing a button on MacroPort 0 runs its custom macro (M100):**
+    *   `$590=0` (`$490` contains the `M100` G-code)
+*   **Pressing a button on MacroPort 1 triggers a Feed Hold:**
+    *   `$591=2`
+*   **Pressing a button on MacroPort 2 triggers a Cycle Start:**
+    *   `$592=1`
 
 #### Tips & Tricks
-- The specific mapping of index values to actions is defined by the grblHAL core or active plugins. Consult driver documentation for available actions.
+- This system provides immense flexibility for customizing physical control panels and pendants.
+- You can mix and match, having some buttons trigger custom macros (value `0`) and others trigger built-in grblHAL functions (values `1`-`10`).
+- Ensure the G-code for any macro you intend to run (when `$59x=0`) is correctly defined in the corresponding `$49x` setting.
 
 ---
 
