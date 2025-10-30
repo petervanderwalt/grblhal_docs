@@ -36,6 +36,10 @@ If too short, drivers may **miss steps**. If too long, it can **limit maximum st
 * **Debugging Missed Steps:**  
   `$0=10`
 
+:::warning
+When set > 0 and less than 2 the value is rounded up to 2 microseconds.
+:::
+
 #### Tips & Tricks
 - Always start **low** (e.g. 2 µs) and only increase if you see reliability issues.  
 - A higher value reduces maximum achievable step frequency.  
