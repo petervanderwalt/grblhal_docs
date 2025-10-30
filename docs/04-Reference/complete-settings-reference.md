@@ -36,10 +36,6 @@ If too short, drivers may **miss steps**. If too long, it can **limit maximum st
 * **Debugging Missed Steps:**  
   `$0=10`
 
-:::warning
-When set > 0 and less than 2 the value is rounded up to 2 microseconds.
-:::
-
 #### Tips & Tricks
 - Always start **low** (e.g. 2 µs) and only increase if you see reliability issues.  
 - A higher value reduces maximum achievable step frequency.  
@@ -955,6 +951,10 @@ Adds an extra delay between the direction pin being set and the step pulse being
 |:----------:|:--------|:------------|
 | 0          | None    | Correct for nearly all modern drivers (Trinamic, TB6600, etc.). |
 | 1-10       | Short Delay | May be required for some drivers with opto-isolators (DMA420A, DQ542MA, DM556T) |
+
+:::warning
+When set > 0 and less than 2 the value is rounded up to 2 microseconds.
+:::
 
 #### Common Examples
 *   **Modern Digital Drivers (Default):**
