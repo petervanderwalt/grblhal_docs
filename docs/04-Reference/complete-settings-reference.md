@@ -5453,6 +5453,53 @@ Sets a factor to adjust the Z-axis feed rate for THC correction moves.
 
 ---
 
+## `$683` – ATCi Configuration (mask)
+Configures the operating modes for the Sienci Automatic Tool Changer Interface plugin.
+
+:::info Context
+- This is a **bitmask**: add together the values of the options you want to enable.
+- **Rack Monitor:** Uses `AUXINPUT7` to detect if the rack is physically mounted. If the rack is removed, the Keepout zone is automatically disabled.
+- **TC Macro Monitor:** Automatically disables the Keepout zone while a Tool Change macro is running to allow tool fetching.
+:::
+
+| Bit | Value | Option | Description |
+|:---:|:-----:|:-------|:------------|
+| 0   | 1     | **Enable Plugin** | Master switch to enable the Keepout Zone logic on startup. |
+| 1   | 2     | **Monitor Rack Presence** | Only enforce Keepout if the rack sensor (`AUXINPUT7`) is triggered. |
+| 2   | 4     | **Monitor TC Macro** | Automatically disable Keepout when a tool change macro is active. |
+
+#### Common Examples
+*   **Enable Basic Keepout:**
+    *   `$683=1`
+*   **Enable Full Automation (Rack Sensor + Macro Awareness):**
+    *   `$683=7` (1+2+4)
+
+---
+
+## `$684` – `$687` – ATCi Keepout Zone Boundaries
+Defines the rectangular safety zone around the tool rack in machine coordinates.
+
+:::info Context
+- These settings define the X and Y limits of the area where the spindle is forbidden to enter during normal operation (jogging/G-code).
+- Entering this zone is only allowed if `M810 P0` is sent, or if the "Monitor TC Macro" option is enabled and a macro is running.
+- **Note:** The plugin includes a "jog-out" feature allowing you to escape the zone if trapped, but prevents jogging deeper in.
+:::
+
+| Setting | Description | Units |
+|:--------|:------------|:------|
+| `$684`  | **X Min:** Left boundary of the zone. | mm |
+| `$685`  | **Y Min:** Front boundary of the zone. | mm |
+| `$686`  | **X Max:** Right boundary of the zone. | mm |
+| `$687`  | **Y Max:** Back boundary of the zone. | mm |
+
+#### Tips & Tricks
+- Move your machine to the front-left corner of your rack area and note the machine coordinates for `$684`/`$685`.
+- Move to the back-right corner and note coordinates for `$686`/`$687`.
+- Add a small buffer (e.g., 5mm) to these values to ensure safety.
+
+---
+
+
 ## `$709` – PWM Spindle Options (Secondary)
 
 Functions the same as `$9`, but applies to the **secondary PWM spindle** if available (spindle type 15 or 16).  
@@ -5650,6 +5697,11 @@ Configures which real-time system state change will activate each of the ten ava
 | **5** | **Feed hold**             | Activates when the controller enters a Feed Hold state. |
 | **6** | **Alarm**                 | Activates when the controller enters an Alarm state.    |
 | **7** | **Spindle at speed**      | Activates when the spindle is confirmed to be at commanded speed (requires `$340` and encoder feedback for closed-loop systems). |
+| **8** | **Motion**                |  |
+| **9** | **Optional stop toggle**  |  |
+| **10** | **Single Stepping Mode** |  |
+| **11** | **Block delete toggle**  |  |
+
 
 #### Common Examples
 *   **Activate Event Slot 0 when the Spindle is enabled:**

@@ -302,3 +302,50 @@ Github Repository: https://github.com/grblHAL/Plugin_WebUI
 ```gcode
 ; No new M-codes; use M3/M4/M5 via WebUI API
 ```
+
+---
+
+## Plugin: Sienci ATCi (Automatic Tool Changer Interface)
+Github Repository: https://github.com/Sienci-Labs/grblhal-atci-plugin
+
+This plugin provides advanced safety, state management, and sensor integration for the **[Sienci Automatic Tool Changer (ATC)](https://sienci.com/product/automatic_tool_changer/)**.
+
+#### $-Settings
+
+| Setting | Description | Format |
+|---------|-------------|---------|
+| `$683` | **ATCi Configuration** | Bitmask: Enable(1), Monitor Rack Sensor(2), Monitor TC Macro(4) |
+| `$684` | **Keepout X Min** | Minimum X coordinate of the safe zone (mm) |
+| `$685` | **Keepout Y Min** | Minimum Y coordinate of the safe zone (mm) |
+| `$686` | **Keepout X Max** | Maximum X coordinate of the safe zone (mm) |
+| `$687` | **Keepout Y Max** | Maximum Y coordinate of the safe zone (mm) |
+
+#### M-Codes
+
+| M-Code | Syntax | Description |
+|--------|--------|-------------|
+| `M960` | `M960 P[0|1]` | Runtime toggle of Keepout enforcement. `P1`=Enable, `P0`=Disable. |
+
+#### Real-time Report
+Appends `|ATCI:[flags]` to the status string.
+*   **E**: Enforcement Enabled
+*   **Z**: Machine is Inside Zone
+*   **R/M/T/S**: Source of state (Rack, M-code, Tool Macro, Startup)
+*   **I**: Rack Installed
+*   **B**: Drawbar Open
+*   **L**: Tool Loaded
+*   **P**: Low Air Pressure
+
+#### Example
+```gcode
+; Configure Keepout Zone
+$684=10.0   ; X Min
+$686=50.0   ; X Max
+$685=10.0   ; Y Min
+$687=50.0   ; Y Max
+$683=7      ; Enable plugin (1) + Monitor Rack (2) + Monitor Macro (4)
+
+; Manually disable keepout to jog inside for maintenance
+M960 P0
+
+---

@@ -1732,3 +1732,13 @@ Repo: `https://github.com/grblHAL/Plugin_encoder`
 | M-Code | Syntax | Description |
 |--------|--------|-------------|
 | `M114` | `M114` | Report current position (includes spindle encoder if available) |
+
+---
+
+## Plugin: Sienci ATCi
+
+| M-Code | Syntax | Description |
+|--------|--------|-------------|
+| `M810` | `M810 P[0\|1]` | Runtime toggle for ATCi Keepout Zone enforcement. `P1` enables protection, `P0` disables it. |
+
+---
