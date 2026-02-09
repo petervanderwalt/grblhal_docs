@@ -344,6 +344,7 @@ Controls behavior for the **primary PWM spindle** if available (spindle type 11 
 | 0   | 1     | Disable PWM output entirely |
 | 1   | 2     | Let RPM control spindle **on/off** signal (S0 disables spindle, S>0 enables) |
 | 2   | 4     | Disable laser capability. In multi-spindle setups, this allows $32 (laser mode) to remain permanently on while selecting a non-laser spindle. |
+| 3   | 8     | Enable ramping PWM output on RPM changes: ($394 > 0, enables ramp up for spindle on and on RPM changes while spindle is enabled. $339 > 0, enables ramp down for spindle off. $392 > 0, enables ramp up on door close and/or restore from parked.) |
 
 #### Common Examples
 * **Enable PWM output with RPM controlling spindle enable:**  
@@ -5697,10 +5698,10 @@ Configures which real-time system state change will activate each of the ten ava
 | **5** | **Feed hold**             | Activates when the controller enters a Feed Hold state. |
 | **6** | **Alarm**                 | Activates when the controller enters an Alarm state.    |
 | **7** | **Spindle at speed**      | Activates when the spindle is confirmed to be at commanded speed (requires `$340` and encoder feedback for closed-loop systems). |
-| **8** | **Motion**                |  |
-| **9** | **Optional stop toggle**  |  |
-| **10** | **Single Stepping Mode** |  |
-| **11** | **Block delete toggle**  |  |
+| **8** | **Motion**                | Activates when the machine is in motion (G0, G1, G2, G3, G38.x). |
+| **9** | **Optional stop toggle**  | Activates when the Optional Stop `(M1)` state is toggled ON. |
+| **10** | **Single Stepping Mode** | Activates when the controller is in Single Stepping (Single Block) mode. |
+| **11** | **Block delete toggle**  | Activates when the Block Delete (/ skip) state is toggled ON. |
 
 
 #### Common Examples
