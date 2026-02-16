@@ -531,3 +531,73 @@ G38.2 Z-50 F100
 G65 P5 Q0
 ```
 
+---
+
+## Template Plugins
+These plugins are available as templates in the **[grblHAL Web Builder](http://svn.io-engineering.com:8080/)** under `3rd party plugins`. They are designed to be starting points for custom functionality but often provide useful features out-of-the-box.
+Github Repository: https://github.com/grblHAL/Templates
+
+### FluidNC WebUI Support (`FluidNC_ESP3D_cmd`)
+Adds support for extended commands required by the FluidNC WebUI (ESP3D v2 protocol).
+*   **Repo:** `my_plugin/FluidNC_ESP3D_cmd`
+*   **Function:** Enables `[ESP:...]` command handling, allowing the FluidNC generic WebUI to function with grblHAL.
+
+### MCU Load Estimator (`MCU_load`)
+Adds a `MCU:` field to the real-time status report, showing the number of idle loop iterations per 10ms.
+*   **Repo:** `my_plugin/MCU_load`
+*   **Report:** `|MCU:20000|` (Higher is better, meaning less load. < 1000 indicates high load).
+
+### Modbus Command (`Modbus_command`)
+Adds a system command for direct Modbus register access, useful for debugging VFDs or external modules.
+*   **Repo:** `my_plugin/Modbus_command`
+*   **Syntax:** `$MODBUSCMD=<addr>,<func>,<reg>,<val>...`
+*   **Example:** 
+    *   `$MODBUSCMD=1,6,0x0201,1000` (Write 1000 to reg 0x201 on device 1).
+    *   `$MODBUSCMD=1,4,0,2` (Read 2 registers starting at 0 from device 1).
+
+### Motor Power Monitor (`Motor_power_monitor`)
+Monitors a digital input for high-voltage power loss (common on Trinamic setups).
+*   **Repo:** `my_plugin/Motor_power_monitor`
+*   **Setting:** `$450` (Input pin number).
+*   **Behavior:** 
+    *   Triggers **Alarm 17** associated with Motor Fault on power loss.
+    *   Automatically runs `M122I` (Re-init drivers) when power is restored and alarm is cleared.
+
+### Pause on SD File Run (`Pause_on_SD_file_run`)
+Automatically triggers a Feed Hold when an SD card file starts execution.
+*   **Repo:** `my_plugin/Pause_on_SD_file_run`
+*   **Usage:** Useful for verifying machine state or changing tools before a job automatically begins. Requires user `Cycle Start` to proceed.
+
+### Realtime Report Aux State (`Realtime_report_aux_out_state`)
+Adds the state of auxiliary output pins to the status report.
+*   **Repo:** `my_plugin/Realtime_report_aux_out_state`
+*   **Report:** `|AUX:0010|` (Bitmask of output states). Only reports ports available via M62-M65.
+
+### Realtime Report Timestamp (`Realtime_report_timestamp`)
+Adds the system uptime to the status report.
+*   **Repo:** `my_plugin/Realtime_report_timestamp`
+*   **Report:** `|TS:123456|` (Milliseconds since boot).
+
+### Solenoid Spindle (`Solenoid_spindle`)
+Optimizes PWM output for driving solenoids (Kick-and-Hold strategy).
+*   **Repo:** `my_plugin/Solenoid_spindle`
+*   **Behavior:** 
+    *   **Kick:** 100% duty cycle for 50ms to energize the solenoid.
+    *   **Hold:** Drop to 25% duty cycle to maintain position without overheating.
+
+### Stepper Enable Control (`Stepper_enable_control`)
+Adds Marlin-style G-codes for individual stepper control.
+*   **Repo:** `my_plugin/Stepper_enable_control`
+*   **Commands:**
+    *   `M17 [X] [Y] ...` - Enable specified steppers (or all if none specified).
+    *   `M18 [X] [Y] ... [S<delay>]` - Disable steppers immediately or after `S` seconds.
+    *   `M84` - Alias for M18.
+
+### HPGL Plotter (`hpgl`)
+Adds an HPGL interpreter mode, allowing the CNC to act as a native pen plotter.
+*   **Repo:** `my_plugin/hpgl`
+*   **Command:** `$HPGL` (Enter HPGL mode).
+*   **Exit:** `CTRL+X` (Return to G-code mode).
+*   **Note:** Originally based on Motöri.
+
+
