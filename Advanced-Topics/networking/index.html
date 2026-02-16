@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-Advanced-Topics/networking" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.8.1">
+<title data-rh="true">Networking &amp; Connectivity | grblHAL Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.com/grblhal_docs/Advanced-Topics/networking"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Networking &amp; Connectivity | grblHAL Documentation"><meta data-rh="true" name="description" content="A guide to connecting grblHAL via Ethernet, Wi-Fi, Bluetooth, and using the WebUI."><meta data-rh="true" property="og:description" content="A guide to connecting grblHAL via Ethernet, Wi-Fi, Bluetooth, and using the WebUI."><link data-rh="true" rel="icon" href="/grblhal_docs/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.com/grblhal_docs/Advanced-Topics/networking"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Advanced-Topics/networking" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Advanced-Topics/networking" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Networking & Connectivity","item":"https://your-docusaurus-site.com/grblhal_docs/Advanced-Topics/networking"}]}</script><link rel="stylesheet" href="/grblhal_docs/assets/css/styles.c8fe8b1f.css">
+<script src="/grblhal_docs/assets/js/runtime~main.fe204188.js" defer="defer"></script>
+<script src="/grblhal_docs/assets/js/main.5158db6c.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t="light";var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",e||t),document.documentElement.setAttribute("data-theme-choice",e||t)}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/grblhal_docs/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/grblhal_docs/"><div class="navbar__logo"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">grblHAL</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/grblhal_docs/Getting-Started/what-is-grblhal">Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/grblHAL/" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Getting-Started/what-is-grblhal">Getting-Started</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Core-Concepts/homing-explained">Core-Concepts</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Machine-Calibration/introduction">Machine-Calibration</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Reference/complete-g-m-code-reference">Reference</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Guides/automatic-tool-changer">Guides</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/grblhal_docs/Advanced-Topics/macros-and-expressions">Advanced-Topics</a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Advanced-Topics/macros-and-expressions">Macros, Expressions &amp; Flow Control</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/grblhal_docs/Advanced-Topics/networking">Networking &amp; Connectivity</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Advanced-Topics/sender-interface">Sender Developer Guide</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Vendors/creating_profiles">Vendors</a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/grblhal_docs/troubleshooting">Troubleshooting Guide</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/grblhal_docs/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Advanced-Topics</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Networking &amp; Connectivity</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Networking &amp; Connectivity</h1></header><p>grblHAL offers powerful networking capabilities that go beyond standard USB connections. Depending on your controller hardware (e.g., Teensy 4.1, ESP32, RP2040), you may have access to <strong>Ethernet</strong>, <strong>Wi-Fi</strong>, <strong>Bluetooth</strong>, and a dedicated <strong>WebUI</strong>.</p>
+<p>This guide covers the setup and configuration for these advanced connectivity options.</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="ethernet">Ethernet<a href="#ethernet" class="hash-link" aria-label="Direct link to Ethernet" title="Direct link to Ethernet">​</a></h2>
+<p>Ethernet provides a robust, interference-resistant connection ideal for production environments. It eliminates USB length limits and susceptibility to EMI (Electro-Magnetic Interference).</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="basic-pc-setup-direct-connection">Basic PC Setup (Direct Connection)<a href="#basic-pc-setup-direct-connection" class="hash-link" aria-label="Direct link to Basic PC Setup (Direct Connection)" title="Direct link to Basic PC Setup (Direct Connection)">​</a></h3>
+<p>If you are connecting your PC directly to the controller (without a router/switch in between), you must configure a <strong>Static IP</strong> on your computer&#x27;s network adapter.</p>
+<blockquote>
+<p><strong>Note:</strong> These steps follow the <a href="https://sienci.zendesk.com/hc/en-us/articles/41759221954708-Ethernet-connection-SLB-and-SLB-EXT" target="_blank" rel="noopener noreferrer">Sienci Labs SLB Ethernet Guide</a>.</p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="1-configure-the-controller-static-ip">1. Configure the Controller (Static IP)<a href="#1-configure-the-controller-static-ip" class="hash-link" aria-label="Direct link to 1. Configure the Controller (Static IP)" title="Direct link to 1. Configure the Controller (Static IP)">​</a></h4>
+<p>First, connect via USB and configure grblHAL to use a Static IP address. This ensures the controller always has a known address.</p>
+<ul>
+<li><strong>IP Mode:</strong> Static</li>
+<li><strong>IP Address:</strong> e.g., <code>192.168.5.15</code></li>
+<li><strong>Gateway:</strong> <code>192.168.5.1</code></li>
+<li><strong>Netmask:</strong> <code>255.255.255.0</code></li>
+</ul>
+<p><em>Check your specific board documentation for the exact <code>$</code> settings to configure IP parameters.</em></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="2-configure-windows-network-adapter">2. Configure Windows Network Adapter<a href="#2-configure-windows-network-adapter" class="hash-link" aria-label="Direct link to 2. Configure Windows Network Adapter" title="Direct link to 2. Configure Windows Network Adapter">​</a></h4>
+<ol>
+<li>Connect the Ethernet cable between your PC and the controller.</li>
+<li>On Windows, search for <strong>&quot;View network connections&quot;</strong>.</li>
+<li>Right-click your <strong>Ethernet</strong> adapter (often &quot;Ethernet 2&quot; or similar) and select <strong>Properties</strong>.</li>
+<li>Select <strong>Internet Protocol Version 4 (TCP/IPv4)</strong> and click <strong>Properties</strong>.</li>
+<li>Select <strong>&quot;Use the following IP address&quot;</strong>:<!-- -->
+<ul>
+<li><strong>IP address:</strong> <code>192.168.5.5</code> (Must be different from the controller, but in the same range)</li>
+<li><strong>Subnet mask:</strong> <code>255.255.255.0</code></li>
+<li><strong>Default gateway:</strong> Leave blank or use <code>192.168.5.1</code>.</li>
+</ul>
+</li>
+<li>Click <strong>OK</strong> to save.</li>
+</ol>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="3-connect-via-g-code-sender">3. Connect via G-Code Sender<a href="#3-connect-via-g-code-sender" class="hash-link" aria-label="Direct link to 3. Connect via G-Code Sender" title="Direct link to 3. Connect via G-Code Sender">​</a></h4>
+<ul>
+<li>Open your sender (e.g., <strong>gSender</strong>, <strong>ioSender</strong>).</li>
+<li>Select <strong>Ethernet/Network</strong> as the connection type.</li>
+<li>Enter the controller&#x27;s IP address (<code>192.168.5.15</code>) and Port (usually <code>23</code>).</li>
+<li>Click <strong>Connect</strong>.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="wi-fi">Wi-Fi<a href="#wi-fi" class="hash-link" aria-label="Direct link to Wi-Fi" title="Direct link to Wi-Fi">​</a></h2>
+<p>Wi-Fi allows for wireless control and is available on chips like the <strong>ESP32</strong> and <strong>Raspberry Pi Pico W</strong>. You can typically operate in two modes:</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="1-station-mode-recommended">1. Station Mode (Recommended)<a href="#1-station-mode-recommended" class="hash-link" aria-label="Direct link to 1. Station Mode (Recommended)" title="Direct link to 1. Station Mode (Recommended)">​</a></h3>
+<p>The controller connects to your existing home/workshop Wi-Fi network.</p>
+<ul>
+<li><strong>Range:</strong> limited by your router&#x27;s signal.</li>
+<li><strong>Access:</strong> Any device on the network can control the machine.</li>
+</ul>
+<p><strong>Configuration:</strong>
+You typically need to set the <strong>SSID</strong> (Network Name) and <strong>Password</strong> via USB first.</p>
+<ul>
+<li><code>$74=&lt;SSID&gt;</code></li>
+<li><code>$75=&lt;Password&gt;</code></li>
+<li><code>$73=1</code> (Enable Wi-Fi / Station Mode)
+<em>(Note: Setting numbers can vary by driver key. Use <code>$S</code> or <code>$P</code> to list available settings)</em></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="2-access-point-ap-mode">2. Access Point (AP) Mode<a href="#2-access-point-ap-mode" class="hash-link" aria-label="Direct link to 2. Access Point (AP) Mode" title="Direct link to 2. Access Point (AP) Mode">​</a></h3>
+<p>The controller creates its own Wi-Fi network that you connect your PC to.</p>
+<ul>
+<li><strong>Range:</strong> Limited to the controller&#x27;s antenna.</li>
+<li><strong>Access:</strong> Direct connection; no router needed.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="webui-plugin_webui">WebUI (<code>Plugin_WebUI</code>)<a href="#webui-plugin_webui" class="hash-link" aria-label="Direct link to webui-plugin_webui" title="Direct link to webui-plugin_webui">​</a></h2>
+<p>Many network-enabled grblHAL builds (especially ESP32, RP2040, and Teensy 4.1) include an embedded <strong>Web User Interface</strong>. This allows you to control the machine from any device with a browser (PC, Tablet, Smartphone) without installing software.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="features">Features<a href="#features" class="hash-link" aria-label="Direct link to Features" title="Direct link to Features">​</a></h3>
+<p>The WebUI is surprisingly powerful and includes:</p>
+<ul>
+<li><strong>Dashboard:</strong> real-time DRO (Digital Readout), Jogging, Homing, and Macro buttons.</li>
+<li><strong>File Management:</strong> Upload, delete, and <strong>run G-code files</strong> directly from the SD card.</li>
+<li><strong>Console:</strong> Send manually typed G-code commands and view the output log.</li>
+<li><strong>Configuration:</strong> Easy-to-use forms for changing grblHAL <code>$</code> settings without memorizing numbers.</li>
+<li><strong>Tablet Mode:</strong> A touch-friendly interface optimized for mounting a tablet on your machine.</li>
+<li><strong>Camera Support:</strong> View a stream from an ESP32-CAM or similar URL.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="installation--compatibility">Installation &amp; Compatibility<a href="#installation--compatibility" class="hash-link" aria-label="Direct link to Installation &amp; Compatibility" title="Direct link to Installation &amp; Compatibility">​</a></h3>
+<ul>
+<li><strong>Build Option:</strong> The WebUI must be enabled at compile time (or selected in the <strong><a href="http://svn.io-engineering.com:8080/" target="_blank" rel="noopener noreferrer">Web Builder</a></strong>).</li>
+<li><strong>File Storage:</strong>
+<ul>
+<li><strong>FlashFS (Recommended):</strong> The WebUI files (<code>index.html.gz</code>, etc.) are compressed and stored in the controller&#x27;s internal flash memory. This is faster and doesn&#x27;t require an SD card for the UI itself.</li>
+<li><strong>SD Card:</strong> On some older or memory-constrained builds, you may need to copy the <code>index.html.gz</code> file to the root of your SD card.</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="essential-settings">Essential Settings<a href="#essential-settings" class="hash-link" aria-label="Direct link to Essential Settings" title="Direct link to Essential Settings">​</a></h3>
+<p>If the WebUI is active but you cannot connect, check these settings via USB:</p>
+<table><thead><tr><th style="text-align:left">Setting</th><th style="text-align:left">Description</th><th style="text-align:left">Recommended Value</th></tr></thead><tbody><tr><td style="text-align:left"><code>$306</code></td><td style="text-align:left"><strong>HTTP Port:</strong> The port for the web server.</td><td style="text-align:left"><code>80</code></td></tr><tr><td style="text-align:left"><code>$307</code></td><td style="text-align:left"><strong>WebSocket Port:</strong> The port for real-time data.</td><td style="text-align:left"><code>81</code></td></tr><tr><td style="text-align:left"><code>$300</code></td><td style="text-align:left"><strong>Hostname:</strong> The network name of the device.</td><td style="text-align:left"><code>grblhal</code></td></tr><tr><td style="text-align:left"><code>$70</code></td><td style="text-align:left"><strong>Network Services:</strong> Bitmask to enable services.</td><td style="text-align:left"><code>15</code> (enables HTTP, Telnet, MDNS, etc.)</td></tr></tbody></table>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="how-to-access">How to Access<a href="#how-to-access" class="hash-link" aria-label="Direct link to How to Access" title="Direct link to How to Access">​</a></h3>
+<ol>
+<li>Connect your machine to Wi-Fi (see above) or Ethernet.</li>
+<li>Find the IP address (type <code>$I</code> in a serial terminal if you don&#x27;t know it).</li>
+<li>Open a web browser on a device connected to the <strong>same network</strong>.</li>
+<li>Type <code>http://&lt;IP_ADDRESS&gt;</code> (e.g., <code>http://192.168.1.50</code>).<!-- -->
+<ul>
+<li><em>Tip: If you set a hostname, you might be able to access it via <code>http://grblhal.local</code> depending on your network.</em></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="bluetooth">Bluetooth<a href="#bluetooth" class="hash-link" aria-label="Direct link to Bluetooth" title="Direct link to Bluetooth">​</a></h2>
+<p>Bluetooth allows for wireless serial communication, effectively replacing the USB cable with a wireless link. It is commonly used for wireless pendants or simple control apps.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="setup--pairing">Setup &amp; Pairing<a href="#setup--pairing" class="hash-link" aria-label="Direct link to Setup &amp; Pairing" title="Direct link to Setup &amp; Pairing">​</a></h3>
+<ol>
+<li><strong>Enable:</strong> Bluetooth is usually enabled at compile-time (<code>BLUETOOTH_ENABLE</code>).</li>
+<li><strong>Pairing:</strong>
+<ul>
+<li>On your PC/Phone, scan for Bluetooth devices.</li>
+<li>Look for a device named <code>grblHAL</code> (or similar).</li>
+<li>Pair with it (default PIN is often <code>1234</code> or <code>0000</code>).</li>
+</ul>
+</li>
+<li><strong>Connection:</strong>
+<ul>
+<li>Once paired, the OS assigns a <strong>COM Port</strong> (Windows) or device file (Linux/Mac).</li>
+<li>In your G-code sender, select this <strong>COM Port</strong> and the appropriate baud rate (Bluetooth often negotiates speed automatically, but try <code>115200</code>).</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>Tip:</strong> Bluetooth can have higher latency than USB or Ethernet. It is great for pendants but less ideal for sending large, high-speed G-code files directly.</p>
+</blockquote></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/06-Advanced-Topics/networking.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Advanced-Topics/macros-and-expressions"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Macros, Expressions &amp; Flow Control</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Advanced-Topics/sender-interface"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Sender Developer Guide</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#ethernet" class="table-of-contents__link toc-highlight">Ethernet</a><ul><li><a href="#basic-pc-setup-direct-connection" class="table-of-contents__link toc-highlight">Basic PC Setup (Direct Connection)</a></li></ul></li><li><a href="#wi-fi" class="table-of-contents__link toc-highlight">Wi-Fi</a><ul><li><a href="#1-station-mode-recommended" class="table-of-contents__link toc-highlight">1. Station Mode (Recommended)</a></li><li><a href="#2-access-point-ap-mode" class="table-of-contents__link toc-highlight">2. Access Point (AP) Mode</a></li></ul></li><li><a href="#webui-plugin_webui" class="table-of-contents__link toc-highlight">WebUI (<code>Plugin_WebUI</code>)</a><ul><li><a href="#features" class="table-of-contents__link toc-highlight">Features</a></li><li><a href="#installation--compatibility" class="table-of-contents__link toc-highlight">Installation &amp; Compatibility</a></li><li><a href="#essential-settings" class="table-of-contents__link toc-highlight">Essential Settings</a></li><li><a href="#how-to-access" class="table-of-contents__link toc-highlight">How to Access</a></li></ul></li><li><a href="#bluetooth" class="table-of-contents__link toc-highlight">Bluetooth</a><ul><li><a href="#setup--pairing" class="table-of-contents__link toc-highlight">Setup &amp; Pairing</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

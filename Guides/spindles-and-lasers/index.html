@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-Guides/spindles-and-lasers" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.8.1">
+<title data-rh="true">Spindles &amp; Lasers Setup | grblHAL Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.com/grblhal_docs/Guides/spindles-and-lasers"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Spindles &amp; Lasers Setup | grblHAL Documentation"><meta data-rh="true" name="description" content="grblHAL is unique in its ability to support multiple active tools on the same machine. You can have a high-speed spindle for milling, a laser for engraving, and a drag knife for cutting vinyl—all controlled by the same board, switching between them with a simple command."><meta data-rh="true" property="og:description" content="grblHAL is unique in its ability to support multiple active tools on the same machine. You can have a high-speed spindle for milling, a laser for engraving, and a drag knife for cutting vinyl—all controlled by the same board, switching between them with a simple command."><link data-rh="true" rel="icon" href="/grblhal_docs/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.com/grblhal_docs/Guides/spindles-and-lasers"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Guides/spindles-and-lasers" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.com/grblhal_docs/Guides/spindles-and-lasers" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Spindles & Lasers Setup","item":"https://your-docusaurus-site.com/grblhal_docs/Guides/spindles-and-lasers"}]}</script><link rel="stylesheet" href="/grblhal_docs/assets/css/styles.c8fe8b1f.css">
+<script src="/grblhal_docs/assets/js/runtime~main.fe204188.js" defer="defer"></script>
+<script src="/grblhal_docs/assets/js/main.5158db6c.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t="light";var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",e||t),document.documentElement.setAttribute("data-theme-choice",e||t)}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/grblhal_docs/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/grblhal_docs/"><div class="navbar__logo"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/grblhal_docs/img/logo.svg" alt="grblHAL Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">grblHAL</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/grblhal_docs/Getting-Started/what-is-grblhal">Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/grblHAL/" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Getting-Started/what-is-grblhal">Getting-Started</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Core-Concepts/homing-explained">Core-Concepts</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Machine-Calibration/introduction">Machine-Calibration</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Reference/complete-g-m-code-reference">Reference</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/grblhal_docs/Guides/automatic-tool-changer">Guides</a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Guides/automatic-tool-changer">Tool Changes &amp; Offsets</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Guides/probing">Probing Guide</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/grblhal_docs/Guides/spindles-and-lasers">Spindles &amp; Lasers Setup</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/grblhal_docs/Guides/vfd-spindle-setup">VFD Spindle Setup</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Advanced-Topics/macros-and-expressions">Advanced-Topics</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/grblhal_docs/Vendors/creating_profiles">Vendors</a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/grblhal_docs/troubleshooting">Troubleshooting Guide</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/grblhal_docs/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Guides</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Spindles &amp; Lasers Setup</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Spindles &amp; Lasers Setup</h1></header>
+<p>grblHAL is unique in its ability to support <strong>multiple active tools</strong> on the same machine. You can have a high-speed spindle for milling, a laser for engraving, and a drag knife for cutting vinyl—all controlled by the same board, switching between them with a simple command.</p>
+<p>This guide covers how to configure spindles, lasers, and dual-tool setups.</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="1-multiple-spindles-the-basics">1. Multiple Spindles: The Basics<a href="#1-multiple-spindles-the-basics" class="hash-link" aria-label="Direct link to 1. Multiple Spindles: The Basics" title="Direct link to 1. Multiple Spindles: The Basics">​</a></h2>
+<p>In grblHAL, a &quot;Spindle&quot; is any device that spins, cuts, or emits light. The system can manage multiple such devices, referring to them by an index (<code>0</code>, <code>1</code>, <code>2</code>...).</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="identifying-your-spindles"><strong>Identifying Your Spindles</strong><a href="#identifying-your-spindles" class="hash-link" aria-label="Direct link to identifying-your-spindles" title="Direct link to identifying-your-spindles">​</a></h3>
+<p>By sending <code>$SPINDLES</code>, grblHAL lists available spindles:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">2 - H-100, enabled as spindle 0, active</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">0 - PWM</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">1 - PWM2</span><br></span></code></pre></div></div>
+<ul>
+<li><strong>Note:</strong> In this example, Spindle <code>2</code> (H-100) is the currently active &quot;Spindle 0&quot;. The others (PWM, PWM2) are available but not currently selected or enabled.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="enabling-spindles"><strong>Enabling Spindles</strong><a href="#enabling-spindles" class="hash-link" aria-label="Direct link to enabling-spindles" title="Direct link to enabling-spindles">​</a></h3>
+<p>Just because a spindle is listed doesn&#x27;t mean it&#x27;s ready to use. You often need to:</p>
+<ol>
+<li><strong>Set the Default Spindle:</strong> Use <strong><code>$395</code></strong> to select which physical tool index is the &quot;Primary&quot; spindle on startup.</li>
+<li><strong>Enable Additional Spindles:</strong>
+<ul>
+<li><strong><code>$511</code></strong>: Enables Spindle 2.</li>
+<li><strong><code>$512</code></strong>: Enables Spindle 3.</li>
+<li><em>(Note: These are driver-specific and may vary, but are common for multi-spindle boards).</em></li>
+</ul>
+</li>
+<li><strong>Configure it:</strong> Set options in <code>$9</code> (Primary), <code>$709</code> (Secondary), etc.</li>
+<li><strong>Select it:</strong> Use <code>M104 Q...</code> to make it the active tool.</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="switching-tools-m104"><strong>Switching Tools (<code>M104</code>)</strong><a href="#switching-tools-m104" class="hash-link" aria-label="Direct link to switching-tools-m104" title="Direct link to switching-tools-m104">​</a></h3>
+<p>To switch the active device, use the <code>M104</code> command with the <code>Q</code> parameter:</p>
+<ul>
+<li><strong><code>M104 Q0</code></strong>: Selects Spindle 0.</li>
+<li><strong><code>M104 Q1</code></strong>: Selects Spindle 1.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="automatic-spindle-switching-tool-mapping"><strong>Automatic Spindle Switching (Tool Mapping)</strong><a href="#automatic-spindle-switching-tool-mapping" class="hash-link" aria-label="Direct link to automatic-spindle-switching-tool-mapping" title="Direct link to automatic-spindle-switching-tool-mapping">​</a></h3>
+<p>Instead of manually inserting <code>M104</code> commands, you can configure grblHAL to automatically switch spindles based on the Tool Number (<code>T</code>) used in <code>M6</code>.</p>
+<table><thead><tr><th style="text-align:left">Setting</th><th style="text-align:left">Description</th><th style="text-align:left">Example</th></tr></thead><tbody><tr><td style="text-align:left"><strong><code>$520</code></strong></td><td style="text-align:left">Min. Tool for Spindle 0</td><td style="text-align:left"><code>0</code> (Default)</td></tr><tr><td style="text-align:left"><strong><code>$521</code></strong></td><td style="text-align:left">Min. Tool for Spindle 1</td><td style="text-align:left"><code>100</code> (Tools 100+ use Spindle 1)</td></tr><tr><td style="text-align:left"><strong><code>$522</code></strong></td><td style="text-align:left">Min. Tool for Spindle 2</td><td style="text-align:left"><code>200</code> (Tools 200+ use Spindle 2)</td></tr></tbody></table>
+<p><strong>Example Workflow:</strong></p>
+<ul>
+<li><code>M6 T1</code>: grblHAL stays on <strong>Spindle 0</strong> (Primary).</li>
+<li><code>M6 T101</code>: grblHAL automatically switches to <strong>Spindle 1</strong> (Secondary/Laser).</li>
+<li><code>M6 T1</code>: Switches back to <strong>Spindle 0</strong>.</li>
+</ul>
+<p><em>Note: Requires a hard reset after changing these settings.</em></p>
+<p><strong>Example G-Code:</strong></p>
+<div class="language-gcode codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-gcode codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">M104 Q0     ; Select Spindle</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M3 S10000   ; Turn on Spindle at 10k RPM</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">... mill path ...</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M5          ; Stop Spindle</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M104 Q1     ; Switch to Laser</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">M3 S100     ; Turn on Laser at 10% power (focus)</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">... laser path ...</span><br></span></code></pre></div></div>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="2-configuring-spindles-9-709-etc">2. Configuring Spindles (<code>$9</code>, <code>$709</code>, etc.)<a href="#2-configuring-spindles-9-709-etc" class="hash-link" aria-label="Direct link to 2-configuring-spindles-9-709-etc" title="Direct link to 2-configuring-spindles-9-709-etc">​</a></h2>
+<p>Each spindle has its own configuration setting (bitmask) that defines its behavior.</p>
+<ul>
+<li><strong>Primary Spindle (<code>$9</code>)</strong>: Controls the main output.</li>
+<li><strong>Secondary Spindle (<code>$709</code>)</strong>: Controls the second output (if supported by board/firmware).</li>
+</ul>
+<p>These settings allow you to:</p>
+<ul>
+<li><strong>Invert PWM:</strong> If your laser is on at S0.</li>
+<li><strong>Enable/Disable Laser Mode:</strong> Crucial for dual setups (see Advanced section below).</li>
+<li><strong>Control Enable Pin Logic.</strong></li>
+</ul>
+<p><em>(See <a href="/grblhal_docs/Reference/complete-settings-reference#9--pwm-spindle-options-primary">Settings Reference</a> for bitmask details.)</em></p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="3-laser-mode-guide-32">3. Laser Mode Guide (<code>$32</code>)<a href="#3-laser-mode-guide-32" class="hash-link" aria-label="Direct link to 3-laser-mode-guide-32" title="Direct link to 3-laser-mode-guide-32">​</a></h2>
+<p>When using a laser, enabling <strong>Laser Mode</strong> (<code>$32=1</code>) changes grblHAL&#x27;s physics to produce cleaner engravings.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="what-laser-mode-does"><strong>What Laser Mode Does</strong><a href="#what-laser-mode-does" class="hash-link" aria-label="Direct link to what-laser-mode-does" title="Direct link to what-laser-mode-does">​</a></h3>
+<ol>
+<li><strong>Eliminates Pauses:</strong> No dwell for spindle spin-up/down.</li>
+<li><strong>Enables Dynamic Power (<code>M4</code>):</strong> Scales power with speed to prevent burning corners.<!-- -->
+<ul>
+<li><em>Accelerating?</em> Power drops.</li>
+<li><em>Cruising?</em> Target power.</li>
+<li><em>Stopped?</em> Laser is <strong>OFF</strong> instantly.</li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="m3-vs-m4-critical-difference"><strong>M3 vs M4: Critical Difference</strong><a href="#m3-vs-m4-critical-difference" class="hash-link" aria-label="Direct link to m3-vs-m4-critical-difference" title="Direct link to m3-vs-m4-critical-difference">​</a></h3>
+<table><thead><tr><th style="text-align:left">Command</th><th style="text-align:left">Name</th><th style="text-align:left">Behavior</th><th style="text-align:left">Best Use</th></tr></thead><tbody><tr><td style="text-align:left"><strong>M3</strong></td><td style="text-align:left">Constant Power</td><td style="text-align:left">Laser output is constant regardless of speed. Turns on immediately.</td><td style="text-align:left"><strong>Cutting</strong> (where depth must be consistent).</td></tr><tr><td style="text-align:left"><strong>M4</strong></td><td style="text-align:left">Dynamic Power</td><td style="text-align:left">Power scales with speed. Turns OFF when stationary.</td><td style="text-align:left"><strong>Engraving</strong> (images, photos, vectors).</td></tr><tr><td style="text-align:left"><strong>M5</strong></td><td style="text-align:left">Laser OFF</td><td style="text-align:left">Turns off the beam.</td><td style="text-align:left">Safety / End of job.</td></tr></tbody></table>
+<p><strong>Warning:</strong> Using <strong>M3</strong> for engraving will burn deep holes at every corner where the machine slows down. Always use <strong>M4</strong> for engraving.</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="4-advanced-dual-mill--laser-setup">4. Advanced: Dual Mill + Laser Setup<a href="#4-advanced-dual-mill--laser-setup" class="hash-link" aria-label="Direct link to 4. Advanced: Dual Mill + Laser Setup" title="Direct link to 4. Advanced: Dual Mill + Laser Setup">​</a></h2>
+<p>If your machine has both a spindle and a laser, you don&#x27;t want to manually toggle <code>$32</code> every time you swap tools.
+Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-by-step-configuration"><strong>Step-by-Step Configuration:</strong><a href="#step-by-step-configuration" class="hash-link" aria-label="Direct link to step-by-step-configuration" title="Direct link to step-by-step-configuration">​</a></h3>
+<ol>
+<li>
+<p><strong>Enable Laser Mode Globally:</strong></p>
+<ul>
+<li>Send <code>$32=1</code>. This makes the <em>system</em> ready for laser moves.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configure the Spindle (<code>$9</code>):</strong></p>
+<ul>
+<li>We need to set <strong>Bit 2 (Value 4)</strong> on the Primary Spindle settings (<code>$9</code>).</li>
+<li>This bit means: <em>&quot;Disable Laser Capability for this tool.&quot;</em></li>
+<li><em>Calculation:</em>
+<ul>
+<li>Default PWM Spindle is usually Bit 0 (Enable) + Bit 1 (RPM controls Enable) = <code>3</code>.</li>
+<li>Add Bit 2 (Disable Laser) -&gt; <code>3 + 4 = 7</code>.</li>
+</ul>
+</li>
+<li><strong>Send <code>$9=7</code></strong> (Check your specific driver defaults, but 7 is common).</li>
+</ul>
+</li>
+<li>
+<p><strong>Result:</strong></p>
+<ul>
+<li><strong>When <code>M104 Q0</code> (Spindle) is active:</strong> grblHAL ignores <code>$32</code>. It pauses for spin-up and uses Constant Power (M3 behavior), even if you send M4.</li>
+<li><strong>When <code>M104 Q1</code> (Laser) is active:</strong> grblHAL uses full Laser Mode (Dynamic Power, no pauses).</li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="workflow-example"><strong>Workflow Example</strong><a href="#workflow-example" class="hash-link" aria-label="Direct link to workflow-example" title="Direct link to workflow-example">​</a></h3>
+<ol>
+<li><strong>Job 1 (Milling):</strong>
+<ul>
+<li><code>M104 Q0</code> (Select Spindle)</li>
+<li><code>M3 S12000</code> (Spindle starts, machine waits for spin-up)</li>
+<li>Cut part.</li>
+</ul>
+</li>
+<li><strong>Job 2 (Laser Engraving):</strong>
+<ul>
+<li><code>M104 Q1</code> (Select Laser)</li>
+<li><code>M4 S500</code> (Laser enables in Dynamic Mode)</li>
+<li>Engrave logo.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="5-handling-physical-offsets">5. Handling Physical Offsets<a href="#5-handling-physical-offsets" class="hash-link" aria-label="Direct link to 5. Handling Physical Offsets" title="Direct link to 5. Handling Physical Offsets">​</a></h2>
+<p>When you switch from your Spindle to your Laser, the &quot;cutting point&quot; physically moves because they are mounted in different spots. If you don&#x27;t account for this, your laser engraving will be offset from your milled pocket.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="method-a-work-coordinate-systems-standard"><strong>Method A: Work Coordinate Systems (Standard)</strong><a href="#method-a-work-coordinate-systems-standard" class="hash-link" aria-label="Direct link to method-a-work-coordinate-systems-standard" title="Direct link to method-a-work-coordinate-systems-standard">​</a></h3>
+<p>The most robust way to handle this is using G-code Work Coordinate Systems (WCS).</p>
+<ol>
+<li><strong>Assign G54 to Spindle:</strong> Zero your Spindle on the workpiece.</li>
+<li><strong>Assign G55 to Laser:</strong>
+<ul>
+<li>Mark a point on scrap material with the Spindle (small drill peck).</li>
+<li>Jog the <strong>Laser</strong> until the crosshair/dot aligns perfectly with that mark.</li>
+<li>Zero the laser position in the <strong>G55</strong> coordinate system (<code>G10 L20 P2 X0 Y0</code>).</li>
+</ul>
+</li>
+<li><strong>Use in G-Code:</strong>
+<ul>
+<li>When milling: <code>G54</code></li>
+<li>When lasering: <code>G55</code></li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="method-b-firmware-offsets-770771"><strong>Method B: Firmware Offsets (<code>$770</code>/<code>$771</code>)</strong><a href="#method-b-firmware-offsets-770771" class="hash-link" aria-label="Direct link to method-b-firmware-offsets-770771" title="Direct link to method-b-firmware-offsets-770771">​</a></h3>
+<p>Some builds of grblHAL include a <strong>Spindle Offset Plugin</strong> that handles this automatically in firmware.</p>
+<ul>
+<li><strong><code>$770</code></strong>: X Offset for Secondary Spindle.</li>
+<li><strong><code>$771</code></strong>: Y Offset for Secondary Spindle.</li>
+</ul>
+<p><strong>⚠️ Note:</strong> If you do not see these settings, the plugin is <strong>not compiled into your firmware</strong>.
+To enable it, you must compile with <strong><code>SPINDLE_OFFSET=1</code></strong> defined in your configuration (e.g., <code>my_machine.h</code> map). Otherwise, use <strong>Method A</strong> (which works on all controllers).</p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="troubleshooting">Troubleshooting<a href="#troubleshooting" class="hash-link" aria-label="Direct link to Troubleshooting" title="Direct link to Troubleshooting">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="laser-wont-turn-on"><strong>Laser Won&#x27;t Turn On</strong><a href="#laser-wont-turn-on" class="hash-link" aria-label="Direct link to laser-wont-turn-on" title="Direct link to laser-wont-turn-on">​</a></h3>
+<ul>
+<li>Check <code>$32=1</code>.</li>
+<li>Check <code>$30</code> matches your sender&#x27;s Max S-Value (usually 1000).</li>
+<li>Wiring: Ensure PWM and Ground are connected correctly.</li>
+<li>Safety: Some lasers require a separate &quot;Enable&quot; pin triggered.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="weak-output"><strong>Weak Output</strong><a href="#weak-output" class="hash-link" aria-label="Direct link to weak-output" title="Direct link to weak-output">​</a></h3>
+<ul>
+<li>Check <code>$30</code> (Max RPM). If grblHAL expects 10000 RPM (<code>$30=10000</code>) but you send <code>S1000</code>, your laser is only at 10% power. Set <code>$30=1000</code> for 0-100% control logic.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="spindle-replaces-laser-in-status-report"><strong>Spindle Replaces Laser in Status Report</strong><a href="#spindle-replaces-laser-in-status-report" class="hash-link" aria-label="Direct link to spindle-replaces-laser-in-status-report" title="Direct link to spindle-replaces-laser-in-status-report">​</a></h3>
+<ul>
+<li>This is normal. The status report (<code>?</code>) shows the current <em>active</em> tool state. Sending <code>M104 Qx</code> changes which one is reported.</li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>Safety Warning</div><div class="admonitionContent_BuS1"><p><strong>ALWAYS WEAR LASER SAFETY GLASSES.</strong>
+Reflected 450nm (Blue) or 10600nm (CO2) light can instantly cause permanent blindness. Never run a laser unattended.</p></div></div></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/docs/05-Guides/spindles-and-lasers.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/grblhal_docs/Guides/probing"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Probing Guide</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/grblhal_docs/Guides/vfd-spindle-setup"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">VFD Spindle Setup</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-multiple-spindles-the-basics" class="table-of-contents__link toc-highlight">1. Multiple Spindles: The Basics</a><ul><li><a href="#identifying-your-spindles" class="table-of-contents__link toc-highlight"><strong>Identifying Your Spindles</strong></a></li><li><a href="#enabling-spindles" class="table-of-contents__link toc-highlight"><strong>Enabling Spindles</strong></a></li><li><a href="#switching-tools-m104" class="table-of-contents__link toc-highlight"><strong>Switching Tools (<code>M104</code>)</strong></a></li><li><a href="#automatic-spindle-switching-tool-mapping" class="table-of-contents__link toc-highlight"><strong>Automatic Spindle Switching (Tool Mapping)</strong></a></li></ul></li><li><a href="#2-configuring-spindles-9-709-etc" class="table-of-contents__link toc-highlight">2. Configuring Spindles (<code>$9</code>, <code>$709</code>, etc.)</a></li><li><a href="#3-laser-mode-guide-32" class="table-of-contents__link toc-highlight">3. Laser Mode Guide (<code>$32</code>)</a><ul><li><a href="#what-laser-mode-does" class="table-of-contents__link toc-highlight"><strong>What Laser Mode Does</strong></a></li><li><a href="#m3-vs-m4-critical-difference" class="table-of-contents__link toc-highlight"><strong>M3 vs M4: Critical Difference</strong></a></li></ul></li><li><a href="#4-advanced-dual-mill--laser-setup" class="table-of-contents__link toc-highlight">4. Advanced: Dual Mill + Laser Setup</a><ul><li><a href="#step-by-step-configuration" class="table-of-contents__link toc-highlight"><strong>Step-by-Step Configuration:</strong></a></li><li><a href="#workflow-example" class="table-of-contents__link toc-highlight"><strong>Workflow Example</strong></a></li></ul></li><li><a href="#5-handling-physical-offsets" class="table-of-contents__link toc-highlight">5. Handling Physical Offsets</a><ul><li><a href="#method-a-work-coordinate-systems-standard" class="table-of-contents__link toc-highlight"><strong>Method A: Work Coordinate Systems (Standard)</strong></a></li><li><a href="#method-b-firmware-offsets-770771" class="table-of-contents__link toc-highlight"><strong>Method B: Firmware Offsets (<code>$770</code>/<code>$771</code>)</strong></a></li></ul></li><li><a href="#troubleshooting" class="table-of-contents__link toc-highlight">Troubleshooting</a><ul><li><a href="#laser-wont-turn-on" class="table-of-contents__link toc-highlight"><strong>Laser Won&#39;t Turn On</strong></a></li><li><a href="#weak-output" class="table-of-contents__link toc-highlight"><strong>Weak Output</strong></a></li><li><a href="#spindle-replaces-laser-in-status-report" class="table-of-contents__link toc-highlight"><strong>Spindle Replaces Laser in Status Report</strong></a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 grblHAL Project. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
