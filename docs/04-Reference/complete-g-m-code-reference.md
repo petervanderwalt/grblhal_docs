@@ -750,7 +750,7 @@ Selects one of the available work coordinate systems. A WCS defines a user-progr
   - `G59` (P6)
   - `G59.1` (P7)
   - `G59.2` (P8)
-  - `G59.3` (P9)
+  - `G59.3` (P9) - **Note:** Used by Tool Change Modes 2 & 3 as the tool change position.
 :::
 
 | Command | WCS Selected |
@@ -822,7 +822,7 @@ These commands control how the machine handles corners and transitions between s
 - **Requires NGC Expressions:** `G65` is supported in grblHAL only if NGC expressions (G-code expressions and flow control) are enabled in the firmware.
 - **Subprogram Location:**
     - User-defined `G65` macros are typically stored on an SD card (or in LittleFS) in the root folder, named `P<n>.macro`, where `<n>` is the `P` argument.
-    - User-provided macros should generally start with a `P` word value of 100 or greater to avoid conflicts with potential inbuilt macros.
+    - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (P1-P7).
 - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 - **Nesting:** Nesting of `G65` macros is not allowed.
 - **Reference:** For more details on expressions and flow control, refer to the [grblHAL wiki page on Expressions and flow control](https://github.com/grblHAL/core/wiki/Expressions-and-flow-control). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
@@ -834,7 +834,8 @@ These commands control how the machine handles corners and transitions between s
 | **L** | **Optional:** Repeat count. The macro will be executed `L` times. (Available from build 20260125). |
 | **A, B, C, X, Y, Z...** | Arguments to be passed to the subprogram. These become local variables inside the macro. |
 
-#### Example
+### User Macro Example (P100+)
+
 * **Call a custom macro `P100.macro` to drill a hole with a specific depth and feed rate:**  
   `(Content of P100.macro: )`  
   `#<hole_depth> = #1 ; A argument becomes local variable #<hole_depth>`  
@@ -849,70 +850,541 @@ These commands control how the machine handles corners and transitions between s
   `G0 X20 Y20`  
   `G65 P100 A8.0 B150` (Call P100.macro, drill 8mm deep at 150mm/min)
 
-#### Tips & Tricks
+### Tips & Tricks
 - `G65` is a powerful tool for creating reusable, modular G-code for complex operations.
 - Variables are assigned to arguments based on their letter, e.g., `A` is typically `#1`, `B` is `#2`, `X` is `#24`, etc.
+- **Reserve P1-P7 for built-in macros** - Start your custom macros at P100 or higher.
 
 ---
 
-#### Inbuilt G65 macros
+## Built-in G65 Macros (P1-P7)
 
-grblHAL provides several built-in `G65` macros.
+grblHAL provides several built-in `G65` macros for system-level operations. These are reserved and should not be overridden by user macros.
 
-*   `G65 P1 Q<n>`: Read numeric setting value. `<n>` is the setting number. Alternatively, the `PRM[]` function can be used.
-*   `G65 P1 Q<n> S<value>`: Set numeric setting value. `<n>` is the setting number, `<value>` is the new value. (Available from build 20251028).
+:::note Return Values
+Built-in macros will set the `_value_returned` parameter to `1` if a value is returned. The value is then stored in the `_value` parameter.
+:::
 
-*   `G65 P2 Q<tool> R<axis>`: Read tool offset from the tool table. `<tool>` is the tool number, `<axis>` is the axis number (0 = X, 1 = Y, ...).
+---
 
-*   `G65 P3 I<n> [S<m>]`: Get parameter value. `<n>` is the parameter number. The optional `S` word can be used to set parameter `<m>` = `<n>`. If `S` is not given, the returned value is stored in the `_value` parameter.
-*   `G65 P3 I<n> Q<value>`: Set parameter value. `<n>` is the parameter number, `<value>` is the value to set it to.
-    *   *Reasoning:* The `P3` macro can be used to simulate arrays since `<n>` and `<m>` can both be expressions.
+### `G65 P1` – Read/Write Settings
 
-*   `G65 P4`: Get current machine state. (Available from build 20250107).
+**Purpose:** Read or write grblHAL numeric settings.
 
-    | State | Description |
-    |-------|-------------|
-    | 0     | Idle |
-    | 2     | Check mode<sup>1</sup> |
-    | 4     | Cycle (motion ongoing) |
-    | 10    | Tool change |
+**Syntax:**
+- `G65 P1 Q<n>` - Read setting value
+- `G65 P1 Q<n> S<value>` - Set setting value (Available from build 20251028)
 
-*   `G65 P5 Q<probe>`: Select probe input. `<probe>` is the probe ID. (Available from build 20250514).
+**Parameters:**
+- `Q` = Setting number (e.g., `Q110` for $110)
+- `S` = New value to set (optional)
 
-    | Probe | Description |
-    |-------|-------------|
-    | 0     | Primary probe |
-    | 1     | Toolsetter |
-    | 2     | Secondary probe |
+**Returns:**
+- `_value` = Current setting value (for read operations)
+- `_value_returned` = 1 if successful
 
-    :::note
-    Selecting a probe input that is not available will raise an error.
+**Examples:**
+```gcode
+; Read current X-axis max rate ($110)
+G65 P1 Q110
+#<max_rate_x> = _value
+(MSG, X-axis max rate: #<max_rate_x> mm/min)
+
+; Set X-axis max rate to 5000 mm/min
+G65 P1 Q110 S5000
+```
+
+**Alternative:** The `PRM[]` function can also be used to read settings:
+```gcode
+#<max_rate> = PRM[110]
+```
+
+---
+
+### `G65 P2` – Read Tool Offset
+
+**Purpose:** Read tool offset values from the tool table.
+
+**Syntax:**
+- `G65 P2 Q<tool> R<axis>`
+
+**Parameters:**
+- `Q` = Tool number (e.g., `Q1` for Tool 1)
+- `R` = Axis number (0=X, 1=Y, 2=Z, 3=A, etc.)
+
+**Returns:**
+- `_value` = Tool offset value for the specified axis
+- `_value_returned` = 1 if successful
+
+**Example:**
+```gcode
+; Read Z-axis offset for Tool 3
+G65 P2 Q3 R2
+#<tool3_length> = _value
+(MSG, Tool 3 Z offset: #<tool3_length> mm)
+
+; Read X-axis offset for Tool 1
+G65 P2 Q1 R0
+#<tool1_x_offset> = _value
+```
+
+---
+
+### `G65 P3` – Get/Set Parameter
+
+**Purpose:** Read or write parameter values. Useful for simulating arrays since parameter numbers can be expressions.
+
+**Syntax:**
+- `G65 P3 I<n> [S<m>]` - Get parameter value
+- `G65 P3 I<n> Q<value>` - Set parameter value
+
+**Parameters:**
+- `I` = Parameter number to read/write
+- `S` = Optional: Set parameter `<m>` = parameter `<n>` (copy operation)
+- `Q` = Value to set parameter to
+
+**Returns:**
+- `_value` = Parameter value (for read operations without `S`)
+- `_value_returned` = 1 if successful
+
+**Examples:**
+```gcode
+; Read parameter #100
+G65 P3 I100
+#<my_value> = _value
+
+; Set parameter #100 to 42.5
+G65 P3 I100 Q42.5
+
+; Copy parameter #100 to parameter #200
+G65 P3 I100 S200
+
+; Simulate an array using expressions
+#<index> = 5
+G65 P3 I[1000 + #<index>] Q123.45  ; Set parameter #1005 to 123.45
+```
+
+**Use Case:** The `P3` macro is particularly useful for simulating arrays, as both `I` and `S` can be expressions.
+
+---
+
+### `G65 P4` – Get Machine State
+
+**Purpose:** Query the current machine state.
+
+**Syntax:**
+- `G65 P4`
+
+**Returns:**
+- `_value` = Current machine state code
+- `_value_returned` = 1 if successful
+
+**State Codes:**
+
+| State | Description |
+|-------|-------------|
+| 0     | Idle |
+| 2     | Check mode<sup>1</sup> |
+| 4     | Cycle (motion ongoing) |
+| 10    | Tool change |
+
+**Example:**
+```gcode
+; Check if machine is idle before starting operation
+G65 P4
+IF [_value NE 0]
+  (MSG, ERROR: Machine not idle!)
+  M0
+ENDIF
+
+; Wait for motion to complete
+G65 P4
+WHILE [_value EQ 4]
+  G4 P0.1  ; Wait 100ms
+  G65 P4
+ENDWHILE
+```
+
+**Available from:** Build 20250107
+
+---
+
+### `G65 P5` – Select Probe Input
+
+**Purpose:** Select which probe input to use for probing operations.
+
+**Syntax:**
+- `G65 P5 Q<probe>`
+
+**Parameters:**
+- `Q` = Probe ID
+
+**Probe IDs:**
+
+| Probe | Description |
+|-------|-------------|
+| 0     | Primary probe |
+| 1     | Toolsetter |
+| 2     | Secondary probe |
+
+**Example:**
+```gcode
+; Use primary probe for workpiece probing
+G65 P5 Q0
+G38.2 Z-50 F100  ; Probe down
+
+; Switch to toolsetter for tool measurement
+G65 P5 Q1
+G38.2 Z-100 F50  ; Probe tool length
+```
+
+:::note
+Selecting a probe input that is not available will raise an error.
+:::
+
+**Available from:** Build 20250514
+
+---
+
+### `G65 P6` – Disable Spindle Delays
+
+**Purpose:** Disable spindle on/off delays for the next `M3`, `M4`, or `M5` command.
+
+**Syntax:**
+- `G65 P6`
+
+**Use Case:** When you need the spindle to start/stop immediately without waiting for the configured delay times (settings `$392` and `$394`).
+
+**Example:**
+```gcode
+; Normal spindle start with delay
+M3 S10000
+G4 P2  ; Wait for spindle to reach speed
+
+; Quick spindle restart without delay
+M5
+G65 P6  ; Disable delays for next spindle command
+M3 S10000  ; Starts immediately, no delay
+```
+
+**Available from:** Build 20250922
+
+---
+
+### `G65 P7` – Send Modbus Message
+
+**Purpose:** Send Modbus RTU/TCP communication from G-code to read/write registers on Modbus-enabled devices such as VFDs (Variable Frequency Drives), PLCs, sensors, and other industrial equipment.
+
+**Syntax:**
+*   `G65 P7 S- F- R- <X->` (Function codes 1-4: Read operations)
+*   `G65 P7 S- F- R- A-` (Function codes 5 and 6: Write single coil/register)
+*   `G65 P7 S- F-` (Function code 7: Read exception status)
+*   `G65 P7 S- F- R- A- <B-> <C->` (Function codes 16 and 17: Write multiple registers)
+
+**Parameters:**
+*   `S`: Modbus server (slave) address (1-247).
+*   `F`: Modbus function code (1-7, 16, 17 supported).
+*   `R`: Register base address (0-65535).
+*   `X`: Number of registers to read (1-3, default 1). Only for read operations.
+*   `A`: First value (for writes) or first register value.
+*   `B`: Second value (for multi-register writes).
+*   `C`: Third value (for multi-register writes).
+
+**Returns:**
+*   On exception: `_value_returned` is set to `0`, and `_value` contains the Modbus exception code.
+*   On success: `_value_returned` is set to the number of values received. `_value`, `_value2`, and `_value3` are set accordingly.
+
+---
+
+#### Supported Modbus Function Codes
+
+    #### **Function Code 1 (0x01): Read Coils**
+    
+    Reads the ON/OFF status of discrete output coils (digital outputs) from the slave device.
+    
+    **Use Case:** Reading the state of relay outputs, digital I/O pins, or binary flags.
+    
+    **Syntax:** `G65 P7 S<address> F1 R<coil_address> X<count>`
+    
+    **Example:**
+    ```gcode
+    ; Read 8 coils starting from address 100 on slave device 1
+    G65 P7 S1 F1 R100 X8
+    ; _value will contain the coil states as a bitmask
+    ```
+
+    #### **Function Code 2 (0x02): Read Discrete Inputs**
+    
+    Reads the ON/OFF status of discrete input contacts (digital inputs) from the slave device.
+    
+    **Use Case:** Reading the state of limit switches, sensors, or other digital input signals.
+    
+    **Syntax:** `G65 P7 S<address> F2 R<input_address> X<count>`
+    
+    **Example:**
+    ```gcode
+    ; Read status of 4 discrete inputs starting from address 200 on slave 1
+    G65 P7 S1 F2 R200 X4
+    ; Check if input is active
+    #<sensor_active> = [_value AND 1]  ; Check bit 0
+    ```
+
+    #### **Function Code 3 (0x03): Read Holding Registers**
+    
+    Reads the contents of holding registers (read/write registers) from the slave device. This is the most commonly used function for reading configuration, setpoints, and status values.
+    
+    **Use Case:** Reading VFD speed setpoints, temperature values, counters, configuration parameters.
+    
+    **Syntax:** `G65 P7 S<address> F3 R<register_address> X<count>`
+    
+    **Example:**
+    ```gcode
+    ; Read current spindle speed from VFD at slave address 1, register 1000
+    G65 P7 S1 F3 R1000 X1
+    #<current_rpm> = _value
+    
+    ; Read 3 consecutive registers (e.g., X, Y, Z position from a controller)
+    G65 P7 S2 F3 R500 X3
+    #<pos_x> = _value
+    #<pos_y> = _value2
+    #<pos_z> = _value3
+    ```
+
+    #### **Function Code 4 (0x04): Read Input Registers**
+    
+    Reads the contents of input registers (read-only registers) from the slave device. These typically contain sensor readings, measurements, or status information.
+    
+    **Use Case:** Reading analog sensor values, measurement data, device status codes.
+    
+    **Syntax:** `G65 P7 S<address> F4 R<register_address> X<count>`
+    
+    **Example:**
+    ```gcode
+    ; Read temperature sensor value from register 300 on slave 3
+    G65 P7 S3 F4 R300 X1
+    #<temperature> = _value
+    
+    ; Read multiple sensor values
+    G65 P7 S3 F4 R400 X3
+    #<sensor1> = _value
+    #<sensor2> = _value2
+    #<sensor3> = _value3
+    ```
+
+    #### **Function Code 5 (0x05): Write Single Coil**
+    
+    Writes (forces) a single coil (digital output) to either ON or OFF.
+    
+    **Use Case:** Controlling relays, solenoids, indicator lights, or digital outputs.
+    
+    **Syntax:** `G65 P7 S<address> F5 R<coil_address> A<value>`
+    
+    **Parameters:**
+    *   `A`: Value to write (0 = OFF, 65280 or 0xFF00 = ON)
+    
+    **Example:**
+    ```gcode
+    ; Turn ON coil at address 50 on slave device 1
+    G65 P7 S1 F5 R50 A65280
+    
+    ; Turn OFF coil at address 50
+    G65 P7 S1 F5 R50 A0
+    
+    ; Practical example: Activate a clamp
+    G65 P7 S1 F5 R100 A65280  ; Clamp ON
+    G4 P0.5                    ; Wait 0.5 seconds
+    ; ... perform machining ...
+    G65 P7 S1 F5 R100 A0       ; Clamp OFF
+    ```
+
+    #### **Function Code 6 (0x06): Write Single Register**
+    
+    Writes a value to a single holding register. This is the most common function for setting parameters, setpoints, and configuration values.
+    
+    **Use Case:** Setting VFD speed, writing configuration parameters, updating setpoints.
+    
+    **Syntax:** `G65 P7 S<address> F6 R<register_address> A<value>`
+    
+    **Example:**
+    ```gcode
+    ; Set VFD spindle speed to 12000 RPM (register 2000 on slave 1)
+    G65 P7 S1 F6 R2000 A12000
+    
+    ; Set a temperature setpoint to 75°C (register 500 on slave 2)
+    G65 P7 S2 F6 R500 A75
+    
+    ; Practical example: Variable spindle speed based on material
+    #<material_type> = 1  ; 1=aluminum, 2=steel
+    IF [#<material_type> EQ 1]
+      #<spindle_rpm> = 18000
+    ELSE
+      #<spindle_rpm> = 12000
+    ENDIF
+    G65 P7 S1 F6 R2000 A#<spindle_rpm>
+    M3  ; Start spindle
+    ```
+
+    #### **Function Code 7 (0x07): Read Exception Status**
+    
+    Reads the exception status (8 coils/bits) from the slave device. This is a specialized diagnostic function.
+    
+    **Use Case:** Reading device error flags, alarm states, or diagnostic information.
+    
+    **Syntax:** `G65 P7 S<address> F7`
+    
+    **Example:**
+    ```gcode
+    ; Read exception status from slave 1
+    G65 P7 S1 F7
+    #<exception_status> = _value
+    
+    ; Check for specific error conditions
+    IF [_value GT 0]
+      (MSG, ERROR: Device exception detected!)
+      M0  ; Stop program
+    ENDIF
+    ```
+
+    #### **Function Code 16 (0x10): Write Multiple Registers**
+    
+    Writes values to multiple consecutive holding registers in a single transaction. More efficient than multiple Function Code 6 calls.
+    
+    **Use Case:** Setting multiple parameters simultaneously, writing coordinate data, bulk configuration updates.
+    
+    **Syntax:** `G65 P7 S<address> F16 R<register_address> A<value1> <B<value2>> <C<value3>>`
+    
+    **Example:**
+    ```gcode
+    ; Write 3 values to consecutive registers starting at 1000 on slave 1
+    G65 P7 S1 F16 R1000 A100 B200 C300
+    ; Register 1000 = 100
+    ; Register 1001 = 200
+    ; Register 1002 = 300
+    
+    ; Practical example: Set XYZ position setpoints
+    #<target_x> = 150.5
+    #<target_y> = 200.0
+    #<target_z> = 50.0
+    G65 P7 S2 F16 R500 A#<target_x> B#<target_y> C#<target_z>
+    ```
+
+    #### **Function Code 17 (0x11): Report Server ID**
+    
+    Reads the identification and additional information from the slave device (serial line only).
+    
+    **Use Case:** Device identification, firmware version checking, diagnostic information retrieval.
+    
+    **Syntax:** `G65 P7 S<address> F17`
+    
+    **Example:**
+    ```gcode
+    ; Get server ID from slave device 1
+    G65 P7 S1 F17
+    ; _value will contain device identification data
+    ```
+
+    ---
+
+    ### Error Handling
+
+    When a Modbus transaction fails or the slave device returns an exception, grblHAL sets:
+    *   `_value_returned = 0`
+    *   `_value` = Modbus exception code
+
+    **Common Modbus Exception Codes:**
+    *   `1`: Illegal Function (function code not supported by device)
+    *   `2`: Illegal Data Address (register address doesn't exist)
+    *   `3`: Illegal Data Value (value out of range)
+    *   `4`: Slave Device Failure (device malfunction)
+    *   `5`: Acknowledge (device accepted but needs time to process)
+    *   `6`: Slave Device Busy (device is processing another request)
+    *   `7`: Negative Acknowledge (device cannot perform the function)
+    *   `8`: Memory Parity Error (data corruption detected)
+
+    **Example Error Handling:**
+    ```gcode
+    ; Attempt to read register with error checking
+    G65 P7 S1 F3 R1000 X1
+    
+    IF [_value_returned EQ 0]
+      (MSG, Modbus Error! Exception Code: #<_value>)
+      IF [_value EQ 2]
+        (MSG, ERROR: Invalid register address)
+      ENDIF
+      IF [_value EQ 4]
+        (MSG, ERROR: Device failure)
+      ENDIF
+      M0  ; Stop program on error
+    ELSE
+      #<spindle_rpm> = _value
+      (MSG, Spindle RPM: #<spindle_rpm>)
+    ENDIF
+    ```
+
+    ---
+
+    ### Practical Application Examples
+
+    #### **Example 1: VFD Spindle Control**
+    ```gcode
+    ; Read current VFD frequency
+    G65 P7 S1 F3 R1000 X1
+    #<current_freq> = _value
+    (MSG, Current Frequency: #<current_freq> Hz)
+    
+    ; Set new frequency to 400 Hz (24000 RPM for 2-pole motor)
+    G65 P7 S1 F6 R1000 A400
+    
+    ; Start VFD
+    G65 P7 S1 F5 R100 A65280  ; Write coil to start
+    G4 P2  ; Wait 2 seconds for spindle to spin up
+    ```
+
+    #### **Example 2: Reading Multiple Sensors**
+    ```gcode
+    ; Read 3 temperature sensors from a monitoring device
+    G65 P7 S3 F4 R100 X3
+    #<temp_spindle> = _value
+    #<temp_ambient> = _value2
+    #<temp_coolant> = _value3
+    
+    ; Check for overheating
+    IF [#<temp_spindle> GT 80]
+      (MSG, WARNING: Spindle temperature high!)
+      M5  ; Stop spindle
+      M0  ; Pause program
+    ENDIF
+    ```
+
+    #### **Example 3: Automated Tool Measurement**
+    ```gcode
+    ; Trigger tool measurement on external probe system
+    G65 P7 S2 F5 R200 A65280  ; Activate measurement
+    G4 P1  ; Wait for measurement
+    
+    ; Read measured tool length
+    G65 P7 S2 F3 R500 X1
+    #<tool_length> = _value
+    
+    ; Apply tool offset
+    G43.1 Z#<tool_length>
+    (MSG, Tool length: #<tool_length> mm)
+    ```
+
+    ---
+
+    :::warning Testing Status
+    This feature has only been tested with a Modbus simulator. Use with caution in production environments and report any issues to the grblHAL development team.
     :::
 
-*   `G65 P6`: Disable spindle on/off delays for the next `M3`, `M4`, or `M5` command. (Available from build 20250922).
+    :::tip Configuration
+    Ensure your grblHAL firmware is compiled with Modbus support enabled and that the Modbus communication parameters (baud rate, parity, stop bits) match your slave devices. Modbus settings are typically configured via grblHAL settings `$3xx` range.
+    :::
 
-*   `G65 P7`: Send Modbus message. (Available from build 20260215).
-
-    *   `G65 P7 S- F- R- <X->` (Function codes 1-4)
-    *   `G65 P7 S- F- R- A-` (Function codes 5 and 6)
-    *   `G65 P7 S- F-` (Function code 7)
-    *   `G65 P7 S- F- R- A- <B-> <C->` (Function codes 16 and 17)
-
-    **Parameters:**
-    *   `S`: Modbus server address.
-    *   `F`: Modbus function code (1-7, 16, 17 supported).
-    *   `R`: Register base address.
-    *   `X`: Number of registers to read (1-3, default 1).
-    *   `A`: First value.
-    *   `B`: Second value.
-    *   `C`: Third value.
-
-    **Returns:**
-    *   On exception: `_value_returned` is set to `0`, and `_value` contains the exception code.
-    *   On success: `_value_returned` is set to the number of values received. `_value`, `_value2`, and `_value3` are set accordingly.
-
-    :::note
-    This has only been tested with a simulator so use with care and report any issues!
+    :::info Additional Resources
+    - [Modbus Protocol Specification](https://www.modbustools.com/modbus.html)
+    - [Modbus Function Codes Reference](https://www.productinfo.schneider-electric.com/powerpactmodbuscommguide/)
+    - [grblHAL Modbus Plugin Documentation](https://github.com/grblHAL/Plugins_spindle)
     :::
 
 ---
@@ -934,11 +1406,7 @@ grblHAL provides several built-in `G65` macros.
 
 **Notes:**
 
-<sup>1</sup> In check mode, non-inbuilt `G65` macros will not be run; only file availability will be checked.
-
-:::note
-Inbuilt macros will set the `_value_returned` parameter to `1` if a value is returned. The value is then stored in the `_value` parameter.
-:::
+<sup>1</sup> In check mode, non-built-in `G65` macros will not be run; only file availability will be checked.
 
 ---
 
@@ -1321,24 +1789,43 @@ Initiates a tool change sequence. The behavior of `M6` is highly dependent on th
 - The logic for the tool change process (both manual and automatic) is often defined in a system macro file, typically named `tc.macro` (tool change) or `P200.macro` (for RapidChange ATC) located on the controller's SD card or accessible by the sender. This allows for extensive customization of the tool change procedure. For an example, see projects like [Rapidchange ATC](https://services.rapidchangeatc.com/docs/).
 - After a tool change, a `G43` or `G43.1` command is typically used to apply the new tool's length offset.
 
+
 ---
 
-## `M98` – Subroutine Call
+## `M98`, `M99` – Subroutine Call & Return
 
 **Syntax:**
-> `M98 P<program_number> [L<repeats>]`
+> `M98 P<program_number> [L<n>]` (Call Subroutine)
+> `M99` (Return)
 
-Calls a subroutine.
+Executes a subroutine (a separate block of G-code or an external file) and then returns to the main program.
 
 :::info Context
-- **Internal vs External:** Behavior depends on setting `$700`.
-    -   `$700=1` (Default): Scans the current file for `O<number> sub` blocks. If found, executes internal subroutine. If not found, looks for external file `P<number>.macro` (or named macro).
-    -   `$700=0`: Always looks for external file `P<number>.macro`.
--   **Execution:**
-    -   **Internal:** The program logic may perform a "check mode" pass to locate subroutines before running.
-    -   **External:** Executes the file from the SD card/local file system.
--   **Return:** Use `M99` to return from the subroutine.
+- **`M98 P<xxx>`:** Jumps to the subroutine with the specified number.
+    - If **Scan Current (`$700=1`)** is enabled, it first looks for a label `O<xxx> sub` in the current file.
+    - If not found (or `$700=0`), it looks for an external file named `xxx` (or `xxx.nc`, `xxx.gcode`, etc.) on the SD card/filesystem.
+- **`L<n>`:** Optional repeat count. The subroutine will act `<n>` times before returning.
+- **`M99`:** Marks the end of the subroutine. Control returns to the line following the `M98` call.
+    - If `M99` is used in the main program (not in a sub), it acts as a "Rewind and Loop" command, jumping back to the beginning of the file.
 :::
+
+| Parameter | Description |
+|-----------|-------------|
+| **`P<number>`** | The subroutine number or filename to call. |
+| **`L<count>`** | (Optional) Number of times to repeat the subroutine. |
+
+#### Examples
+*   **External Subroutine:**
+    *   `M98 P1001` (Calls file `1001.gcode` from SD card)
+*   **Internal Subroutine (with `$700=1`):**
+    ```gcode
+    M98 P100 L3   ; Call sub 100 three times
+    M30           ; End main program
+
+    O100 sub      ; Define subroutine 100
+    G91 G0 X10    ; Move X
+    M99           ; Return
+    ```
 
 ---
 
@@ -1614,6 +2101,25 @@ Imagine you have a macro to find the center of a hole. This macro needs to use `
 
 ---
 
+## `M98` – Subroutine Call
+
+**Syntax:**
+> `M98 P<program_number> [L<repeats>]`
+
+Calls a subroutine.
+
+:::info Context
+- **Internal vs External:** Behavior depends on setting `$700`.
+    -   `$700=1` (Default): Scans the current file for `O<number> sub` blocks. If found, executes internal subroutine. If not found, looks for external file `P<number>.macro` (or named macro).
+    -   `$700=0`: Always looks for external file `P<number>.macro`.
+-   **Execution:**
+    -   **Internal:** The program logic may perform a "check mode" pass to locate subroutines before running.
+    -   **External:** Executes the file from the SD card/local file system.
+-   **Return:** Use `M99` to return from the subroutine.
+:::
+
+---
+
 ## `M99` – Return from Subprogram
 
 **Syntax:**  
@@ -1851,5 +2357,72 @@ Repo: `https://github.com/grblHAL/Plugin_encoder`
 | M-Code | Syntax | Description |
 |--------|--------|-------------|
 | `M810` | `M810 P[0\|1]` | Runtime toggle for ATCi Keepout Zone enforcement. `P1` enables protection, `P0` disables it. |
+
+---
+
+# System Commands ($)
+
+System commands are special real-time or near-real-time commands that start with `$`. They are used to configure, control, and query the machine state.
+
+## Core Commands
+
+| Command | Description |
+|---------|-------------|
+| **`$$`** | View current settings. |
+| **`$#`** | View G-code parameters (WCS offsets, probe positions, tool offsets). |
+| **`$G`** | View G-code parser state (active modes like G54, G17, G90, etc.). |
+| **`$I`** | View build info string. |
+| **`$N`** | View startup blocks. |
+| **`$X`** | **Kill Alarm Lock.** Unlocks the machine from an alarm state (e.g., hard limit). Use with caution! |
+| **`$H`** | **Run Homing Cycle.** Homes all axes specified in `$23`. |
+| **`$HX`** | **Home Individual Axis.** Homes only the X axis (replace X with Y, Z, etc.). |
+| **`$J=...`** | **Jogging.** Execute a jogging motion. |
+| **`$SLP`** | **Sleep.** Put the machine to sleep. |
+
+## Tool Change Extensions
+
+These commands are specific to manual and semi-automatic tool change modes.
+
+| Command | Description |
+|---------|-------------|
+| **`$TLR`** | **Set Tool Length Reference.** Sets the current tool length offset as the reference. Used after a successful probe for the first tool in a job. |
+| **`$TPW`** | **Tool Probe Workpiece.** Initiates a probing sequence to set the dynamic tool offset for a new tool. Only available in Tool Change Modes 1 and 2. |
+
+## Reporting & Enumeration (grblHAL Extensions)
+
+grblHAL provides advanced reporting commands for Senders to query capabilities without hardcoded lists.
+
+| Command | Description |
+|---------|-------------|
+| **`$EA`** | **Enumerate Alarms.** Lists all supported alarm codes and descriptions. |
+| **`$EE`** | **Enumerate Errors.** Lists all supported error codes and descriptions. |
+| **`$ES`** | **Enumerate Settings.** Lists all supported settings with types, ranges, and descriptions. |
+| **`$EG`** | **Enumerate Setting Groups.** Lists the hierarchy of setting groups. |
+| **`$pins`** | **Enumerate Pins.** Lists processor pin mappings. |
+| **`$pinstate`** | **Enumerate Pin States.** Lists current state of auxiliary pins. |
+| **`$ports`** | **Enumerate Serial Ports.** Lists available UART ports. |
+| **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
+
+## File System Commands
+(Added in Build 20251111)
+
+These commands allow navigation of the SD card or internal LittleFS file system.
+
+| Command | Description |
+|---------|-------------|
+| **`$F`** | **List Files.** Lists files in the current working directory. |
+| **`$F+`** | **List Files (Standard).** Lists files in standard format. |
+| **`$F=`** | **Change Directory.** Sets the Current Working Directory (CWD). Usage: `$F=/` (root), `$F=..` (up), `$F=subdir` (down). |
+| **`$FM`** | **Mount SD Card.** Manually mounts the SD card. |
+
+## Advanced System Commands
+
+| Command | Description |
+|---------|-------------|
+| **`$REBOOT`** | **System Reboot.** Hard resets the controller. Connection will be lost. (Build 20251208) |
+| **`$DFU`**    | **Enter Bootloader.** Reboots the controller into DFU/Bootloader mode for firmware flashing. Connection will be lost. |
+| **`$MODBUSCMD`**| **Modbus Command.** Send raw Modbus commands. (Build 20260215) |
+| **`$TTLOAD`** | **Reload Tool Table.** Reloads the tool table from storage. (Build 20251111) |
+
 
 ---

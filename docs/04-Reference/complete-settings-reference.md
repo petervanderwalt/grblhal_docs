@@ -5223,18 +5223,17 @@ Configures various options related to the controller's filesystem, typically inv
 
 | Bit | Value | Option | Description |
 |:---:|:-----:|:-------|:------------|
-| 0   | 1     | Auto Mount SD Card | Automatically mounts the SD card on controller startup. This is highly useful if tool change macros, startup scripts, or other essential files are stored on an SD card that is permanently inserted into the controller. |
-| 1   | 2     | Hide LittleFS | When set, the content of the internal LittleFS filesystem will not be listed (e.g., via the `$F` command or in the WebUI). This can be useful for blocking user access to content vital for machine operation, such as core tool change macros or protected configuration files. |
+| 0   | 1     | **Auto Mount SD Card** | Automatically mounts the SD card on controller startup. This is highly useful if tool change macros, startup scripts, or other essential files are stored on an SD card that is permanently inserted into the controller. |
+| 1   | 2     | **Hide LittleFS** | When set, the content of the internal LittleFS filesystem will not be listed (e.g., via the `$F` command or in the WebUI). |
+| 2   | 4     | **Hierarchical Listing** | (Build 20251111+) Enables directory support. Files are listed per directory, and directories are shown with size `-1`. Use `$F=subdir` to navigate down and `$F=..` to go up. |
 
 #### Common Examples
-*   **Automatically mount SD card on startup:**
-    *   `$650=1`
-*   **Hide LittleFS content (e.g., to protect critical system macros):**
-    *   `$650=2`
+*   **Auto-mount SD & Enable Directories:**
+    *   `1 + 4 = 5` → `$650=5`
 
 #### Tips & Tricks
-- If your machine relies on macros or other files stored on an SD card for automatic operation (e.g., on startup or for tool changes), enabling `Auto Mount SD Card` is essential for reliable function.
-- `Hide LittleFS` is an advanced security/protection feature for system builders who want to prevent accidental modification or viewing of sensitive internal files.
+- Hierarchical listing is essential for organizing large numbers of G-code files into folders.
+- If your machine relies on macros stored on an SD card for automatic operation (e.g., on startup or for tool changes), enabling `Auto Mount SD Card` is essential.
 
 ---
 

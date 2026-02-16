@@ -347,5 +347,187 @@ $683=7      ; Enable plugin (1) + Monitor Rack (2) + Monitor Macro (4)
 
 ; Manually disable keepout to jog inside for maintenance
 M960 P0
+```
 
 ---
+
+## Plugin: Embroidery (`Plugin_embroidery`)
+Github Repository: https://github.com/grblHAL/Plugin_embroidery
+
+Stream embroidery files (.dst, .pes) directly from SD card. This experimental plugin bypasses G-code translation for precise stitch timing.
+
+#### Commands
+
+| Command | Syntax | Description |
+|---------|--------|-------------|
+| `$F<` | `$F<[filename]` | Render embroidery file to G-code (for sender preview). |
+| `$F=` | `$F=[filename]` | Run embroidery job from SD card. |
+
+#### $-Settings (Experimental)
+
+| Setting | Description |
+|---------|-------------|
+| `$450` | **Stitch Feedrate:** Feed rate for stitch moves (mm/min). |
+| `$451` | **Z Travel:** Needle Z travel (not yet implemented). |
+| `$452` | **Trigger Aux Port:** Input port number for needle position sensor. |
+| `$453` | **Sync Mode:** `0`=Stepper Needle, `1`=Trigger Sync (Sensor). |
+| `$454` | **Stop Delay:** Delay before motor off (ms). |
+| `$455` | **Trigger Edge:** `0`=Falling, `1`=Rising. |
+| `$456` | **Aux 0 Cycle Output:** Output logical high on Aux 0 during cycle (debug). |
+
+#### Example
+```gcode
+; Configure embroidery settings
+$450=600        ; Stitch feed rate (mm/min)
+$453=1          ; Sync mode: Trigger Sync
+$455=1          ; Trigger on rising edge
+
+; Run embroidery file from SD card
+$F=design.dst
+```
+
+---
+
+## Plugin: Event Triggers (`eventout`) - `Plugins_misc`
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Bind real-time machine events to physical auxiliary output pins.
+
+#### $-Settings
+
+| Setting | Description |
+|---------|-------------|
+| `$750-$759` | **Event Source Selection:** Assign a trigger event (e.g., Spindle On, Alarm) to Event Slot 0-9. |
+| `$760-$769` | **Output Port Assignment:** Assign a physical Aux Output Pin to Event Slot 0-9. |
+
+*See `complete-settings-reference.md` for full trigger ID list.*
+
+---
+
+## Plugin: File-based Tool Table - `Plugins_misc`
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Loads a LinuxCNC-compatible tool table (`tool.tbl`) from the SD card root.
+
+#### Features
+- Automatically loads tool offsets from file on startup/mount.
+- Supports pockets for ATC logic.
+
+
+---
+
+## Plugin: Homing Pulloff (`Plugins_misc`)
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Allows setting a unique homing pulloff distance for each axis, overriding the global `$27` setting.
+
+#### $-Settings (Experimental)
+| Setting | Description |
+|---------|-------------|
+| `$290` | X-Axis Homing Pulloff (mm) |
+| `$291` | Y-Axis Homing Pulloff (mm) |
+| `$292` | Z-Axis Homing Pulloff (mm) |
+| `$293` | A-Axis Homing Pulloff (mm) |
+| `$294` | B-Axis Homing Pulloff (mm) |
+| `$295` | C-Axis Homing Pulloff (mm) |
+
+---
+
+## Plugin: FluidNC I/O Expander (`Plugins_misc`)
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Adds support for external I/O expanders (like the [Airedale](http://wiki.fluidnc.com/en/hardware/official/airedale)) using the FluidNC UART-based protocol.
+
+#### Hardware & Connection
+- **Hardware:** Connects via a UART (Serial) port on the controller
+- **Firmware:** The expander runs specific firmware (e.g., [RP_FNC_IO_Expander](https://github.com/grblHAL/RP_FNC_IO_Expander)).
+- **Protocol:** Uses a high-speed (default 1Mbaud), bi-directional UART protocol involving:
+    - **Text Commands:** `[EXP:...]` for configuration (sent by controller).
+    - **Binary Events:** `0xC4`/`0xC5` byte sequences for real-time pin state changes (latency < 1ms).
+- **Passthrough:** Supports daisy-chaining (passthrough) for other UART devices like a **Pendant** or **Display** on the same port.
+
+#### Pin Mapping & Identification
+The plugin registers the expander's pins as standard **Auxiliary Inputs** and **Outputs** in grblHAL.
+- **Discovery:** Use the `$PINS` command to see the assigned indices. Expander pins are typically labeled with `FNC:`.
+- **Inputs:** Expander Input 0-7 $\rightarrow$ grblHAL Aux Input $N$ to $N+7$.
+- **Outputs:** Expander Output 0-9 $\rightarrow$ grblHAL Aux Output $M$ to $M+9$.
+- **RGB LED:** If the main board has no RGB LED, the expander's status LED is claimed by `M150`.
+
+#### Features & Usage
+
+**1. Digital Outputs (`M62`-`M65`)**
+Control the expander's output pins.
+```gcode
+; Turn ON expander output mapped to Aux Output 4
+M62 P4
+; Turn OFF
+M63 P4
+```
+
+**2. Wait on Input (`M66`)**
+Use expander inputs for program flow control (e.g., wait for a button press or sensor).
+```gcode
+; Wait for Expander Input (mapped to Aux Input 5) to go LOW
+M66 P5 L0
+```
+
+**3. Status LED (`M150`)**
+Control the onboard RGB LED (if available and mapped).
+```gcode
+; Set LED to Purple
+M150 R255 B255
+```
+
+#### Protocol Details
+The FluidNC protocol hybridizes text and binary for efficiency:
+- **Config:** Controller sends `[EXP:io.0=in,high,pu]` to configure Pin 0 as input, active high, pull-up.
+- **State Change (Binary):**
+    - `0xC4 <PinID>`: Set Pin LOW.
+    - `0xC5 <PinID>`: Set Pin HIGH.
+    - `PinID`: `0x80 | PinIndex`.
+- **Ack/Nak:** `0xB2` (Ack), `0xB3` (Nak).
+
+---
+
+## Plugin: ESP-AT (`Plugins_misc`)
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Enables WiFi connectivity using an ESP8266/ESP32 running AT-command firmware connected to a UART.
+
+#### Features
+- Telnet access to the grblHAL console.
+- WebUI support (limited).
+
+---
+
+## Plugin: Toolsetter / Secondary Probe (`Plugins_misc`)
+Github Repository: https://github.com/grblHAL/Plugins_misc
+
+Adds support for a dedicated toolsetter input and a secondary probe input, allowing for advanced probing scenarios.
+
+#### $-Settings
+
+| Setting | Description |
+|---------|-------------|
+| `$678` | **Toolsetter Input:** Auxiliary input pin number. |
+| `$679` | **Secondary Probe Input:** Auxiliary input pin number. |
+
+#### Commands
+
+| Command | Syntax | Description |
+|---------|--------|-------------|
+| `G65` | `G65 P5 Q[n]` | Select probe input: `Q0`=Standard, `Q1`=Toolsetter, `Q2`=Secondary. |
+
+#### Example
+```gcode
+; Configure toolsetter input on Aux 2
+$678=2
+
+; Select toolsetter to probe tool length
+G65 P5 Q1
+G38.2 Z-50 F100
+
+; Return to standard probe
+G65 P5 Q0
+```
+
