@@ -3387,6 +3387,7 @@ The master switch to enable sensorless homing for each axis.
 - This setting tells grblHAL to use the Trinamic StallGuard feature for homing instead of physical limit switches.
 - This is a **bitmask**: add together the values of the axes you want to home without switches.
 - It requires the StallGuard thresholds (`$200`-`$22x`) to be properly tuned.
+- **Spindle Ramp Down:** If `$9` bit 3 is set, this setting (`$339 > 0`) also enables Spindle Ramp Down for spindle off.
 :::
 
 :::danger Note
@@ -4084,16 +4085,22 @@ Calibration parameters for the analog-to-digital converter (ADC) used to read th
 
 ---
 
-## `$385` – BlueTooth State Input
-Maps a digital input pin to monitor the state of the Bluetooth module.
+## `$385` – Keep Last Tool
+Enables the persistence of the last used tool number across restarts.
 
 :::info Context
-Used for switching control to/from the Bluetooth data stream when a sender connects/disconnects
+- Moved from the template plugin to the core (Build 20250618).
+- If enabled (`1`), the controller will remember which tool was active (`T` number) before a power cycle or reset and restore it on startup.
 :::
 
 | Value | Meaning |
 |:-----:|:--------|
-| Pin # | The hardware digital input pin number. |
+| 0     | Disabled |
+| 1     | Enabled |
+
+#### Tips & Tricks
+- This was formerly the "Bluetooth State Input" setting in older configurations.
+
 
 ---
 
@@ -4146,6 +4153,7 @@ Adds a delay after the safety door is closed before the spindle is automatically
 :::info Context
 - A safety feature used with the Safety Door (`$61`) system.
 - Provides a "grace period" after the door is closed before the spindle automatically turns back on.
+- **Spindle Ramp Up:** If `$9` bit 3 is set, this setting (`$392 > 0`) enables Spindle Ramp Up on door close and/or restore from parked.
 :::
 
 ---
@@ -4171,6 +4179,7 @@ Adds a mandatory delay after a spindle start command is executed, before motion 
 :::info Context
 - This is a critical setting for machines with VFDs or large spindles that require time to accelerate to the commanded speed.
 - It forces grblHAL to pause for a specified time after an `M3` or `M4` command.
+- **Spindle Ramp Up:** If `$9` bit 3 is set, this setting (`$394 > 0`) enables Spindle Ramp Up for spindle on and on RPM changes while spindle is enabled.
 :::
 
 :::tip Note
@@ -5500,6 +5509,25 @@ Defines the rectangular safety zone around the tool rack in machine coordinates.
 
 ---
 
+
+
+## `$700` – Subroutine Scanning
+Controls how the `M98` command searches for subroutines.
+
+:::info Context
+- Determines whether the controller looks for subroutines within the current file before looking for external macro files.
+- Useful for keeping subroutines and main program in a single file.
+:::
+
+| Value | Meaning | Description |
+|:-----:|:--------|:------------|
+| 0     | External Only | Always looks for an external file `P<number>.macro` on the SD card/filesystem. |
+| 1     | Scan Current | (Default) Scans the current file for `O<number> sub` blocks first. If not found, looks for external file. |
+
+#### Tips & Tricks
+- Use `$700=1` if you want to use "internal" subroutines defined in the same G-code file.
+
+---
 
 ## `$709` – PWM Spindle Options (Secondary)
 

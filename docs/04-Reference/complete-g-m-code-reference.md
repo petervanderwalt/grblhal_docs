@@ -798,6 +798,7 @@ These commands control how the machine handles corners and transitions between s
 |---------|------|-----------------|
 | **`G61`** | Exact Stop | Sharp corners, decelerates to zero at each vertex. |
 
+
 #### Common Examples
 * **Engraving a precise technical drawing with sharp corners:**  
   `G61`  
@@ -813,7 +814,7 @@ These commands control how the machine handles corners and transitions between s
 ## `G65` – Subprogram Call with Arguments
 
 **Syntax:**  
-> `G65 P<program_number> A- B- C- ...`  
+> `G65 P<program_number> [L<n>] [A- B- C- ...]`  
 
 `G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
@@ -830,6 +831,7 @@ These commands control how the machine handles corners and transitions between s
 | Parameter | Description |
 |-----------|-------------|
 | **P** | The number of the subprogram to call (e.g., `P100` calls `P100.macro`). |
+| **L** | **Optional:** Repeat count. The macro will be executed `L` times. (Available from build 20260125). |
 | **A, B, C, X, Y, Z...** | Arguments to be passed to the subprogram. These become local variables inside the macro. |
 
 #### Example
@@ -850,6 +852,93 @@ These commands control how the machine handles corners and transitions between s
 #### Tips & Tricks
 - `G65` is a powerful tool for creating reusable, modular G-code for complex operations.
 - Variables are assigned to arguments based on their letter, e.g., `A` is typically `#1`, `B` is `#2`, `X` is `#24`, etc.
+
+---
+
+#### Inbuilt G65 macros
+
+grblHAL provides several built-in `G65` macros.
+
+*   `G65 P1 Q<n>`: Read numeric setting value. `<n>` is the setting number. Alternatively, the `PRM[]` function can be used.
+*   `G65 P1 Q<n> S<value>`: Set numeric setting value. `<n>` is the setting number, `<value>` is the new value. (Available from build 20251028).
+
+*   `G65 P2 Q<tool> R<axis>`: Read tool offset from the tool table. `<tool>` is the tool number, `<axis>` is the axis number (0 = X, 1 = Y, ...).
+
+*   `G65 P3 I<n> [S<m>]`: Get parameter value. `<n>` is the parameter number. The optional `S` word can be used to set parameter `<m>` = `<n>`. If `S` is not given, the returned value is stored in the `_value` parameter.
+*   `G65 P3 I<n> Q<value>`: Set parameter value. `<n>` is the parameter number, `<value>` is the value to set it to.
+    *   *Reasoning:* The `P3` macro can be used to simulate arrays since `<n>` and `<m>` can both be expressions.
+
+*   `G65 P4`: Get current machine state. (Available from build 20250107).
+
+    | State | Description |
+    |-------|-------------|
+    | 0     | Idle |
+    | 2     | Check mode<sup>1</sup> |
+    | 4     | Cycle (motion ongoing) |
+    | 10    | Tool change |
+
+*   `G65 P5 Q<probe>`: Select probe input. `<probe>` is the probe ID. (Available from build 20250514).
+
+    | Probe | Description |
+    |-------|-------------|
+    | 0     | Primary probe |
+    | 1     | Toolsetter |
+    | 2     | Secondary probe |
+
+    :::note
+    Selecting a probe input that is not available will raise an error.
+    :::
+
+*   `G65 P6`: Disable spindle on/off delays for the next `M3`, `M4`, or `M5` command. (Available from build 20250922).
+
+*   `G65 P7`: Send Modbus message. (Available from build 20260215).
+
+    *   `G65 P7 S- F- R- <X->` (Function codes 1-4)
+    *   `G65 P7 S- F- R- A-` (Function codes 5 and 6)
+    *   `G65 P7 S- F-` (Function code 7)
+    *   `G65 P7 S- F- R- A- <B-> <C->` (Function codes 16 and 17)
+
+    **Parameters:**
+    *   `S`: Modbus server address.
+    *   `F`: Modbus function code (1-7, 16, 17 supported).
+    *   `R`: Register base address.
+    *   `X`: Number of registers to read (1-3, default 1).
+    *   `A`: First value.
+    *   `B`: Second value.
+    *   `C`: Third value.
+
+    **Returns:**
+    *   On exception: `_value_returned` is set to `0`, and `_value` contains the exception code.
+    *   On success: `_value_returned` is set to the number of values received. `_value`, `_value2`, and `_value3` are set accordingly.
+
+    :::note
+    This has only been tested with a simulator so use with care and report any issues!
+    :::
+
+---
+
+## `G66`, `G67` – Modal Macro Call
+
+**Syntax:**
+> `G66 P<program_number> [L<n>] [A- B- C- ...]`
+> `G67`
+
+`G66` acts like `G65` but is **modal**. The specified macro is called after every subsequent motion command (`G0`, `G1`, `G2`, `G3`, etc.) until cancelled by `G67`.
+
+:::info Context
+- **Purpose:** Useful for drilling canned cycles, custom probing cycles, or repeating an operation at multiple locations.
+- **Cancellation:** `G67` cancels the modal macro state.
+:::
+
+---
+
+**Notes:**
+
+<sup>1</sup> In check mode, non-inbuilt `G65` macros will not be run; only file availability will be checked.
+
+:::note
+Inbuilt macros will set the `_value_returned` parameter to `1` if a value is returned. The value is then stored in the `_value` parameter.
+:::
 
 ---
 
@@ -1231,6 +1320,25 @@ Initiates a tool change sequence. The behavior of `M6` is highly dependent on th
 - The `T` word only *selects* the tool. `M6` is the command that *executes* the change.
 - The logic for the tool change process (both manual and automatic) is often defined in a system macro file, typically named `tc.macro` (tool change) or `P200.macro` (for RapidChange ATC) located on the controller's SD card or accessible by the sender. This allows for extensive customization of the tool change procedure. For an example, see projects like [Rapidchange ATC](https://services.rapidchangeatc.com/docs/).
 - After a tool change, a `G43` or `G43.1` command is typically used to apply the new tool's length offset.
+
+---
+
+## `M98` – Subroutine Call
+
+**Syntax:**
+> `M98 P<program_number> [L<repeats>]`
+
+Calls a subroutine.
+
+:::info Context
+- **Internal vs External:** Behavior depends on setting `$700`.
+    -   `$700=1` (Default): Scans the current file for `O<number> sub` blocks. If found, executes internal subroutine. If not found, looks for external file `P<number>.macro` (or named macro).
+    -   `$700=0`: Always looks for external file `P<number>.macro`.
+-   **Execution:**
+    -   **Internal:** The program logic may perform a "check mode" pass to locate subroutines before running.
+    -   **External:** Executes the file from the SD card/local file system.
+-   **Return:** Use `M99` to return from the subroutine.
+:::
 
 ---
 
@@ -1698,6 +1806,9 @@ Repo: `https://github.com/grblHAL/Plugin_OpenPNP`
 | `M42` | `M42 P[ioport] S[0/1]` | Set digital output |
 | `M204` | `M204 P[axes] S[accel]` | Set axis acceleration |
 | `M205` | `M205 [axes]` | Set jerk |
+| `M143` | `M143 P[port] Q[scale] R[offset]` | Read Analog/Digital input |
+| `M144` | `M144 P[port]` | Read Digital input |
+| `M145` | `M145 P[port] Q[scale] R[offset]` | Read Analog input |
 
 ---
 
