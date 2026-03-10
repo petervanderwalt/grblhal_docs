@@ -2404,16 +2404,43 @@ grblHAL provides advanced reporting commands for Senders to query capabilities w
 | **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
 
 ## File System Commands
-(Added in Build 20251111)
+(Updated Build 20260310)
 
-These commands allow navigation of the SD card or internal LittleFS file system.
+These commands allow navigation and management of the SD card or internal LittleFS file system.
 
 | Command | Description |
 |---------|-------------|
-| **`$F`** | **List Files.** Lists files in the current working directory. |
-| **`$F+`** | **List Files (Standard).** Lists files in standard format. |
-| **`$F=`** | **Change Directory.** Sets the Current Working Directory (CWD). Usage: `$F=/` (root), `$F=..` (up), `$F=subdir` (down). |
-| **`$FM`** | **Mount SD Card.** Manually mounts the SD card. |
+| **`$F`** | **List Files.** Lists CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
+| **`$F+`** | **List All Files.** Lists all files in the current working directory regardless of extension. |
+| **`$F=[file]`** | **Run File.** Starts execution of the specified G-code file. |
+| **`$CWD=[path]`** | **Change Directory.** Sets the Current Working Directory. Usage: `$CWD=/` (root), `$CWD=..` (up), `$CWD=subdir` (down). If called without arguments, it reports the current path. |
+| **`$PWD`** | **Print Working Directory.** Reports the current working directory in the format `[CWD:/path/to/dir]`. |
+| **`$FM`** | **Mount SD Card.** Manually triggers a mount of the SD card. |
+| **`$FU`** | **Unmount SD Card.** Safely unmounts the SD card. |
+| **`$FD=[file]`** | **Delete File.** Permanently removes a file from the storage. |
+
+---
+
+### Storage Systems in grblHAL
+grblHAL for ESP32 utilizes a **Virtual File System (VFS)** layer that allows it to interact with different storage media through a unified set of commands.
+
+#### SD Card (FatFs)
+The SD card is the primary high-capacity storage for G-code files, typically formatted as **FAT32**.
+- **Mount Point:** Usually mounted at the root (`/`).
+- **Performance:** Ideal for large 3D carving jobs or complex laser engraving.
+- **Hot-Swapping:** Supported on most ESP32 boards with a detect pin.
+
+#### Internal Flash (LittleFS)
+LittleFS is a fail-safe file system designed for microcontrollers, using the ESP32's internal flash memory.
+- **Mount Point:** Often used as a fallback if no SD card is present, or mounted at a specific path like `/flash`.
+- **Use Case:** Best for small macro files, tool tables (`tool.tbl`), and persistent system configuration.
+- **Reliability:** Resistant to power loss during write operations.
+
+#### Navigation & Usage
+grblHAL keeps track of a **Current Working Directory (CWD)**. By default, this is the root `/`. When you use `$F` to list files or `$F=` to run one, grblHAL looks inside the CWD. You can navigate into subfolders using `$CWD=foldername` and back up using `$CWD=..`.
+
+> [!TIP]
+> You can use `$PWD` at any time to verify where you are in the file system. This is particularly useful when managing complex folder structures for different projects.
 
 ## Advanced System Commands
 
