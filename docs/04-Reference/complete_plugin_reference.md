@@ -166,12 +166,14 @@ Github Repository: https://github.com/grblHAL/Plugin_SD_card
 
 | Command | Syntax | Description |
 |---------|--------|-------------|
-| `$FM` | `$FM` | Mount SD card |
-| `$F` | `$F` | List CNC-relevant files |
-| `$F+` | `$F+` | List all files recursively |
-| `$F=[filename]` | `$F=[filename]` | Run G-code file |
-| `$FR` | `$FR` | Enable rewind mode |
-| `$FD=[filename]` | `$FD=[filename]` | Delete file |
+| **`$F`** | `$F` | List CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
+| **`$F+`** | `$F+` | List all files in the current working directory regardless of extension. |
+| **`$F=[file]`** | `$F=[file]` | Run G-code file. |
+| **`$CWD=[path]`** | `$CWD=[path]` | Change Directory. Usage: `$CWD=/` (root), `$CWD=..` (up), `$CWD=subdir` (down). If called without arguments, it reports the current path. |
+| **`$PWD`** | `$PWD` | Print Working Directory. Reports the current working directory in the format `[CWD:/path/to/dir]`. |
+| **`$FM`** | `$FM` | Mount SD card. |
+| **`$FU`** | `$FU` | Unmount SD card. |
+| **`$FD=[file]`** | `$FD=[file]` | Delete file. |
 
 #### Example
 ```gcode
@@ -184,9 +186,22 @@ $F+
 ; Run a file
 $F=myprogram.ngc
 
-; Delete a file
-$FD=old_program.ngc
+; Change directory
+$CWD=subdir
+
+; Print working directory
+$PWD
 ```
+
+---
+
+### Storage Systems in grblHAL (ESP32)
+grblHAL for ESP32 utilizes a **Virtual File System (VFS)** layer for unified storage access.
+
+- **SD Card (FatFs):** High-capacity storage for G-code files, typically formatted as **FAT32**. Mounted at `/`.
+- **Internal Flash (LittleFS):** Fail-safe internal storage for macros and tool tables. Often mounted at `/flash` or used as a fallback.
+
+**Navigation:** grblHAL tracks a **Current Working Directory (CWD)**. Use `$CWD=foldername` to enter subfolders and `$CWD=..` to go back up. You can verify your location with `$PWD`.
 
 ---
 
