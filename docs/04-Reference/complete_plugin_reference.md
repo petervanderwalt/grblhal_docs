@@ -195,11 +195,11 @@ $PWD
 
 ---
 
-### Storage Systems in grblHAL (ESP32)
-grblHAL for ESP32 utilizes a **Virtual File System (VFS)** layer for unified storage access.
+### Storage Systems in grblHAL
+grblHAL utilizes a **Virtual File System (VFS)** layer for unified storage access across multiple platforms.
 
 - **SD Card (FatFs):** High-capacity storage for G-code files, typically formatted as **FAT32**. Mounted at `/`.
-- **Internal Flash (LittleFS):** Fail-safe internal storage for macros and tool tables. Often mounted at `/flash` or used as a fallback.
+- **Internal Storage (LittleFS):** Fail-safe internal storage for macros and tool tables. Supported on **ESP32**, **Teensy 4.1**, **RP2040**, **MSP432**, and others. Often mounted at `/flash`, `/littlefs`, or as the root (`/`) if no SD card is present.
 
 **Navigation:** grblHAL tracks a **Current Working Directory (CWD)**. Use `$CWD=foldername` to enter subfolders and `$CWD=..` to go back up. You can verify your location with `$PWD`.
 
@@ -566,7 +566,7 @@ Adds a `MCU:` field to the real-time status report, showing the number of idle l
 Adds a system command for direct Modbus register access, useful for debugging VFDs or external modules.
 *   **Repo:** `my_plugin/Modbus_command`
 *   **Syntax:** `$MODBUSCMD=<addr>,<func>,<reg>,<val>...`
-*   **Example:** 
+*   **Example:**
     *   `$MODBUSCMD=1,6,0x0201,1000` (Write 1000 to reg 0x201 on device 1).
     *   `$MODBUSCMD=1,4,0,2` (Read 2 registers starting at 0 from device 1).
 
@@ -574,7 +574,7 @@ Adds a system command for direct Modbus register access, useful for debugging VF
 Monitors a digital input for high-voltage power loss (common on Trinamic setups).
 *   **Repo:** `my_plugin/Motor_power_monitor`
 *   **Setting:** `$450` (Input pin number).
-*   **Behavior:** 
+*   **Behavior:**
     *   Triggers **Alarm 17** associated with Motor Fault on power loss.
     *   Automatically runs `M122I` (Re-init drivers) when power is restored and alarm is cleared.
 
@@ -596,7 +596,7 @@ Adds the system uptime to the status report.
 ### Solenoid Spindle (`Solenoid_spindle`)
 Optimizes PWM output for driving solenoids (Kick-and-Hold strategy).
 *   **Repo:** `my_plugin/Solenoid_spindle`
-*   **Behavior:** 
+*   **Behavior:**
     *   **Kick:** 100% duty cycle for 50ms to energize the solenoid.
     *   **Hold:** Drop to 25% duty cycle to maintain position without overheating.
 
@@ -614,5 +614,3 @@ Adds an HPGL interpreter mode, allowing the CNC to act as a native pen plotter.
 *   **Command:** `$HPGL` (Enter HPGL mode).
 *   **Exit:** `CTRL+X` (Return to G-code mode).
 *   **Note:** Originally based on Motöri.
-
-

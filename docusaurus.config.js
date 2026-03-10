@@ -8,10 +8,10 @@ const config = {
   favicon: 'img/favicon.ico', // You can create a favicon later
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.com', // <<<<<<< REQUIRED: CHANGE THIS LATER
+  url: 'https://grblHAL.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/grblhal_docs', // <<<<<<< REQUIRED
+  baseUrl: '/grblhal_docs/',
 
   // GitHub pages deployment config.
   organizationName: 'petervanderwalt', // Your GitHub username.
@@ -35,7 +35,7 @@ const config = {
           routeBasePath: '/', // Serve docs from the site root
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/PETERVANDERWALT/grblhal_docs/tree/main/',
+          editUrl: 'https://github.com/grblHAL/grblhal_docs/tree/main/',
         },
         blog: false, // We disabled the blog plugin
         theme: {
