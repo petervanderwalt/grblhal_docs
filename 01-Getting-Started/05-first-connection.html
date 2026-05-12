@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="first-connection-and-amp-motion">First Connection &amp; Motion</h1><p>Congratulations on successfully flashing grblHAL! This guide will walk you through connecting to your controller for the first time, configuring essential settings, and testing your first movements safely.</p>
-<h2 id="prerequisites">Prerequisites</h2><p>Before proceeding, ensure you have:</p>
+      <h1 id="first-connection-and-amp-motion"><a class="anchor" href="#first-connection-and-amp-motion" aria-hidden="true"></a>First Connection &amp; Motion</h1><p>Congratulations on successfully flashing grblHAL! This guide will walk you through connecting to your controller for the first time, configuring essential settings, and testing your first movements safely.</p>
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites" aria-hidden="true"></a>Prerequisites</h2><p>Before proceeding, ensure you have:</p>
 <ol>
 <li><strong>grblHAL firmware flashed</strong> on your controller (see <a href="./04-firmware-flashing.md">Firmware Flashing</a>)</li>
 <li><strong>Controller connected</strong> to your computer via USB</li>
@@ -40,8 +40,8 @@
 </ul>
 </blockquote>
 <hr>
-<h2 id="step-1-choose-and-install-a-g-code-sender">Step 1: Choose and Install a G-code Sender</h2><p>A <strong>G-code sender</strong> is the software you&#39;ll use to communicate with grblHAL. Here are the most popular options:</p>
-<h3 id="recommended-senders"><strong>Recommended Senders</strong></h3><table>
+<h2 id="step-1-choose-and-install-a-g-code-sender"><a class="anchor" href="#step-1-choose-and-install-a-g-code-sender" aria-hidden="true"></a>Step 1: Choose and Install a G-code Sender</h2><p>A <strong>G-code sender</strong> is the software you&#39;ll use to communicate with grblHAL. Here are the most popular options:</p>
+<h3 id="recommended-senders"><a class="anchor" href="#recommended-senders" aria-hidden="true"></a><strong>Recommended Senders</strong></h3><table>
 <thead>
 <tr>
 <th>Sender</th>
@@ -85,14 +85,14 @@
 <p>💡 <strong>Tip</strong>
 <strong>ioSender</strong> is specifically designed for grblHAL and offers the best feature support, including advanced settings management, macro support, and real-time visualization.</p>
 </blockquote>
-<h3 id="installing-iosender-example"><strong>Installing ioSender (Example)</strong></h3><ol>
+<h3 id="installing-iosender-example"><a class="anchor" href="#installing-iosender-example" aria-hidden="true"></a><strong>Installing ioSender (Example)</strong></h3><ol>
 <li>Download the latest release for your OS</li>
 <li>Extract the archive</li>
 <li>Run the executable (no installation required)</li>
 <li>On first run, it will create configuration files</li>
 </ol>
 <hr>
-<h2 id="step-2-establish-connection">Step 2: Establish Connection</h2><h3 id="a-identify-your-com-port"><strong>A. Identify Your COM Port</strong></h3><p><strong>Windows:</strong></p>
+<h2 id="step-2-establish-connection"><a class="anchor" href="#step-2-establish-connection" aria-hidden="true"></a>Step 2: Establish Connection</h2><h3 id="a-identify-your-com-port"><a class="anchor" href="#a-identify-your-com-port" aria-hidden="true"></a><strong>A. Identify Your COM Port</strong></h3><p><strong>Windows:</strong></p>
 <ol>
 <li>Open <strong>Device Manager</strong></li>
 <li>Expand <strong>Ports (COM &amp; LPT)</strong></li>
@@ -105,7 +105,7 @@
 <li>Run: <code>ls /dev/tty.*</code> (macOS) or <code>ls /dev/ttyUSB*</code> or <code>ls /dev/ttyACM*</code> (Linux)</li>
 <li>Note the device name (e.g., <code>/dev/ttyUSB0</code>)</li>
 </ol>
-<h3 id="b-connect-via-your-sender"><strong>B. Connect via Your Sender</strong></h3><p><strong>Using ioSender:</strong></p>
+<h3 id="b-connect-via-your-sender"><a class="anchor" href="#b-connect-via-your-sender" aria-hidden="true"></a><strong>B. Connect via Your Sender</strong></h3><p><strong>Using ioSender:</strong></p>
 <ol>
 <li>Launch ioSender</li>
 <li>Select <strong>COM port</strong> from dropdown (top toolbar)</li>
@@ -126,7 +126,7 @@
 <li>Select <strong>Port</strong> and <strong>Baud Rate</strong> (115200)</li>
 <li>Click <strong>Connect</strong></li>
 </ol>
-<h3 id="c-verify-connection"><strong>C. Verify Connection</strong></h3><p>Once connected, you should see:</p>
+<h3 id="c-verify-connection"><a class="anchor" href="#c-verify-connection" aria-hidden="true"></a><strong>C. Verify Connection</strong></h3><p>Once connected, you should see:</p>
 <ul>
 <li><strong>Status:</strong> &quot;Idle&quot; or &quot;Alarm&quot; (alarm is normal on first boot)</li>
 <li><strong>Position:</strong> X, Y, Z coordinates (likely all zeros)</li>
@@ -144,8 +144,8 @@
 ok
 </code></pre>
 <hr>
-<h2 id="step-3-clear-initial-alarm-if-present">Step 3: Clear Initial Alarm (If Present)</h2><p>grblHAL often starts in <strong>Alarm state</strong> for safety. This is normal.</p>
-<h3 id="check-alarm-code"><strong>Check Alarm Code</strong></h3><p>Send:</p>
+<h2 id="step-3-clear-initial-alarm-if-present"><a class="anchor" href="#step-3-clear-initial-alarm-if-present" aria-hidden="true"></a>Step 3: Clear Initial Alarm (If Present)</h2><p>grblHAL often starts in <strong>Alarm state</strong> for safety. This is normal.</p>
+<h3 id="check-alarm-code"><a class="anchor" href="#check-alarm-code" aria-hidden="true"></a><strong>Check Alarm Code</strong></h3><p>Send:</p>
 <pre><code>$#
 </code></pre>
 <p>Or look at the status display. Common initial alarms:</p>
@@ -154,7 +154,7 @@ ok
 <li><strong>Alarm 2:</strong> Soft limit triggered  </li>
 <li><strong>Alarm 11:</strong> Homing required (if <code>$22=1</code>)</li>
 </ul>
-<h3 id="clear-alarm"><strong>Clear Alarm</strong></h3><p><strong>Method 1: Unlock Command</strong></p>
+<h3 id="clear-alarm"><a class="anchor" href="#clear-alarm" aria-hidden="true"></a><strong>Clear Alarm</strong></h3><p><strong>Method 1: Unlock Command</strong></p>
 <pre><code>$X
 </code></pre>
 <p>This unlocks the controller if no actual fault exists.</p>
@@ -172,8 +172,8 @@ If <code>$22=1</code> (homing required on startup), you must home first:</p>
 Disabling homing requirement (<code>$22=0</code>) reduces safety. Re-enable once limit switches are installed.</p>
 </blockquote>
 <hr>
-<h2 id="step-4-configure-essential-settings">Step 4: Configure Essential Settings</h2><p>Before moving your machine, configure these critical settings. Send <code>$$</code> to view all current settings.</p>
-<h3 id="a-steps-per-millimeter-100-101-102"><strong>A. Steps per Millimeter ($100, $101, $102)</strong></h3><p>These define how many motor steps equal 1mm of movement. Values depend on:</p>
+<h2 id="step-4-configure-essential-settings"><a class="anchor" href="#step-4-configure-essential-settings" aria-hidden="true"></a>Step 4: Configure Essential Settings</h2><p>Before moving your machine, configure these critical settings. Send <code>$$</code> to view all current settings.</p>
+<h3 id="a-steps-per-millimeter-100-101-102"><a class="anchor" href="#a-steps-per-millimeter-100-101-102" aria-hidden="true"></a><strong>A. Steps per Millimeter ($100, $101, $102)</strong></h3><p>These define how many motor steps equal 1mm of movement. Values depend on:</p>
 <ul>
 <li>Motor steps per revolution (typically 200)</li>
 <li>Microstepping (e.g., 1/16 = 16)</li>
@@ -193,22 +193,22 @@ $102=400.000   ; Z-axis steps/mm (lead screw example)
 <p>💡 <strong>Tip</strong>
 Don&#39;t know your values? See <a href="../03-Machine-Calibration/02-calibrating-steps.md">Calibrating Steps per mm</a> for detailed calculation and calibration procedures.</p>
 </blockquote>
-<h3 id="b-maximum-rate-110-111-112"><strong>B. Maximum Rate ($110, $111, $112)</strong></h3><p>Maximum speed in mm/min for each axis. Start conservative:</p>
+<h3 id="b-maximum-rate-110-111-112"><a class="anchor" href="#b-maximum-rate-110-111-112" aria-hidden="true"></a><strong>B. Maximum Rate ($110, $111, $112)</strong></h3><p>Maximum speed in mm/min for each axis. Start conservative:</p>
 <pre><code>$110=3000.000  ; X-axis max rate (mm/min)
 $111=3000.000  ; Y-axis max rate
 $112=1000.000  ; Z-axis max rate (slower for safety)
 </code></pre>
-<h3 id="c-acceleration-120-121-122"><strong>C. Acceleration ($120, $121, $122)</strong></h3><p>How quickly the machine can change speed (mm/sec²). Start low:</p>
+<h3 id="c-acceleration-120-121-122"><a class="anchor" href="#c-acceleration-120-121-122" aria-hidden="true"></a><strong>C. Acceleration ($120, $121, $122)</strong></h3><p>How quickly the machine can change speed (mm/sec²). Start low:</p>
 <pre><code>$120=200.000   ; X-axis acceleration
 $121=200.000   ; Y-axis acceleration
 $122=100.000   ; Z-axis acceleration (slower for safety)
 </code></pre>
-<h3 id="d-maximum-travel-130-131-132"><strong>D. Maximum Travel ($130, $131, $132)</strong></h3><p>Define your machine&#39;s working area (mm):</p>
+<h3 id="d-maximum-travel-130-131-132"><a class="anchor" href="#d-maximum-travel-130-131-132" aria-hidden="true"></a><strong>D. Maximum Travel ($130, $131, $132)</strong></h3><p>Define your machine&#39;s working area (mm):</p>
 <pre><code>$130=800.000   ; X-axis max travel
 $131=800.000   ; Y-axis max travel
 $132=100.000   ; Z-axis max travel
 </code></pre>
-<h3 id="e-direction-inversion-3"><strong>E. Direction Inversion ($3)</strong></h3><p>If motors move in wrong direction, invert them using bitmask:</p>
+<h3 id="e-direction-inversion-3"><a class="anchor" href="#e-direction-inversion-3" aria-hidden="true"></a><strong>E. Direction Inversion ($3)</strong></h3><p>If motors move in wrong direction, invert them using bitmask:</p>
 <pre><code>$3=0    ; No inversion
 $3=1    ; Invert X
 $3=2    ; Invert Y
@@ -216,12 +216,12 @@ $3=4    ; Invert Z
 $3=3    ; Invert X and Y (1+2)
 </code></pre>
 <p><strong>Test and adjust after first movement.</strong></p>
-<h3 id="f-save-settings"><strong>F. Save Settings</strong></h3><p>Settings are saved automatically after each command. Verify with:</p>
+<h3 id="f-save-settings"><a class="anchor" href="#f-save-settings" aria-hidden="true"></a><strong>F. Save Settings</strong></h3><p>Settings are saved automatically after each command. Verify with:</p>
 <pre><code>$$
 </code></pre>
 <hr>
-<h2 id="step-5-safety-checks">Step 5: Safety Checks</h2><p>Before powering motors, perform these checks:</p>
-<h3 id="physical-inspection"><strong>Physical Inspection</strong></h3><ul>
+<h2 id="step-5-safety-checks"><a class="anchor" href="#step-5-safety-checks" aria-hidden="true"></a>Step 5: Safety Checks</h2><p>Before powering motors, perform these checks:</p>
+<h3 id="physical-inspection"><a class="anchor" href="#physical-inspection" aria-hidden="true"></a><strong>Physical Inspection</strong></h3><ul>
 <li>All motor connectors secure</li>
 <li>Power supply voltage correct</li>
 <li>No loose wires or shorts</li>
@@ -229,19 +229,19 @@ $3=3    ; Invert X and Y (1+2)
 <li>Workspace clear of obstacles</li>
 <li>Emergency stop accessible</li>
 </ul>
-<h3 id="electrical-check"><strong>Electrical Check</strong></h3><ul>
+<h3 id="electrical-check"><a class="anchor" href="#electrical-check" aria-hidden="true"></a><strong>Electrical Check</strong></h3><ul>
 <li>Stepper driver current set correctly (if adjustable)</li>
 <li>Cooling fans operational (if present)</li>
 <li>No unusual smells or heat</li>
 </ul>
 <hr>
-<h2 id="step-6-first-movement-test">Step 6: First Movement Test</h2><p>Now for the exciting part - making your machine move!</p>
-<h3 id="a-power-on-motors"><strong>A. Power On Motors</strong></h3><ol>
+<h2 id="step-6-first-movement-test"><a class="anchor" href="#step-6-first-movement-test" aria-hidden="true"></a>Step 6: First Movement Test</h2><p>Now for the exciting part - making your machine move!</p>
+<h3 id="a-power-on-motors"><a class="anchor" href="#a-power-on-motors" aria-hidden="true"></a><strong>A. Power On Motors</strong></h3><ol>
 <li><strong>Apply power</strong> to your stepper drivers/motors</li>
 <li>Motors should <strong>energize</strong> (become harder to turn by hand)</li>
 <li>If motors get hot immediately, <strong>power off</strong> and check driver current</li>
 </ol>
-<h3 id="b-test-individual-axes"><strong>B. Test Individual Axes</strong></h3><p><strong>Using Jog Controls:</strong></p>
+<h3 id="b-test-individual-axes"><a class="anchor" href="#b-test-individual-axes" aria-hidden="true"></a><strong>B. Test Individual Axes</strong></h3><p><strong>Using Jog Controls:</strong></p>
 <p>Most senders have jog buttons. Start with:</p>
 <ul>
 <li><strong>Distance:</strong> 1mm or 0.1mm</li>
@@ -258,7 +258,7 @@ $3=3    ; Invert X and Y (1+2)
 <li><code>X1</code> - Move X-axis 1mm positive</li>
 <li><code>F100</code> - Feed rate 100mm/min</li>
 </ul>
-<h3 id="c-test-each-axis"><strong>C. Test Each Axis</strong></h3><p><strong>X-Axis Test:</strong></p>
+<h3 id="c-test-each-axis"><a class="anchor" href="#c-test-each-axis" aria-hidden="true"></a><strong>C. Test Each Axis</strong></h3><p><strong>X-Axis Test:</strong></p>
 <pre><code>$J=G91 X1 F100    ; Move +X by 1mm
 $J=G91 X-1 F100   ; Move -X by 1mm
 </code></pre>
@@ -270,14 +270,14 @@ $J=G91 Y-1 F100   ; Move -Y by 1mm
 <pre><code>$J=G91 Z1 F100    ; Move +Z by 1mm
 $J=G91 Z-1 F100   ; Move -Z by 1mm
 </code></pre>
-<h3 id="d-verify-direction"><strong>D. Verify Direction</strong></h3><p>Check if axes move in expected directions:</p>
+<h3 id="d-verify-direction"><a class="anchor" href="#d-verify-direction" aria-hidden="true"></a><strong>D. Verify Direction</strong></h3><p>Check if axes move in expected directions:</p>
 <ul>
 <li><strong>+X</strong> should move right (or away from operator)</li>
 <li><strong>+Y</strong> should move back (or to the left)</li>
 <li><strong>+Z</strong> should move up</li>
 </ul>
 <p><strong>If direction is wrong</strong>, adjust <code>$3</code> setting (see Step 4E above).</p>
-<h3 id="e-increase-distance-and-speed"><strong>E. Increase Distance and Speed</strong></h3><p>Once comfortable:</p>
+<h3 id="e-increase-distance-and-speed"><a class="anchor" href="#e-increase-distance-and-speed" aria-hidden="true"></a><strong>E. Increase Distance and Speed</strong></h3><p>Once comfortable:</p>
 <ol>
 <li>Increase jog distance to 10mm</li>
 <li>Increase speed to 1000mm/min</li>
@@ -285,8 +285,8 @@ $J=G91 Z-1 F100   ; Move -Z by 1mm
 <li>Verify smooth motion without stalling</li>
 </ol>
 <hr>
-<h2 id="step-7-test-g-code-program">Step 7: Test G-code Program</h2><p>Run a simple test program to verify coordinated motion:</p>
-<h3 id="simple-square-test"><strong>Simple Square Test</strong></h3><pre><code class="language-gcode">G21         ; Metric units
+<h2 id="step-7-test-g-code-program"><a class="anchor" href="#step-7-test-g-code-program" aria-hidden="true"></a>Step 7: Test G-code Program</h2><p>Run a simple test program to verify coordinated motion:</p>
+<h3 id="simple-square-test"><a class="anchor" href="#simple-square-test" aria-hidden="true"></a><strong>Simple Square Test</strong></h3><pre><code class="language-gcode">G21         ; Metric units
 G90         ; Absolute positioning
 G0 Z5       ; Lift Z to safe height
 G0 X0 Y0    ; Move to origin
@@ -306,7 +306,7 @@ M2          ; Program end
 <li>Machine should draw a 10mm square in the XY plane</li>
 </ol>
 <hr>
-<h2 id="step-8-understanding-machine-states">Step 8: Understanding Machine States</h2><p>grblHAL has several operating states:</p>
+<h2 id="step-8-understanding-machine-states"><a class="anchor" href="#step-8-understanding-machine-states" aria-hidden="true"></a>Step 8: Understanding Machine States</h2><p>grblHAL has several operating states:</p>
 <table>
 <thead>
 <tr>
@@ -357,7 +357,7 @@ M2          ; Program end
 </tr>
 </tbody></table>
 <hr>
-<h2 id="troubleshooting">Troubleshooting</h2><h3 id="motors-don-and-39t-move"><strong>Motors Don&#39;t Move</strong></h3><ul>
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting" aria-hidden="true"></a>Troubleshooting</h2><h3 id="motors-don-and-39t-move"><a class="anchor" href="#motors-don-and-39t-move" aria-hidden="true"></a><strong>Motors Don&#39;t Move</strong></h3><ul>
 <li>Check power supply is ON</li>
 <li>Verify stepper driver enable pins</li>
 <li><strong>Check <code>$4</code> (enable invert mask)</strong> - Some drivers need inverted enable signal. Try toggling bits:<ul>
@@ -369,29 +369,29 @@ M2          ; Program end
 <li>Verify wiring connections</li>
 <li>Check for alarm state</li>
 </ul>
-<h3 id="motors-move-wrong-direction"><strong>Motors Move Wrong Direction</strong></h3><ul>
+<h3 id="motors-move-wrong-direction"><a class="anchor" href="#motors-move-wrong-direction" aria-hidden="true"></a><strong>Motors Move Wrong Direction</strong></h3><ul>
 <li>Adjust <code>$3</code> (direction invert mask)</li>
 <li>Or swap motor wiring pairs (A+/A- with B+/B-)</li>
 </ul>
-<h3 id="motors-stall-or-skip-steps"><strong>Motors Stall or Skip Steps</strong></h3><ul>
+<h3 id="motors-stall-or-skip-steps"><a class="anchor" href="#motors-stall-or-skip-steps" aria-hidden="true"></a><strong>Motors Stall or Skip Steps</strong></h3><ul>
 <li>Reduce acceleration (<code>$120</code>, <code>$121</code>, <code>$122</code>)</li>
 <li>Reduce max rate (<code>$110</code>, <code>$111</code>, <code>$112</code>)</li>
 <li>Increase stepper driver current (if adjustable)</li>
 <li>Check for mechanical binding</li>
 </ul>
-<h3 id="erratic-movement-or-noise"><strong>Erratic Movement or Noise</strong></h3><ul>
+<h3 id="erratic-movement-or-noise"><a class="anchor" href="#erratic-movement-or-noise" aria-hidden="true"></a><strong>Erratic Movement or Noise</strong></h3><ul>
 <li>Check for loose wiring</li>
 <li>Check stepper driver current settings</li>
 <li>Ensure microstepping configuration matches firmware</li>
 </ul>
-<h3 id="connection-drops"><strong>Connection Drops</strong></h3><ul>
+<h3 id="connection-drops"><a class="anchor" href="#connection-drops" aria-hidden="true"></a><strong>Connection Drops</strong></h3><ul>
 <li>Use shorter, higher-quality USB cable</li>
 <li>Avoid USB hubs</li>
 <li>Update USB drivers</li>
 <li>Check for electrical interference</li>
 </ul>
 <hr>
-<h2 id="next-steps">Next Steps</h2><p>Now that your machine is moving:</p>
+<h2 id="next-steps"><a class="anchor" href="#next-steps" aria-hidden="true"></a>Next Steps</h2><p>Now that your machine is moving:</p>
 <ol>
 <li><strong>Calibrate steps/mm</strong> - See <a href="../03-Machine-Calibration/02-calibrating-steps.md">Calibrating Steps per mm</a></li>
 <li><strong>Tune acceleration and speeds</strong> - See <a href="../03-Machine-Calibration/03-tuning-motion.md">Tuning Motion</a></li>
@@ -400,7 +400,7 @@ M2          ; Program end
 <li><strong>Explore G-code</strong> - See <a href="../04-Reference/complete-g-m-code-reference.md">Complete G-code Reference</a></li>
 </ol>
 <hr>
-<h2 id="quick-reference-commands">Quick Reference Commands</h2><table>
+<h2 id="quick-reference-commands"><a class="anchor" href="#quick-reference-commands" aria-hidden="true"></a>Quick Reference Commands</h2><table>
 <thead>
 <tr>
 <th>Command</th>

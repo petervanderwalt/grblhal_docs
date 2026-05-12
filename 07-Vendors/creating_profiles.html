@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="creating-vendor-profiles">Creating Vendor Profiles</h1><p>The <strong><a href="http://svn.io-engineering.com:8080/">grblHAL Web Builder</a></strong> allows vendors to provide pre-configured firmware options for their machines. This guide details how to create and host your own machine profiles.</p>
-<h2 id="overview">Overview</h2><p>To list your machines in the Web Builder, you need to:</p>
+      <h1 id="creating-vendor-profiles"><a class="anchor" href="#creating-vendor-profiles" aria-hidden="true"></a>Creating Vendor Profiles</h1><p>The <strong><a href="http://svn.io-engineering.com:8080/">grblHAL Web Builder</a></strong> allows vendors to provide pre-configured firmware options for their machines. This guide details how to create and host your own machine profiles.</p>
+<h2 id="overview"><a class="anchor" href="#overview" aria-hidden="true"></a>Overview</h2><p>To list your machines in the Web Builder, you need to:</p>
 <ol>
 <li><strong>Host a Repository:</strong> Create a public GitHub repository to store your profiles.</li>
 <li><strong>Create Profile Files:</strong> Create JSON files defining the configuration for each machine.</li>
@@ -29,19 +29,19 @@
 <li><strong>Register:</strong> Submit your repository to be added to the Web Builder&#39;s main list.</li>
 </ol>
 <hr>
-<h2 id="1-directory-structure">1. Directory Structure</h2><p>We recommend a structure similar to the <a href="https://github.com/Sienci-Labs/grblhal-profiles">Sienci Labs profiles</a>:</p>
+<h2 id="1-directory-structure"><a class="anchor" href="#1-directory-structure" aria-hidden="true"></a>1. Directory Structure</h2><p>We recommend a structure similar to the <a href="https://github.com/Sienci-Labs/grblhal-profiles">Sienci Labs profiles</a>:</p>
 <pre><code class="language-text">my-grblhal-profiles/
 ├── profiles.json        # Main index file
 └── profiles/            # Folder containing individual machine configurations
     ├── my-router.json
     └── my-lathe.json
 </code></pre>
-<h3 id="reference-implementation">Reference Implementation</h3><p><strong>Sienci Labs</strong> maintains a comprehensive repository of profiles for their machines (LongMill, AltMill) and generic configurations. You can use their repository as a template or reference for structuring your own files.</p>
+<h3 id="reference-implementation"><a class="anchor" href="#reference-implementation" aria-hidden="true"></a>Reference Implementation</h3><p><strong>Sienci Labs</strong> maintains a comprehensive repository of profiles for their machines (LongMill, AltMill) and generic configurations. You can use their repository as a template or reference for structuring your own files.</p>
 <ul>
 <li><strong>GitHub Repository:</strong> <a href="https://github.com/Sienci-Labs/grblhal-profiles">Sienci-Labs/grblhal-profiles</a></li>
 </ul>
 <hr>
-<h2 id="2-the-index-file-profilesjson">2. The Index File (<code>profiles.json</code>)</h2><p>This file tells the Web Builder which machines you offer. It must be located at the root of your repository.</p>
+<h2 id="2-the-index-file-profilesjson"><a class="anchor" href="#2-the-index-file-profilesjson" aria-hidden="true"></a>2. The Index File (<code>profiles.json</code>)</h2><p>This file tells the Web Builder which machines you offer. It must be located at the root of your repository.</p>
 <p><strong>Example <code>profiles.json</code>:</strong></p>
 <pre><code class="language-json">{
   &quot;machines&quot;: [
@@ -67,7 +67,7 @@
 <li><strong>URL:</strong> A link to your product page (optional).</li>
 </ul>
 <hr>
-<h2 id="3-machine-profile-json">3. Machine Profile JSON</h2><p>Each machine file (e.g., <code>profiles/router3018.json</code>) defines the specific settings and compile-time options. It supports a base configuration and multiple &quot;variants&quot;.</p>
+<h2 id="3-machine-profile-json"><a class="anchor" href="#3-machine-profile-json" aria-hidden="true"></a>3. Machine Profile JSON</h2><p>Each machine file (e.g., <code>profiles/router3018.json</code>) defines the specific settings and compile-time options. It supports a base configuration and multiple &quot;variants&quot;.</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-json">{
   &quot;machine&quot;: {
@@ -95,15 +95,15 @@
   ]
 }
 </code></pre>
-<h3 id="symbols-vs-defaults">Symbols vs. Defaults</h3><p>It is crucial to understand the difference between <strong>Symbols</strong> and <strong>Defaults</strong>:</p>
-<h4 id="symbols-default_symbols"><strong>Symbols (<code>default_symbols</code>)</strong></h4><p>These correspond to <strong>Compile-Time options</strong> (C Preprocessor <code>#define</code>). They determine <em>what features are built into the firmware</em>.</p>
+<h3 id="symbols-vs-defaults"><a class="anchor" href="#symbols-vs-defaults" aria-hidden="true"></a>Symbols vs. Defaults</h3><p>It is crucial to understand the difference between <strong>Symbols</strong> and <strong>Defaults</strong>:</p>
+<h4 id="symbols-default_symbols"><a class="anchor" href="#symbols-default_symbols" aria-hidden="true"></a><strong>Symbols (<code>default_symbols</code>)</strong></h4><p>These correspond to <strong>Compile-Time options</strong> (C Preprocessor <code>#define</code>). They determine <em>what features are built into the firmware</em>.</p>
 <ul>
 <li><strong>Examples:</strong> Enabling Wi-Fi, changing the number of axes, enabling specific plugins (Trinamic drivers, WebUI).</li>
 <li><strong>Impact:</strong> Changing these requires re-compiling the firmware.</li>
 <li><strong>Lookup:</strong> These are the names found in <code>my_machine.h</code> or usually prefixed with <code>ENABLE_</code> in the code.</li>
 <li><strong>Web Builder UI:</strong> These symbols control which checkboxes and dropdowns are selected in the Web Builder interface.</li>
 </ul>
-<h4 id="defaults-setting_defaults"><strong>Defaults (<code>setting_defaults</code>)</strong></h4><p>These correspond to <strong>Runtime Settings</strong> (EEPROM values). They set the <em>default values</em> for <code>$</code> settings (like Steps/mm), so the user doesn&#39;t have to manually configure them after flashing.</p>
+<h4 id="defaults-setting_defaults"><a class="anchor" href="#defaults-setting_defaults" aria-hidden="true"></a><strong>Defaults (<code>setting_defaults</code>)</strong></h4><p>These correspond to <strong>Runtime Settings</strong> (EEPROM values). They set the <em>default values</em> for <code>$</code> settings (like Steps/mm), so the user doesn&#39;t have to manually configure them after flashing.</p>
 <ul>
 <li><strong>Examples:</strong> Steps per mm (<code>$100</code>), Max Velocity (<code>$110</code>), Pulse microseconds (<code>$0</code>).</li>
 <li><strong>Impact:</strong> These values are loaded into the specific controller&#39;s defaults.</li>
@@ -114,14 +114,14 @@
 </li>
 </ul>
 <hr>
-<h2 id="4-testing-your-profiles">4. Testing Your Profiles</h2><p>You can test your profiles using the development version of the Web Builder before submitting them.</p>
+<h2 id="4-testing-your-profiles"><a class="anchor" href="#4-testing-your-profiles" aria-hidden="true"></a>4. Testing Your Profiles</h2><p>You can test your profiles using the development version of the Web Builder before submitting them.</p>
 <ol>
 <li>Push your changes to your GitHub repository.</li>
 <li>Go to the <strong><a href="https://svn.io-engineering.com:8443/index2.html?dev=1">Web Builder (Dev Version)</a></strong>.</li>
 <li>Open the browser console (F12).</li>
 <li>You may need to manually invoke the loading function or use a URL parameter if supported (check <code>index2.js</code> logic for <code>vendor</code> parameters). <em>Note: The easiest way is currently to examine how <code>drivers.json</code> loads vendors and simulate that process or request a test add.</em></li>
 </ol>
-<h2 id="5-publishing">5. Publishing</h2><p>Once your profiles are ready, you can request to be added to the official <code>drivers.json</code> file used by the Web Builder. This is typically done by contacting the grblHAL maintainers or submitting a Pull Request to the repository hosting the Web Builder configuration.</p>
+<h2 id="5-publishing"><a class="anchor" href="#5-publishing" aria-hidden="true"></a>5. Publishing</h2><p>Once your profiles are ready, you can request to be added to the official <code>drivers.json</code> file used by the Web Builder. This is typically done by contacting the grblHAL maintainers or submitting a Pull Request to the repository hosting the Web Builder configuration.</p>
 
     </article>
     <nav class="toc"><h3>On this page</h3><ul class="toc-list"><li class="toc-h2"><a href="#overview">Overview</a></li><li class="toc-h2"><a href="#1-directory-structure">1. Directory Structure</a></li><li class="toc-h2"><a href="#2-the-index-file-profilesjson">2. The Index File (profiles.json)</a></li><li class="toc-h2"><a href="#3-machine-profile-json">3. Machine Profile JSON</a></li><li class="toc-h2"><a href="#4-testing-your-profiles">4. Testing Your Profiles</a></li><li class="toc-h2"><a href="#5-publishing">5. Publishing</a></li></ul></nav>

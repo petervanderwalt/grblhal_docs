@@ -20,9 +20,9 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="calibrating-steps-per-unit">Calibrating Steps per Unit</h1><p><strong>Steps per Unit</strong> (usually Steps per mm) is the setting that tells grblHAL how many motor steps are required to move an axis exactly 1 millimeter (or inch).</p>
+      <h1 id="calibrating-steps-per-unit"><a class="anchor" href="#calibrating-steps-per-unit" aria-hidden="true"></a>Calibrating Steps per Unit</h1><p><strong>Steps per Unit</strong> (usually Steps per mm) is the setting that tells grblHAL how many motor steps are required to move an axis exactly 1 millimeter (or inch).</p>
 <p>If this value is wrong, your parts will come out the wrong size. E.g., a designed 100mm square might cut as 98mm or 102mm.</p>
-<h2 id="the-formula">The Formula</h2><p>The calibration process is simple math:</p>
+<h2 id="the-formula"><a class="anchor" href="#the-formula" aria-hidden="true"></a>The Formula</h2><p>The calibration process is simple math:</p>
 <blockquote>
 <p><strong>New Steps = Current Steps * (Commanded Distance / Measured Distance)</strong></p>
 </blockquote>
@@ -33,12 +33,12 @@
 <li><strong>Measured Distance:</strong> How far the machine <em>actually</em> moved.</li>
 </ul>
 <hr>
-<h2 id="step-by-step-calibration">Step-by-Step Calibration</h2><h3 id="material-needed"><strong>Material Needed</strong></h3><ul>
+<h2 id="step-by-step-calibration"><a class="anchor" href="#step-by-step-calibration" aria-hidden="true"></a>Step-by-Step Calibration</h2><h3 id="material-needed"><a class="anchor" href="#material-needed" aria-hidden="true"></a><strong>Material Needed</strong></h3><ul>
 <li>A reliable ruler, tape measure, or digital caliper.</li>
 <li>A pointed tool (V-bit) or a fine marker attached to the spindle/tool holder.</li>
 <li>A piece of scrap material (MDF, wood, or paper tape on the bed).</li>
 </ul>
-<h3 id="procedure-do-for-x-y-and-z-axes"><strong>Procedure (Do for X, Y, and Z axes)</strong></h3><ol>
+<h3 id="procedure-do-for-x-y-and-z-axes"><a class="anchor" href="#procedure-do-for-x-y-and-z-axes" aria-hidden="true"></a><strong>Procedure (Do for X, Y, and Z axes)</strong></h3><ol>
 <li><p><strong>Check Current Settings:</strong></p>
 <ul>
 <li>Send <code>$$</code> in the console.</li>
@@ -95,14 +95,14 @@
 </li>
 </ol>
 <hr>
-<h2 id="tips-for-accuracy">Tips for Accuracy</h2><h3 id="use-the-longest-distance-possible"><strong>Use the Longest Distance Possible</strong></h3><p>Measuring error is constant (e.g., ±0.5mm with a ruler).</p>
+<h2 id="tips-for-accuracy"><a class="anchor" href="#tips-for-accuracy" aria-hidden="true"></a>Tips for Accuracy</h2><h3 id="use-the-longest-distance-possible"><a class="anchor" href="#use-the-longest-distance-possible" aria-hidden="true"></a><strong>Use the Longest Distance Possible</strong></h3><p>Measuring error is constant (e.g., ±0.5mm with a ruler).</p>
 <ul>
 <li>Over 10mm, a 0.5mm error is <strong>5%</strong>.</li>
 <li>Over 100mm, a 0.5mm error is <strong>0.5%</strong>.</li>
 <li>Over 500mm, a 0.5mm error is <strong>0.1%</strong>.</li>
 </ul>
 <p><strong>Calibrate using the longest travel your machine and measuring tool allow.</strong></p>
-<h3 id="account-for-backlash"><strong>Account for Backlash</strong></h3><p>If your axis has backlash (loose fitting screws/belts):</p>
+<h3 id="account-for-backlash"><a class="anchor" href="#account-for-backlash" aria-hidden="true"></a><strong>Account for Backlash</strong></h3><p>If your axis has backlash (loose fitting screws/belts):</p>
 <ul>
 <li>Always approach your start point and end point from the <strong>same direction</strong>.</li>
 <li>Example:<ol>
@@ -114,20 +114,20 @@
 </li>
 </ul>
 <p>This removes backlash from the measurement equation.</p>
-<h3 id="don-and-39t-forget-z-axis"><strong>Don&#39;t Forget Z-Axis</strong></h3><p>Calibrating Z is critical for accurate pocket depths.</p>
+<h3 id="don-and-39t-forget-z-axis"><a class="anchor" href="#don-and-39t-forget-z-axis" aria-hidden="true"></a><strong>Don&#39;t Forget Z-Axis</strong></h3><p>Calibrating Z is critical for accurate pocket depths.</p>
 <ul>
 <li>Use a dial indicator or touch off the top of a block, move Z up, place a precision 1-2-3 block, and touch off again.</li>
 </ul>
 <hr>
-<h2 id="troubleshooting">Troubleshooting</h2><h3 id="my-dimensions-are-consistently-off-by-exactly-half-or-double"><strong>My dimensions are consistently off by exactly half or double.</strong></h3><ul>
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting" aria-hidden="true"></a>Troubleshooting</h2><h3 id="my-dimensions-are-consistently-off-by-exactly-half-or-double"><a class="anchor" href="#my-dimensions-are-consistently-off-by-exactly-half-or-double" aria-hidden="true"></a><strong>My dimensions are consistently off by exactly half or double.</strong></h3><ul>
 <li><strong>Cause:</strong> Incorrect microstepping setting on stepper drivers vs. firmware.</li>
 <li><strong>Fix:</strong> Check your DIP switches on the stepper driver and double check your expected steps/mm calculation.</li>
 </ul>
-<h3 id="my-circles-are-ovals"><strong>My circles are ovals.</strong></h3><ul>
+<h3 id="my-circles-are-ovals"><a class="anchor" href="#my-circles-are-ovals" aria-hidden="true"></a><strong>My circles are ovals.</strong></h3><ul>
 <li><strong>Cause:</strong> X and Y steps/mm are not calibrated equally, or severe backlash.</li>
 <li><strong>Fix:</strong> Calibrate X and Y independently. Check for loose belts.</li>
 </ul>
-<h3 id="i-updated-the-steps-but-it-got-worse"><strong>I updated the steps, but it got worse.</strong></h3><ul>
+<h3 id="i-updated-the-steps-but-it-got-worse"><a class="anchor" href="#i-updated-the-steps-but-it-got-worse" aria-hidden="true"></a><strong>I updated the steps, but it got worse.</strong></h3><ul>
 <li><strong>Cause:</strong> You likely inverted the formula (Measured / Commanded instead of Commanded / Measured).</li>
 <li><strong>Fix:</strong> Flip the fraction and recalculate.<ul>
 <li>Remember: If it moved <strong>short</strong>, you need <strong>more</strong> steps (ratio &gt; 1).</li>

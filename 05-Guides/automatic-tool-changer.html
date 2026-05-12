@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="tool-changes-and-amp-offsets">Tool Changes &amp; Offsets</h1><p>Changing tools mid-job allows you to use different end mills (e.g., roughing, finishing, v-carving) in a single project. grblHAL supports standard G-code tool change commands (<code>M6</code>) and length offsets (<code>G43</code>).</p>
-<h2 id="the-basic-tool-change-m6">The Basic Tool Change (<code>M6</code>)</h2><p>By default, when grblHAL encounters an <code>M6 T</code> command:</p>
+      <h1 id="tool-changes-and-amp-offsets"><a class="anchor" href="#tool-changes-and-amp-offsets" aria-hidden="true"></a>Tool Changes &amp; Offsets</h1><p>Changing tools mid-job allows you to use different end mills (e.g., roughing, finishing, v-carving) in a single project. grblHAL supports standard G-code tool change commands (<code>M6</code>) and length offsets (<code>G43</code>).</p>
+<h2 id="the-basic-tool-change-m6"><a class="anchor" href="#the-basic-tool-change-m6" aria-hidden="true"></a>The Basic Tool Change (<code>M6</code>)</h2><p>By default, when grblHAL encounters an <code>M6 T</code> command:</p>
 <ol>
 <li>It stops the spindle (<code>M5</code>).</li>
 <li>It pauses the program (Feed Hold).</li>
@@ -30,8 +30,8 @@
 </ol>
 <p><strong>The Problem:</strong> The new tool is likely a different length than the old one. If you just resume, your Z-zero will be wrong, and you&#39;ll cut air or crash into the bed.</p>
 <hr>
-<h2 id="solving-the-length-problem">Solving the Length Problem</h2><p>You have two main strategies:</p>
-<h3 id="strategy-1-re-zero-z-simple"><strong>Strategy 1: Re-Zero Z (Simple)</strong></h3><p>After changing the tool, you manually re-probe or re-zero the Z-axis to the top of the stock.</p>
+<h2 id="solving-the-length-problem"><a class="anchor" href="#solving-the-length-problem" aria-hidden="true"></a>Solving the Length Problem</h2><p>You have two main strategies:</p>
+<h3 id="strategy-1-re-zero-z-simple"><a class="anchor" href="#strategy-1-re-zero-z-simple" aria-hidden="true"></a><strong>Strategy 1: Re-Zero Z (Simple)</strong></h3><p>After changing the tool, you manually re-probe or re-zero the Z-axis to the top of the stock.</p>
 <ol>
 <li>Job Pauses (<code>M6</code>).</li>
 <li>Change Tool.</li>
@@ -41,7 +41,7 @@
 </ol>
 <p><strong>Pros:</strong> Simple, works with any sender.
 <strong>Cons:</strong> Risk of losing X/Y position if you move the machine too much; requires accessible stock surface.</p>
-<h3 id="strategy-2-tool-length-offsets-professional"><strong>Strategy 2: Tool Length Offsets (Professional)</strong></h3><p>This method uses <code>G43</code> to compensate for the difference in length between tools.</p>
+<h3 id="strategy-2-tool-length-offsets-professional"><a class="anchor" href="#strategy-2-tool-length-offsets-professional" aria-hidden="true"></a><strong>Strategy 2: Tool Length Offsets (Professional)</strong></h3><p>This method uses <code>G43</code> to compensate for the difference in length between tools.</p>
 <p><strong>Concept:</strong></p>
 <ul>
 <li><strong>Reference Tool (T1):</strong> The tool you set Z-zero with. Length Offset = 0.</li>
@@ -58,8 +58,8 @@
 <li><strong>Apply Offset:</strong> <code>G43 H2</code> automatically adjusts Z.</li>
 </ol>
 <hr>
-<h2 id="configuring-grblhal-for-tool-changes">Configuring grblHAL for Tool Changes</h2><p>You typically handle tool changes via your <strong>Sender Software</strong> (ioSender, UGS, etc.) using macros.</p>
-<h3 id="example-macro-semi-auto-tool-change"><strong>Example Macro: Semi-Auto Tool Change</strong></h3><p>A typical macro for a machine with a fixed tool setter:</p>
+<h2 id="configuring-grblhal-for-tool-changes"><a class="anchor" href="#configuring-grblhal-for-tool-changes" aria-hidden="true"></a>Configuring grblHAL for Tool Changes</h2><p>You typically handle tool changes via your <strong>Sender Software</strong> (ioSender, UGS, etc.) using macros.</p>
+<h3 id="example-macro-semi-auto-tool-change"><a class="anchor" href="#example-macro-semi-auto-tool-change" aria-hidden="true"></a><strong>Example Macro: Semi-Auto Tool Change</strong></h3><p>A typical macro for a machine with a fixed tool setter:</p>
 <pre><code class="language-gcode">; --- Tool Change Detected ---
 M5              ; Stop Spindle
 G53 G0 Z0       ; Lift Z to safe height
@@ -75,13 +75,13 @@ G10 L20 P1 Z... ; Update Z offset (Logic depends on sender script)
 G53 G0 Z0       ; Retract safely
 </code></pre>
 <p><strong>Note:</strong> Advanced senders like <strong>ioSender</strong> have built-in &quot;Tool Change&quot; tabs where you simply enter the position of your tool setter, and it handles the math automatically.</p>
-<h3 id="settings-used"><strong>Settings Used</strong></h3><ul>
+<h3 id="settings-used"><a class="anchor" href="#settings-used" aria-hidden="true"></a><strong>Settings Used</strong></h3><ul>
 <li><strong><code>$341</code></strong>: Tool Change Mode (if enabled in firmware).</li>
 <li><strong><code>$342</code></strong>: Tool Change Probing Distance.</li>
 <li><strong><code>$343</code></strong>: Tool Change Locate Feed Rate.</li>
 </ul>
 <hr>
-<h2 id="automatic-tool-changers-atc">Automatic Tool Changers (ATC)</h2><p>For machines with an automatic spindle (ISO20/30, BT30) and a tool rack:</p>
+<h2 id="automatic-tool-changers-atc"><a class="anchor" href="#automatic-tool-changers-atc" aria-hidden="true"></a>Automatic Tool Changers (ATC)</h2><p>For machines with an automatic spindle (ISO20/30, BT30) and a tool rack:</p>
 <ol>
 <li><strong>Requires specialized hardware</strong> (pneumatic drawbar, tool forks, sensors).</li>
 <li><strong>Requires Macros:</strong> Custom M6 macros to handle the pick-and-place logic.</li>
@@ -94,7 +94,7 @@ G53 G0 Z0       ; Retract safely
 <li><strong><code>$683</code></strong>: ATCi Configuration (Rack monitoring and keepout zones).</li>
 </ul>
 <hr>
-<h2 id="best-practices">Best Practices</h2><ol>
+<h2 id="best-practices"><a class="anchor" href="#best-practices" aria-hidden="true"></a>Best Practices</h2><ol>
 <li><strong>Always use a &quot;Safe Z&quot; height</strong> before moving to the tool change position.</li>
 <li><strong>Clean the collet</strong> every change. Dust adds runout.</li>
 <li><strong>Measure twice.</strong> If using offsets, verify the first tool change carefully.</li>

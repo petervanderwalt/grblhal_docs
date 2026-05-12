@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="homing-explained">Homing Explained</h1><p><strong>Homing</strong> is one of the most important concepts in CNC operation. It&#39;s the process by which your machine establishes a known, repeatable reference point - essentially teaching the machine where it is in physical space. Without homing, your CNC controller has no idea where the axes are positioned, making accurate machining impossible.</p>
-<h2 id="why-homing-matters">Why Homing Matters</h2><p>When you power on a CNC machine, the controller has <strong>no inherent knowledge</strong> of where the axes are located. The stepper or servo motors could be at any position. Homing solves this by:</p>
+      <h1 id="homing-explained"><a class="anchor" href="#homing-explained" aria-hidden="true"></a>Homing Explained</h1><p><strong>Homing</strong> is one of the most important concepts in CNC operation. It&#39;s the process by which your machine establishes a known, repeatable reference point - essentially teaching the machine where it is in physical space. Without homing, your CNC controller has no idea where the axes are positioned, making accurate machining impossible.</p>
+<h2 id="why-homing-matters"><a class="anchor" href="#why-homing-matters" aria-hidden="true"></a>Why Homing Matters</h2><p>When you power on a CNC machine, the controller has <strong>no inherent knowledge</strong> of where the axes are located. The stepper or servo motors could be at any position. Homing solves this by:</p>
 <ol>
 <li><strong>Establishing a Fixed Reference Point</strong> - Creates a known &quot;machine zero&quot; (0,0,0) position</li>
 <li><strong>Enabling Soft Limits</strong> - Allows the controller to enforce software boundaries and prevent crashes</li>
@@ -34,8 +34,8 @@
 <strong>Always home your machine after powering on</strong> before running any jobs. Running without homing can result in crashes, broken tools, and damaged workpieces.</p>
 </blockquote>
 <hr>
-<h2 id="how-homing-works">How Homing Works</h2><p>The homing process relies on <strong>limit switches</strong> (also called homing switches) installed at specific positions on each axis. Here&#39;s the step-by-step sequence:</p>
-<h3 id="the-homing-sequence">The Homing Sequence</h3><ol>
+<h2 id="how-homing-works"><a class="anchor" href="#how-homing-works" aria-hidden="true"></a>How Homing Works</h2><p>The homing process relies on <strong>limit switches</strong> (also called homing switches) installed at specific positions on each axis. Here&#39;s the step-by-step sequence:</p>
+<h3 id="the-homing-sequence"><a class="anchor" href="#the-homing-sequence" aria-hidden="true"></a>The Homing Sequence</h3><ol>
 <li><p><strong>Initiation</strong></p>
 <ul>
 <li>You send the <code>$H</code> command (or press the &quot;Home&quot; button in your sender)</li>
@@ -81,8 +81,8 @@
 </li>
 </ol>
 <hr>
-<h2 id="limit-switches-types-and-installation">Limit Switches: Types and Installation</h2><p>Limit switches are the physical sensors that detect when an axis reaches its homing position. There are several types:</p>
-<h3 id="types-of-limit-switches"><strong>Types of Limit Switches</strong></h3><table>
+<h2 id="limit-switches-types-and-installation"><a class="anchor" href="#limit-switches-types-and-installation" aria-hidden="true"></a>Limit Switches: Types and Installation</h2><p>Limit switches are the physical sensors that detect when an axis reaches its homing position. There are several types:</p>
+<h3 id="types-of-limit-switches"><a class="anchor" href="#types-of-limit-switches" aria-hidden="true"></a><strong>Types of Limit Switches</strong></h3><table>
 <thead>
 <tr>
 <th>Type</th>
@@ -116,7 +116,7 @@
 <td>Requires magnets on moving parts</td>
 </tr>
 </tbody></table>
-<h3 id="installation-best-practices"><strong>Installation Best Practices</strong></h3><ul>
+<h3 id="installation-best-practices"><a class="anchor" href="#installation-best-practices" aria-hidden="true"></a><strong>Installation Best Practices</strong></h3><ul>
 <li><strong>Mount Securely</strong> - Switches must not move or vibrate</li>
 <li><strong>Protect from Debris</strong> - Shield switches from chips, coolant, and dust</li>
 <li><strong>Wire Properly</strong> - Use shielded cables to prevent electrical noise</li>
@@ -124,8 +124,8 @@
 <li><strong>Normally Open (NO) vs Normally Closed (NC)</strong> - NC is safer (detects wire breaks)</li>
 </ul>
 <hr>
-<h2 id="hard-limits-vs-soft-limits">Hard Limits vs. Soft Limits</h2><p>grblHAL supports two types of limits to protect your machine:</p>
-<h3 id="hard-limits"><strong>Hard Limits</strong></h3><ul>
+<h2 id="hard-limits-vs-soft-limits"><a class="anchor" href="#hard-limits-vs-soft-limits" aria-hidden="true"></a>Hard Limits vs. Soft Limits</h2><p>grblHAL supports two types of limits to protect your machine:</p>
+<h3 id="hard-limits"><a class="anchor" href="#hard-limits" aria-hidden="true"></a><strong>Hard Limits</strong></h3><ul>
 <li><strong>Physical protection</strong> using limit switches at the extreme ends of travel</li>
 <li>When triggered, the machine <strong>immediately stops</strong> and enters an alarm state</li>
 <li>Prevents the machine from physically crashing into its mechanical limits</li>
@@ -141,7 +141,7 @@
 <p>⚠️ <strong>Warning</strong>
 Hard limits will <strong>immediately halt</strong> the machine. Make sure your wiring is correct, or you may get false alarms from electrical noise.</p>
 </blockquote>
-<h3 id="soft-limits"><strong>Soft Limits</strong></h3><ul>
+<h3 id="soft-limits"><a class="anchor" href="#soft-limits" aria-hidden="true"></a><strong>Soft Limits</strong></h3><ul>
 <li><strong>Software-based protection</strong> that prevents moves beyond configured boundaries</li>
 <li>Only works <strong>after the machine has been homed</strong></li>
 <li>Uses settings <code>$130</code>, <code>$131</code>, <code>$132</code> (max travel) to define boundaries</li>
@@ -161,7 +161,7 @@ $20=1         ; Enable soft limits
 </code></pre>
 <p>If you command <code>G0 X850</code>, grblHAL will reject it because 850mm exceeds the 800mm limit.</p>
 <hr>
-<h2 id="key-homing-settings-in-grblhal">Key Homing Settings in grblHAL</h2><p>Here are the essential settings for configuring homing:</p>
+<h2 id="key-homing-settings-in-grblhal"><a class="anchor" href="#key-homing-settings-in-grblhal" aria-hidden="true"></a>Key Homing Settings in grblHAL</h2><p>Here are the essential settings for configuring homing:</p>
 <table>
 <thead>
 <tr>
@@ -211,7 +211,7 @@ $20=1         ; Enable soft limits
 <td><code>3</code> (X and Y, bitmask)</td>
 </tr>
 </tbody></table>
-<h3 id="homing-direction-23"><strong>Homing Direction (<code>$23</code>)</strong></h3><p>This bitmask setting determines which direction each axis moves during homing:</p>
+<h3 id="homing-direction-23"><a class="anchor" href="#homing-direction-23" aria-hidden="true"></a><strong>Homing Direction (<code>$23</code>)</strong></h3><p>This bitmask setting determines which direction each axis moves during homing:</p>
 <pre><code>$23=0   ; All axes home in positive direction
 $23=1   ; X homes negative, Y and Z positive
 $23=2   ; Y homes negative, X and Z positive
@@ -219,7 +219,7 @@ $23=4   ; Z homes negative, X and Y positive
 $23=3   ; X and Y home negative (1+2)
 </code></pre>
 <p><strong>Tip:</strong> The direction should move <strong>toward</strong> the limit switch. If your Z-axis limit switch is at the top, Z should home in the positive direction.</p>
-<h3 id="homing-cycle-order-44-45-46"><strong>Homing Cycle Order (<code>$44</code>, <code>$45</code>, <code>$46</code>)</strong></h3><p>These settings define which axes home together in each pass:</p>
+<h3 id="homing-cycle-order-44-45-46"><a class="anchor" href="#homing-cycle-order-44-45-46" aria-hidden="true"></a><strong>Homing Cycle Order (<code>$44</code>, <code>$45</code>, <code>$46</code>)</strong></h3><p>These settings define which axes home together in each pass:</p>
 <p><strong>Bitmask values:</strong></p>
 <ul>
 <li>X = 1</li>
@@ -232,22 +232,22 @@ $23=3   ; X and Y home negative (1+2)
 $45=3   ; Cycle 2: X and Y together (1+2=3)
 </code></pre>
 <hr>
-<h2 id="homing-without-limit-switches">Homing Without Limit Switches</h2><p>If your machine doesn&#39;t have limit switches, you have a few options:</p>
-<h3 id="option-1-disable-homing-requirement"><strong>Option 1: Disable Homing Requirement</strong></h3><pre><code>$22=0   ; Disable homing cycle
+<h2 id="homing-without-limit-switches"><a class="anchor" href="#homing-without-limit-switches" aria-hidden="true"></a>Homing Without Limit Switches</h2><p>If your machine doesn&#39;t have limit switches, you have a few options:</p>
+<h3 id="option-1-disable-homing-requirement"><a class="anchor" href="#option-1-disable-homing-requirement" aria-hidden="true"></a><strong>Option 1: Disable Homing Requirement</strong></h3><pre><code>$22=0   ; Disable homing cycle
 </code></pre>
 <ul>
 <li>You can still use the machine, but you lose the benefits of homing</li>
 <li>Soft limits will not work</li>
 <li>You must manually position the machine to a known location each time</li>
 </ul>
-<h3 id="option-2-manual-and-quotsoft-homing-and-quot"><strong>Option 2: Manual &quot;Soft Homing&quot;</strong></h3><ol>
+<h3 id="option-2-manual-and-quotsoft-homing-and-quot"><a class="anchor" href="#option-2-manual-and-quotsoft-homing-and-quot" aria-hidden="true"></a><strong>Option 2: Manual &quot;Soft Homing&quot;</strong></h3><ol>
 <li>Manually jog the machine to a known position (e.g., front-left corner)</li>
 <li>Zero the work coordinates: <code>G10 L20 P1 X0 Y0 Z0</code></li>
 <li>This sets your current position as the origin for G54</li>
 </ol>
-<h3 id="option-3-install-limit-switches"><strong>Option 3: Install Limit Switches</strong></h3><p>This is the <strong>recommended</strong> approach for any serious CNC work. Limit switches are inexpensive and dramatically improve safety and repeatability.</p>
+<h3 id="option-3-install-limit-switches"><a class="anchor" href="#option-3-install-limit-switches" aria-hidden="true"></a><strong>Option 3: Install Limit Switches</strong></h3><p>This is the <strong>recommended</strong> approach for any serious CNC work. Limit switches are inexpensive and dramatically improve safety and repeatability.</p>
 <hr>
-<h2 id="common-homing-issues-and-solutions">Common Homing Issues and Solutions</h2><h3 id="problem-homing-fails-with-and-quotalarm-8-and-quot-or-and-quotalarm-9-and-quot"><strong>Problem: Homing Fails with &quot;Alarm 8&quot; or &quot;Alarm 9&quot;</strong></h3><p><strong>Cause:</strong> Limit switch not triggered during homing cycle</p>
+<h2 id="common-homing-issues-and-solutions"><a class="anchor" href="#common-homing-issues-and-solutions" aria-hidden="true"></a>Common Homing Issues and Solutions</h2><h3 id="problem-homing-fails-with-and-quotalarm-8-and-quot-or-and-quotalarm-9-and-quot"><a class="anchor" href="#problem-homing-fails-with-and-quotalarm-8-and-quot-or-and-quotalarm-9-and-quot" aria-hidden="true"></a><strong>Problem: Homing Fails with &quot;Alarm 8&quot; or &quot;Alarm 9&quot;</strong></h3><p><strong>Cause:</strong> Limit switch not triggered during homing cycle</p>
 <p><strong>Solutions:</strong></p>
 <ul>
 <li>Check that limit switches are properly wired and functioning</li>
@@ -255,20 +255,20 @@ $45=3   ; Cycle 2: X and Y together (1+2=3)
 <li>Test switch manually: Send <code>?</code> command and check limit switch status</li>
 <li>Increase homing seek distance if needed</li>
 </ul>
-<h3 id="problem-machine-homes-in-wrong-direction"><strong>Problem: Machine Homes in Wrong Direction</strong></h3><p><strong>Cause:</strong> Incorrect <code>$23</code> (homing direction) setting</p>
+<h3 id="problem-machine-homes-in-wrong-direction"><a class="anchor" href="#problem-machine-homes-in-wrong-direction" aria-hidden="true"></a><strong>Problem: Machine Homes in Wrong Direction</strong></h3><p><strong>Cause:</strong> Incorrect <code>$23</code> (homing direction) setting</p>
 <p><strong>Solution:</strong></p>
 <ul>
 <li>Invert the direction for the affected axis using <code>$23</code></li>
 <li>Example: If Z homes down instead of up, add 4 to <code>$23</code></li>
 </ul>
-<h3 id="problem-homing-position-not-repeatable"><strong>Problem: Homing Position Not Repeatable</strong></h3><p><strong>Cause:</strong> Pull-off distance too small, or mechanical slop</p>
+<h3 id="problem-homing-position-not-repeatable"><a class="anchor" href="#problem-homing-position-not-repeatable" aria-hidden="true"></a><strong>Problem: Homing Position Not Repeatable</strong></h3><p><strong>Cause:</strong> Pull-off distance too small, or mechanical slop</p>
 <p><strong>Solutions:</strong></p>
 <ul>
 <li>Increase <code>$27</code> (pull-off distance) to 2-5mm</li>
 <li>Check for mechanical play in the axis (loose belts, worn screws)</li>
 <li>Ensure limit switch is mounted rigidly</li>
 </ul>
-<h3 id="problem-false-hard-limit-alarms-during-operation"><strong>Problem: False Hard Limit Alarms During Operation</strong></h3><p><strong>Cause:</strong> Electrical noise triggering limit switches</p>
+<h3 id="problem-false-hard-limit-alarms-during-operation"><a class="anchor" href="#problem-false-hard-limit-alarms-during-operation" aria-hidden="true"></a><strong>Problem: False Hard Limit Alarms During Operation</strong></h3><p><strong>Cause:</strong> Electrical noise triggering limit switches</p>
 <p><strong>Solutions:</strong></p>
 <ul>
 <li>Use shielded cables for limit switch wiring</li>
@@ -276,14 +276,14 @@ $45=3   ; Cycle 2: X and Y together (1+2=3)
 <li>Ensure proper grounding of the controller and machine frame</li>
 <li>Move limit switch wires away from motor wires</li>
 </ul>
-<h3 id="problem-and-quothoming-required-and-quot-alarm-on-startup"><strong>Problem: &quot;Homing Required&quot; Alarm on Startup</strong></h3><p><strong>Cause:</strong> Setting <code>$22=1</code> requires homing before operation</p>
+<h3 id="problem-and-quothoming-required-and-quot-alarm-on-startup"><a class="anchor" href="#problem-and-quothoming-required-and-quot-alarm-on-startup" aria-hidden="true"></a><strong>Problem: &quot;Homing Required&quot; Alarm on Startup</strong></h3><p><strong>Cause:</strong> Setting <code>$22=1</code> requires homing before operation</p>
 <p><strong>Solutions:</strong></p>
 <ul>
 <li>Run <code>$H</code> to home the machine</li>
 <li>Or temporarily disable: <code>$22=0</code> (not recommended for production)</li>
 </ul>
 <hr>
-<h2 id="best-practices">Best Practices</h2><ol>
+<h2 id="best-practices"><a class="anchor" href="#best-practices" aria-hidden="true"></a>Best Practices</h2><ol>
 <li><p><strong>Always Home After Power-On</strong></p>
 <ul>
 <li>Make it a habit to home immediately after turning on the machine</li>
@@ -318,8 +318,8 @@ $45=3   ; Cycle 2: X and Y together (1+2=3)
 </li>
 </ol>
 <hr>
-<h2 id="testing-your-homing-setup">Testing Your Homing Setup</h2><p>Before running jobs, verify your homing works correctly:</p>
-<h3 id="test-procedure"><strong>Test Procedure</strong></h3><ol>
+<h2 id="testing-your-homing-setup"><a class="anchor" href="#testing-your-homing-setup" aria-hidden="true"></a>Testing Your Homing Setup</h2><p>Before running jobs, verify your homing works correctly:</p>
+<h3 id="test-procedure"><a class="anchor" href="#test-procedure" aria-hidden="true"></a><strong>Test Procedure</strong></h3><ol>
 <li><strong>Power on and connect</strong> to grblHAL</li>
 <li><strong>Send <code>$H</code></strong> to initiate homing</li>
 <li><strong>Observe the sequence:</strong><ul>

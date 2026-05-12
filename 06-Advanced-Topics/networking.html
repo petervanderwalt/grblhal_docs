@@ -20,15 +20,15 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="networking-and-amp-connectivity">Networking &amp; Connectivity</h1><p>grblHAL offers powerful networking capabilities that go beyond standard USB connections. Depending on your controller hardware (e.g., Teensy 4.1, ESP32, RP2040), you may have access to <strong>Ethernet</strong>, <strong>Wi-Fi</strong>, <strong>Bluetooth</strong>, and a dedicated <strong>WebUI</strong>.</p>
+      <h1 id="networking-and-amp-connectivity"><a class="anchor" href="#networking-and-amp-connectivity" aria-hidden="true"></a>Networking &amp; Connectivity</h1><p>grblHAL offers powerful networking capabilities that go beyond standard USB connections. Depending on your controller hardware (e.g., Teensy 4.1, ESP32, RP2040), you may have access to <strong>Ethernet</strong>, <strong>Wi-Fi</strong>, <strong>Bluetooth</strong>, and a dedicated <strong>WebUI</strong>.</p>
 <p>This guide covers the setup and configuration for these advanced connectivity options.</p>
 <hr>
-<h2 id="ethernet">Ethernet</h2><p>Ethernet provides a robust, interference-resistant connection ideal for production environments. It eliminates USB length limits and susceptibility to EMI (Electro-Magnetic Interference).</p>
-<h3 id="basic-pc-setup-direct-connection">Basic PC Setup (Direct Connection)</h3><p>If you are connecting your PC directly to the controller (without a router/switch in between), you must configure a <strong>Static IP</strong> on your computer&#39;s network adapter.</p>
+<h2 id="ethernet"><a class="anchor" href="#ethernet" aria-hidden="true"></a>Ethernet</h2><p>Ethernet provides a robust, interference-resistant connection ideal for production environments. It eliminates USB length limits and susceptibility to EMI (Electro-Magnetic Interference).</p>
+<h3 id="basic-pc-setup-direct-connection"><a class="anchor" href="#basic-pc-setup-direct-connection" aria-hidden="true"></a>Basic PC Setup (Direct Connection)</h3><p>If you are connecting your PC directly to the controller (without a router/switch in between), you must configure a <strong>Static IP</strong> on your computer&#39;s network adapter.</p>
 <blockquote>
 <p><strong>Note:</strong> These steps follow the <a href="https://sienci.zendesk.com/hc/en-us/articles/41759221954708-Ethernet-connection-SLB-and-SLB-EXT">Sienci Labs SLB Ethernet Guide</a>.</p>
 </blockquote>
-<h4 id="1-configure-the-controller-static-ip">1. Configure the Controller (Static IP)</h4><p>First, connect via USB and configure grblHAL to use a Static IP address. This ensures the controller always has a known address.</p>
+<h4 id="1-configure-the-controller-static-ip"><a class="anchor" href="#1-configure-the-controller-static-ip" aria-hidden="true"></a>1. Configure the Controller (Static IP)</h4><p>First, connect via USB and configure grblHAL to use a Static IP address. This ensures the controller always has a known address.</p>
 <ul>
 <li><strong>IP Mode:</strong> Static</li>
 <li><strong>IP Address:</strong> e.g., <code>192.168.5.15</code></li>
@@ -36,7 +36,7 @@
 <li><strong>Netmask:</strong> <code>255.255.255.0</code></li>
 </ul>
 <p><em>Check your specific board documentation for the exact <code>$</code> settings to configure IP parameters.</em></p>
-<h4 id="2-configure-windows-network-adapter">2. Configure Windows Network Adapter</h4><ol>
+<h4 id="2-configure-windows-network-adapter"><a class="anchor" href="#2-configure-windows-network-adapter" aria-hidden="true"></a>2. Configure Windows Network Adapter</h4><ol>
 <li>Connect the Ethernet cable between your PC and the controller.</li>
 <li>On Windows, search for <strong>&quot;View network connections&quot;</strong>.</li>
 <li>Right-click your <strong>Ethernet</strong> adapter (often &quot;Ethernet 2&quot; or similar) and select <strong>Properties</strong>.</li>
@@ -49,15 +49,15 @@
 </li>
 <li>Click <strong>OK</strong> to save.</li>
 </ol>
-<h4 id="3-connect-via-g-code-sender">3. Connect via G-Code Sender</h4><ul>
+<h4 id="3-connect-via-g-code-sender"><a class="anchor" href="#3-connect-via-g-code-sender" aria-hidden="true"></a>3. Connect via G-Code Sender</h4><ul>
 <li>Open your sender (e.g., <strong>gSender</strong>, <strong>ioSender</strong>).</li>
 <li>Select <strong>Ethernet/Network</strong> as the connection type.</li>
 <li>Enter the controller&#39;s IP address (<code>192.168.5.15</code>) and Port (usually <code>23</code>).</li>
 <li>Click <strong>Connect</strong>.</li>
 </ul>
 <hr>
-<h2 id="wi-fi">Wi-Fi</h2><p>Wi-Fi allows for wireless control and is available on chips like the <strong>ESP32</strong> and <strong>Raspberry Pi Pico W</strong>. You can typically operate in two modes:</p>
-<h3 id="1-station-mode-recommended">1. Station Mode (Recommended)</h3><p>The controller connects to your existing home/workshop Wi-Fi network.</p>
+<h2 id="wi-fi"><a class="anchor" href="#wi-fi" aria-hidden="true"></a>Wi-Fi</h2><p>Wi-Fi allows for wireless control and is available on chips like the <strong>ESP32</strong> and <strong>Raspberry Pi Pico W</strong>. You can typically operate in two modes:</p>
+<h3 id="1-station-mode-recommended"><a class="anchor" href="#1-station-mode-recommended" aria-hidden="true"></a>1. Station Mode (Recommended)</h3><p>The controller connects to your existing home/workshop Wi-Fi network.</p>
 <ul>
 <li><strong>Range:</strong> limited by your router&#39;s signal.</li>
 <li><strong>Access:</strong> Any device on the network can control the machine.</li>
@@ -70,14 +70,14 @@ You typically need to set the <strong>SSID</strong> (Network Name) and <strong>P
 <li><code>$73=1</code> (Enable Wi-Fi / Station Mode)
 <em>(Note: Setting numbers can vary by driver key. Use <code>$S</code> or <code>$P</code> to list available settings)</em></li>
 </ul>
-<h3 id="2-access-point-ap-mode">2. Access Point (AP) Mode</h3><p>The controller creates its own Wi-Fi network that you connect your PC to.</p>
+<h3 id="2-access-point-ap-mode"><a class="anchor" href="#2-access-point-ap-mode" aria-hidden="true"></a>2. Access Point (AP) Mode</h3><p>The controller creates its own Wi-Fi network that you connect your PC to.</p>
 <ul>
 <li><strong>Range:</strong> Limited to the controller&#39;s antenna.</li>
 <li><strong>Access:</strong> Direct connection; no router needed.</li>
 </ul>
 <hr>
-<h2 id="webui-plugin_webui">WebUI (<code>Plugin_WebUI</code>)</h2><p>Many network-enabled grblHAL builds (especially ESP32, RP2040, and Teensy 4.1) include an embedded <strong>Web User Interface</strong>. This allows you to control the machine from any device with a browser (PC, Tablet, Smartphone) without installing software.</p>
-<h3 id="features">Features</h3><p>The WebUI is surprisingly powerful and includes:</p>
+<h2 id="webui-plugin_webui"><a class="anchor" href="#webui-plugin_webui" aria-hidden="true"></a>WebUI (<code>Plugin_WebUI</code>)</h2><p>Many network-enabled grblHAL builds (especially ESP32, RP2040, and Teensy 4.1) include an embedded <strong>Web User Interface</strong>. This allows you to control the machine from any device with a browser (PC, Tablet, Smartphone) without installing software.</p>
+<h3 id="features"><a class="anchor" href="#features" aria-hidden="true"></a>Features</h3><p>The WebUI is surprisingly powerful and includes:</p>
 <ul>
 <li><strong>Dashboard:</strong> real-time DRO (Digital Readout), Jogging, Homing, and Macro buttons.</li>
 <li><strong>File Management:</strong> Upload, delete, and <strong>run G-code files</strong> directly from the SD card.</li>
@@ -86,7 +86,7 @@ You typically need to set the <strong>SSID</strong> (Network Name) and <strong>P
 <li><strong>Tablet Mode:</strong> A touch-friendly interface optimized for mounting a tablet on your machine.</li>
 <li><strong>Camera Support:</strong> View a stream from an ESP32-CAM or similar URL.</li>
 </ul>
-<h3 id="installation-and-amp-compatibility">Installation &amp; Compatibility</h3><ul>
+<h3 id="installation-and-amp-compatibility"><a class="anchor" href="#installation-and-amp-compatibility" aria-hidden="true"></a>Installation &amp; Compatibility</h3><ul>
 <li><strong>Build Option:</strong> The WebUI must be enabled at compile time (or selected in the <strong><a href="http://svn.io-engineering.com:8080/">Web Builder</a></strong>).</li>
 <li><strong>File Storage:</strong><ul>
 <li><strong>FlashFS (Recommended):</strong> The WebUI files (<code>index.html.gz</code>, etc.) are compressed and stored in the controller&#39;s internal flash memory. This is faster and doesn&#39;t require an SD card for the UI itself.</li>
@@ -94,7 +94,7 @@ You typically need to set the <strong>SSID</strong> (Network Name) and <strong>P
 </ul>
 </li>
 </ul>
-<h3 id="essential-settings">Essential Settings</h3><p>If the WebUI is active but you cannot connect, check these settings via USB:</p>
+<h3 id="essential-settings"><a class="anchor" href="#essential-settings" aria-hidden="true"></a>Essential Settings</h3><p>If the WebUI is active but you cannot connect, check these settings via USB:</p>
 <table>
 <thead>
 <tr>
@@ -124,7 +124,7 @@ You typically need to set the <strong>SSID</strong> (Network Name) and <strong>P
 <td align="left"><code>15</code> (enables HTTP, Telnet, MDNS, etc.)</td>
 </tr>
 </tbody></table>
-<h3 id="how-to-access">How to Access</h3><ol>
+<h3 id="how-to-access"><a class="anchor" href="#how-to-access" aria-hidden="true"></a>How to Access</h3><ol>
 <li>Connect your machine to Wi-Fi (see above) or Ethernet.</li>
 <li>Find the IP address (type <code>$I</code> in a serial terminal if you don&#39;t know it).</li>
 <li>Open a web browser on a device connected to the <strong>same network</strong>.</li>
@@ -134,8 +134,8 @@ You typically need to set the <strong>SSID</strong> (Network Name) and <strong>P
 </li>
 </ol>
 <hr>
-<h2 id="bluetooth">Bluetooth</h2><p>Bluetooth allows for wireless serial communication, effectively replacing the USB cable with a wireless link. It is commonly used for wireless pendants or simple control apps.</p>
-<h3 id="setup-and-amp-pairing">Setup &amp; Pairing</h3><ol>
+<h2 id="bluetooth"><a class="anchor" href="#bluetooth" aria-hidden="true"></a>Bluetooth</h2><p>Bluetooth allows for wireless serial communication, effectively replacing the USB cable with a wireless link. It is commonly used for wireless pendants or simple control apps.</p>
+<h3 id="setup-and-amp-pairing"><a class="anchor" href="#setup-and-amp-pairing" aria-hidden="true"></a>Setup &amp; Pairing</h3><ol>
 <li><strong>Enable:</strong> Bluetooth is usually enabled at compile-time (<code>BLUETOOTH_ENABLE</code>).</li>
 <li><strong>Pairing:</strong><ul>
 <li>On your PC/Phone, scan for Bluetooth devices.</li>

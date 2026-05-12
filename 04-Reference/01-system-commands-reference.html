@@ -20,19 +20,19 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="system-commands-reference">System Commands Reference</h1><p>This page details the system commands available in grblHAL. These commands are distinct from G-code and are used to configure the controller, control machine state, and request real-time information.</p>
+      <h1 id="system-commands-reference"><a class="anchor" href="#system-commands-reference" aria-hidden="true"></a>System Commands Reference</h1><p>This page details the system commands available in grblHAL. These commands are distinct from G-code and are used to configure the controller, control machine state, and request real-time information.</p>
 <p>They are divided into two categories:</p>
 <ol>
 <li><strong><code>$</code> System Commands</strong>: Text-based commands starting with <code>$</code> and terminated by a newline. These interact with settings, memory, and high-level control.</li>
 <li><strong>Realtime Commands</strong>: Single ASCII characters (or byte values) that execute immediately, even while the machine is moving.</li>
 </ol>
 <hr>
-<h1 id="system-commands"><code>$</code> System Commands</h1><p>System commands allow you to view and change settings, control machine modes (like sleep or homing), and read non-volatile data.</p>
+<h1 id="system-commands"><a class="anchor" href="#system-commands" aria-hidden="true"></a><code>$</code> System Commands</h1><p>System commands allow you to view and change settings, control machine modes (like sleep or homing), and read non-volatile data.</p>
 <blockquote>
 <p>ℹ️ <strong>Info</strong>
 Most <code>$</code> commands are processed by the main protocol loop. Some commands (like <code>$H</code> for homing) may block other operations until they complete.</p>
 </blockquote>
-<h2 id="configuration-and-amp-settings">Configuration &amp; Settings</h2><h3 id="view-all-settings"><code>$$</code> – View All Settings</h3><p>Outputs the current value of all numbered settings.</p>
+<h2 id="configuration-and-amp-settings"><a class="anchor" href="#configuration-and-amp-settings" aria-hidden="true"></a>Configuration &amp; Settings</h2><h3 id="view-all-settings"><a class="anchor" href="#view-all-settings" aria-hidden="true"></a><code>$$</code> – View All Settings</h3><p>Outputs the current value of all numbered settings.</p>
 <p><strong>Syntax:</strong> <code>$$</code></p>
 <blockquote>
 <p>ℹ️ <strong>Info</strong></p>
@@ -42,7 +42,7 @@ Most <code>$</code> commands are processed by the main protocol loop. Some comma
 </ul>
 </blockquote>
 <hr>
-<h3 id="view-setting-help"><code>$$=</code> – View Setting Help</h3><p>Outputs the description, units, and range for a specific setting.</p>
+<h3 id="view-setting-help"><a class="anchor" href="#view-setting-help" aria-hidden="true"></a><code>$$=</code> – View Setting Help</h3><p>Outputs the description, units, and range for a specific setting.</p>
 <p><strong>Syntax:</strong> <code>$$=</code></p>
 <p><strong>Example:</strong></p>
 <ul>
@@ -68,7 +68,7 @@ NOTE: Parser state will be sent separately after the status report and only on c
 </li>
 </ul>
 <hr>
-<h3 id="x-write-setting"><code>$x=</code> – Write Setting</h3><p>Sets the value of a specific setting.</p>
+<h3 id="x-write-setting"><a class="anchor" href="#x-write-setting" aria-hidden="true"></a><code>$x=</code> – Write Setting</h3><p>Sets the value of a specific setting.</p>
 <p><strong>Syntax:</strong> <code>$=</code></p>
 <p><strong>Example:</strong></p>
 <ul>
@@ -111,10 +111,10 @@ Sets a custom string in the build info. This can be used to store machine specif
 This feature might be disabled in some builds (<code>DISABLE_BUILD_INFO_WRITE_COMMAND</code>).</p>
 </blockquote>
 <hr>
-<h3 id="n-view-startup-lines"><code>$N</code> – View Startup Lines</h3><p>Outputs the currently stored startup G-code blocks. These lines run automatically every time grblHAL powers up or resets.</p>
+<h3 id="n-view-startup-lines"><a class="anchor" href="#n-view-startup-lines" aria-hidden="true"></a><code>$N</code> – View Startup Lines</h3><p>Outputs the currently stored startup G-code blocks. These lines run automatically every time grblHAL powers up or resets.</p>
 <p><strong>Syntax:</strong> <code>$N</code></p>
 <hr>
-<h3 id="n-set-startup-line"><code>$N=</code> – Set Startup Line</h3><p>Saves a G-code block to one of the startup lines (typically <code>$N0</code> and <code>$N1</code>).</p>
+<h3 id="n-set-startup-line"><a class="anchor" href="#n-set-startup-line" aria-hidden="true"></a><code>$N=</code> – Set Startup Line</h3><p>Saves a G-code block to one of the startup lines (typically <code>$N0</code> and <code>$N1</code>).</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li><code>$N0=G54 G20 G17</code> (Set first startup line)</li>
@@ -130,7 +130,7 @@ This feature might be disabled in some builds (<code>DISABLE_BUILD_INFO_WRITE_CO
 Do not place motion commands (<code>G0</code>, <code>G1</code>, <code>G2</code>, <code>G3</code>) or tool changes (<code>M6</code>) in startup lines. This can be dangerous if the machine moves unexpectedly upon connection.</p>
 </blockquote>
 <hr>
-<h3 id="rst-restore-settings"><code>$RST</code> – Restore Settings</h3><p>Restores groups of settings to their firmware defaults.</p>
+<h3 id="rst-restore-settings"><a class="anchor" href="#rst-restore-settings" aria-hidden="true"></a><code>$RST</code> – Restore Settings</h3><p>Restores groups of settings to their firmware defaults.</p>
 <p><strong>Syntax:</strong> <code>$RST=</code></p>
 <table>
 <thead>
@@ -153,7 +153,7 @@ Do not place motion commands (<code>G0</code>, <code>G1</code>, <code>G2</code>,
 </tr>
 </tbody></table>
 <hr>
-<h2 id="machine-control">Machine Control</h2><h3 id="j-jogging"><code>$J</code> – Jogging</h3><p>Commands the machine to move freely. Jog commands are independent of the G-code parser state and can be canceled immediately by a Feed Hold or Jog Cancel command.</p>
+<h2 id="machine-control"><a class="anchor" href="#machine-control" aria-hidden="true"></a>Machine Control</h2><h3 id="j-jogging"><a class="anchor" href="#j-jogging" aria-hidden="true"></a><code>$J</code> – Jogging</h3><p>Commands the machine to move freely. Jog commands are independent of the G-code parser state and can be canceled immediately by a Feed Hold or Jog Cancel command.</p>
 <p><strong>Syntax:</strong> <code>$J=X Y ... F</code></p>
 <p><strong>Requirements:</strong></p>
 <ul>
@@ -174,7 +174,7 @@ Do not place motion commands (<code>G0</code>, <code>G1</code>, <code>G2</code>,
 </ul>
 </blockquote>
 <hr>
-<h3 id="h-homing-cycle"><code>$H</code> – Homing Cycle</h3><p>Initiates the homing sequence to find the machine origin.</p>
+<h3 id="h-homing-cycle"><a class="anchor" href="#h-homing-cycle" aria-hidden="true"></a><code>$H</code> – Homing Cycle</h3><p>Initiates the homing sequence to find the machine origin.</p>
 <p><strong>Syntax:</strong> <code>$H</code> (Homes all configured axes in standard sequence)</p>
 <p><strong>Extended Syntax (Single Axis):</strong></p>
 <ul>
@@ -188,7 +188,7 @@ Do not place motion commands (<code>G0</code>, <code>G1</code>, <code>G2</code>,
 Requires limit switches to be installed and configured.</p>
 </blockquote>
 <hr>
-<h3 id="slp-sleep-mode"><code>$SLP</code> – Sleep Mode</h3><p>Puts the machine into a low-power sleep state.</p>
+<h3 id="slp-sleep-mode"><a class="anchor" href="#slp-sleep-mode" aria-hidden="true"></a><code>$SLP</code> – Sleep Mode</h3><p>Puts the machine into a low-power sleep state.</p>
 <p><strong>Syntax:</strong> <code>$SLP</code></p>
 <p><strong>Behavior:</strong></p>
 <ul>
@@ -197,7 +197,7 @@ Requires limit switches to be installed and configured.</p>
 <li>Requires a Reset (<code>ctrl-x</code>) to wake up.</li>
 </ul>
 <hr>
-<h3 id="c-check-mode"><code>$C</code> – Check Mode</h3><p>Toggles &quot;Check Mode&quot;. In this mode, grblHAL parses and validates G-code but <strong>does not move</strong> the machine or turn on the spindle.</p>
+<h3 id="c-check-mode"><a class="anchor" href="#c-check-mode" aria-hidden="true"></a><code>$C</code> – Check Mode</h3><p>Toggles &quot;Check Mode&quot;. In this mode, grblHAL parses and validates G-code but <strong>does not move</strong> the machine or turn on the spindle.</p>
 <p><strong>Syntax:</strong> <code>$C</code></p>
 <p><strong>Usage:</strong></p>
 <ul>
@@ -206,7 +206,7 @@ Requires limit switches to be installed and configured.</p>
 <li>Send <code>ctrl-x</code> (Reset) to exit Check Mode.</li>
 </ul>
 <hr>
-<h3 id="x-unlock-kill-alarm"><code>$X</code> – Unlock / Kill Alarm</h3><p>Disables the alarm lock state.</p>
+<h3 id="x-unlock-kill-alarm"><a class="anchor" href="#x-unlock-kill-alarm" aria-hidden="true"></a><code>$X</code> – Unlock / Kill Alarm</h3><p>Disables the alarm lock state.</p>
 <p><strong>Syntax:</strong> <code>$X</code></p>
 <p><strong>Usage:</strong></p>
 <ul>
@@ -215,22 +215,22 @@ Requires limit switches to be installed and configured.</p>
 <li><strong>Caution:</strong> This does not fix the underlying issue (e.g., machine position may be lost).</li>
 </ul>
 <hr>
-<h3 id="rw-rewind-if-supported"><code>$RW</code> – Rewind (if supported)</h3><p>Rewinds the input stream or program (SD card) context.</p>
+<h3 id="rw-rewind-if-supported"><a class="anchor" href="#rw-rewind-if-supported" aria-hidden="true"></a><code>$RW</code> – Rewind (if supported)</h3><p>Rewinds the input stream or program (SD card) context.</p>
 <hr>
-<h2 id="file-system-sd-card">File System (SD Card)</h2><p>Commands for managing files on the SD card (if supported).</p>
-<h3 id="f-list-files"><code>$F</code> – List Files</h3><p>Lists files in the current working directory.</p>
+<h2 id="file-system-sd-card"><a class="anchor" href="#file-system-sd-card" aria-hidden="true"></a>File System (SD Card)</h2><p>Commands for managing files on the SD card (if supported).</p>
+<h3 id="f-list-files"><a class="anchor" href="#f-list-files" aria-hidden="true"></a><code>$F</code> – List Files</h3><p>Lists files in the current working directory.</p>
 <p><strong>Syntax:</strong> <code>$F</code></p>
-<h3 id="f-change-directory"><code>$F=</code> – Change Directory</h3><p>Sets the current working directory (CWD) for file operations.</p>
+<h3 id="f-change-directory"><a class="anchor" href="#f-change-directory" aria-hidden="true"></a><code>$F=</code> – Change Directory</h3><p>Sets the current working directory (CWD) for file operations.</p>
 <ul>
 <li><code>$F=/</code>: Go to root.</li>
 <li><code>$F=..</code>: Go up one level.</li>
 <li><code>$F=subfolder</code>: Go to <code>subfolder</code>.</li>
 </ul>
 <p><strong>Syntax:</strong> <code>$F=/my_folder</code></p>
-<h3 id="ff-format-sd-card"><code>$FF</code> – Format SD Card</h3><p>Formats the SD card. <strong>All data will be lost.</strong></p>
+<h3 id="ff-format-sd-card"><a class="anchor" href="#ff-format-sd-card" aria-hidden="true"></a><code>$FF</code> – Format SD Card</h3><p>Formats the SD card. <strong>All data will be lost.</strong></p>
 <p><strong>Syntax:</strong> <code>$FF=yes</code></p>
 <hr>
-<h2 id="diagnostics-and-amp-reporting">Diagnostics &amp; Reporting</h2><h3 id="g-view-g-code-parser-state"><code>$G</code> – View G-code Parser State</h3><p>Outputs the currently active G-code modal states.</p>
+<h2 id="diagnostics-and-amp-reporting"><a class="anchor" href="#diagnostics-and-amp-reporting" aria-hidden="true"></a>Diagnostics &amp; Reporting</h2><h3 id="g-view-g-code-parser-state"><a class="anchor" href="#g-view-g-code-parser-state" aria-hidden="true"></a><code>$G</code> – View G-code Parser State</h3><p>Outputs the currently active G-code modal states.</p>
 <p><strong>Syntax:</strong> <code>$G</code></p>
 <p><strong>Output Example:</strong> <code>[GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S0]</code></p>
 <ul>
@@ -241,7 +241,7 @@ Requires limit switches to be installed and configured.</p>
 <li>Can include extended G-codes: <code>G5</code>, <code>G7</code>, <code>G8</code>, <code>G43</code>/<code>G49</code> (TLO), <code>G96</code>/<code>G97</code> (Spindle Mode), <code>G98</code>/<code>G99</code> (Retract), <code>M50</code>/<code>M51</code>/<code>M53</code> (Overrides), <code>M56</code> (Parking), <code>M60</code> (Pallet).</li>
 </ul>
 <hr>
-<h3 id="view-parameters"><code>$#</code> – View Parameters</h3><p>Outputs the stored offsets for work coordinate systems, tool offsets, and pre-defined positions.</p>
+<h3 id="view-parameters"><a class="anchor" href="#view-parameters" aria-hidden="true"></a><code>$#</code> – View Parameters</h3><p>Outputs the stored offsets for work coordinate systems, tool offsets, and pre-defined positions.</p>
 <p><strong>Syntax:</strong> <code>$#</code></p>
 <p><strong>Output Example:</strong>
 <code>[G54:0.000,0.000,0.000]</code>
@@ -256,7 +256,7 @@ Requires limit switches to be installed and configured.</p>
 <li><code>[TLR:]</code>: Tool length reference.</li>
 </ul>
 <hr>
-<h3 id="pins-report-pin-status"><code>$PINS</code> – Report Pin Status</h3><p>Debug command to show the current hardware state of input/output pins.</p>
+<h3 id="pins-report-pin-status"><a class="anchor" href="#pins-report-pin-status" aria-hidden="true"></a><code>$PINS</code> – Report Pin Status</h3><p>Debug command to show the current hardware state of input/output pins.</p>
 <p><strong>Syntax:</strong> <code>$PINS</code></p>
 <p><strong>Output Example:</strong></p>
 <pre><code class="language-text">[PIN:PB12,Emergency stop]
@@ -271,7 +271,7 @@ Requires limit switches to be installed and configured.</p>
 [PIN:PD5,TX,Modbus]
 </code></pre>
 <hr>
-<h3 id="pinstate-detailed-pin-enumeration"><code>$PINSTATE</code> – Detailed Pin Enumeration</h3><p>Enumerates auxiliary pins with type, description, mode (input/output, inverted, pull-up/down), and capabilities.</p>
+<h3 id="pinstate-detailed-pin-enumeration"><a class="anchor" href="#pinstate-detailed-pin-enumeration" aria-hidden="true"></a><code>$PINSTATE</code> – Detailed Pin Enumeration</h3><p>Enumerates auxiliary pins with type, description, mode (input/output, inverted, pull-up/down), and capabilities.</p>
 <p><strong>Syntax:</strong> <code>$PINSTATE</code></p>
 <p><strong>Output Format:</strong></p>
 <pre><code class="language-text">[PINSTATE:|||||]
@@ -291,7 +291,7 @@ Requires limit switches to be installed and configured.</p>
 [PORT:1|Modbus|PD6,RX|PD5,TX|19200,8,N,1|C]
 </code></pre>
 <hr>
-<h3 id="spindles-spindlesh-enumerate-spindles"><code>$SPINDLES</code> / <code>$SPINDLESH</code> – Enumerate Spindles</h3><p>Lists available spindles. </p>
+<h3 id="spindles-spindlesh-enumerate-spindles"><a class="anchor" href="#spindles-spindlesh-enumerate-spindles" aria-hidden="true"></a><code>$SPINDLES</code> / <code>$SPINDLESH</code> – Enumerate Spindles</h3><p>Lists available spindles. </p>
 <ul>
 <li><p><code>$SPINDLES</code>: Human readable format.</p>
 <pre><code class="language-text">2 - H-100, enabled as spindle 0, active
@@ -310,7 +310,7 @@ Requires limit switches to be installed and configured.</p>
 </li>
 </ul>
 <hr>
-<h2 id="help-and-amp-enumeration">Help &amp; Enumeration</h2><p>System commands to discover capabilities.</p>
+<h2 id="help-and-amp-enumeration"><a class="anchor" href="#help-and-amp-enumeration" aria-hidden="true"></a>Help &amp; Enumeration</h2><p>System commands to discover capabilities.</p>
 <table>
 <thead>
 <tr>
@@ -356,7 +356,7 @@ Requires limit switches to be installed and configured.</p>
 </tr>
 </tbody></table>
 <hr>
-<h2 id="additional-commands">Additional Commands</h2><p>Extended functionality for machine control and debugging found in the source.</p>
+<h2 id="additional-commands"><a class="anchor" href="#additional-commands" aria-hidden="true"></a>Additional Commands</h2><p>Extended functionality for machine control and debugging found in the source.</p>
 <table>
 <thead>
 <tr>
@@ -438,7 +438,7 @@ Requires limit switches to be installed and configured.</p>
 </tr>
 </tbody></table>
 <hr>
-<h1 id="realtime-commands">Realtime Commands</h1><p>Realtime commands are single control characters that can be sent to grblHAL at any time. They are intercepted by the serial receive interrupt and executed immediately, often within tens of milliseconds, bypassing the normal G-code planner buffer.</p>
+<h1 id="realtime-commands"><a class="anchor" href="#realtime-commands" aria-hidden="true"></a>Realtime Commands</h1><p>Realtime commands are single control characters that can be sent to grblHAL at any time. They are intercepted by the serial receive interrupt and executed immediately, often within tens of milliseconds, bypassing the normal G-code planner buffer.</p>
 <blockquote>
 <p>ℹ️ <strong>Info</strong></p>
 <ul>
@@ -448,7 +448,7 @@ Requires limit switches to be installed and configured.</p>
 <li><strong>Ignored if Invalid:</strong> If a command cannot be executed (e.g., toggling spindle stop while moving), it is silently ignored to prevent unsafe conditions.</li>
 </ul>
 </blockquote>
-<h2 id="basic-control-commands">Basic Control Commands</h2><p>These are the standard Grbl control characters found in most senders.</p>
+<h2 id="basic-control-commands"><a class="anchor" href="#basic-control-commands" aria-hidden="true"></a>Basic Control Commands</h2><p>These are the standard Grbl control characters found in most senders.</p>
 <table>
 <thead>
 <tr>
@@ -484,8 +484,8 @@ Requires limit switches to be installed and configured.</p>
 </tr>
 </tbody></table>
 <hr>
-<h2 id="overrides">Overrides</h2><p>Overrides allow you to fine-tune the machine&#39;s operation in real-time.</p>
-<h3 id="feed-rate-overrides">Feed Rate Overrides</h3><p>Alters the programmed feed rate (<code>F</code>) for <code>G1</code>, <code>G2</code>, <code>G3</code> moves.</p>
+<h2 id="overrides"><a class="anchor" href="#overrides" aria-hidden="true"></a>Overrides</h2><p>Overrides allow you to fine-tune the machine&#39;s operation in real-time.</p>
+<h3 id="feed-rate-overrides"><a class="anchor" href="#feed-rate-overrides" aria-hidden="true"></a>Feed Rate Overrides</h3><p>Alters the programmed feed rate (<code>F</code>) for <code>G1</code>, <code>G2</code>, <code>G3</code> moves.</p>
 <ul>
 <li><strong>Range:</strong> 10% to 200%.</li>
 <li><strong>Limits:</strong> Commands that would push the value outside this range are ignored.</li>
@@ -526,7 +526,7 @@ Requires limit switches to be installed and configured.</p>
 <td align="left">Decreases feed override by 1%.</td>
 </tr>
 </tbody></table>
-<h3 id="rapid-rate-overrides">Rapid Rate Overrides</h3><p>Scales the speed of <code>G0</code>, <code>G28</code>, and <code>G30</code> rapid motions.</p>
+<h3 id="rapid-rate-overrides"><a class="anchor" href="#rapid-rate-overrides" aria-hidden="true"></a>Rapid Rate Overrides</h3><p>Scales the speed of <code>G0</code>, <code>G28</code>, and <code>G30</code> rapid motions.</p>
 <ul>
 <li><strong>Scope:</strong> Affects rapid motions only. Does not affect cutting moves (<code>G1</code>, etc.).</li>
 <li><strong>State:</strong> Can be changed at any time.</li>
@@ -555,7 +555,7 @@ Requires limit switches to be installed and configured.</p>
 <td align="left">Sets rapids to 25% of max rate.</td>
 </tr>
 </tbody></table>
-<h3 id="spindle-speed-overrides">Spindle Speed Overrides</h3><p>Alters the programmed spindle speed (<code>S</code>).</p>
+<h3 id="spindle-speed-overrides"><a class="anchor" href="#spindle-speed-overrides" aria-hidden="true"></a>Spindle Speed Overrides</h3><p>Alters the programmed spindle speed (<code>S</code>).</p>
 <ul>
 <li><strong>Range:</strong> 10% to 200%.</li>
 <li><strong>Limits:</strong> Commands that would push the value outside this range are ignored.</li>
@@ -595,7 +595,7 @@ Requires limit switches to be installed and configured.</p>
 <td align="left">Decreases spindle override by 1%.</td>
 </tr>
 </tbody></table>
-<h3 id="spindle-stop-override">Spindle Stop Override</h3><table>
+<h3 id="spindle-stop-override"><a class="anchor" href="#spindle-stop-override" aria-hidden="true"></a>Spindle Stop Override</h3><table>
 <thead>
 <tr>
 <th align="center">Hex</th>
@@ -609,7 +609,7 @@ Requires limit switches to be installed and configured.</p>
 <td align="left">- <strong>Only valid in HOLD state.</strong> - Toggles the spindle On/Off while paused. - <strong>Safety:</strong> Ignored during motion to prevent crashing. - <strong>Resume:</strong> When Cycle Start (<code>~</code>) is issued, the spindle automatically restores its previous state. The system waits 4.0 seconds (configurable) for the spindle to spin up before resuming motion.</td>
 </tr>
 </tbody></table>
-<h3 id="coolant-overrides">Coolant Overrides</h3><p>Toggles coolant states directly.</p>
+<h3 id="coolant-overrides"><a class="anchor" href="#coolant-overrides" aria-hidden="true"></a>Coolant Overrides</h3><p>Toggles coolant states directly.</p>
 <ul>
 <li><strong>State:</strong> Valid in standard states (Idle, Run, Hold).</li>
 <li><strong>Parser Update:</strong> These commands <strong>update the modal state</strong> of the G-code parser. A <code>$G</code> report will reflect the change.</li>
@@ -634,7 +634,7 @@ Requires limit switches to be installed and configured.</p>
 </tr>
 </tbody></table>
 <hr>
-<h2 id="extended-commands">Extended Commands</h2><p>These functionality codes are specific extensions or part of the extended ASCII set.</p>
+<h2 id="extended-commands"><a class="anchor" href="#extended-commands" aria-hidden="true"></a>Extended Commands</h2><p>These functionality codes are specific extensions or part of the extended ASCII set.</p>
 <table>
 <thead>
 <tr>
@@ -660,7 +660,7 @@ Requires limit switches to be installed and configured.</p>
 </tr>
 </tbody></table>
 <hr>
-<h1 id="realtime-report">Realtime Report</h1><p>When you send <code>?</code>, status reports are streamed back. The format is a structured text string enclosed in ``, with fields separated by pipe <code>|</code> characters.</p>
+<h1 id="realtime-report"><a class="anchor" href="#realtime-report" aria-hidden="true"></a>Realtime Report</h1><p>When you send <code>?</code>, status reports are streamed back. The format is a structured text string enclosed in ``, with fields separated by pipe <code>|</code> characters.</p>
 <pre><code class="language-text">[{:}|{|Bf:,}{|Ln:}{|FS:,{,}}{|Pn:}{|WCO:}{|WCS:G}{|Ov:}{|A:}{|MPG:}{|H:{,}}{|D:}{|Sc:}{|TLR:}{|FW:}{|In:}]
 </code></pre>
 <blockquote>
@@ -672,7 +672,7 @@ In the definitions below:</p>
 <li><code>|</code> separates literal values.</li>
 </ul>
 </blockquote>
-<h2 id="core-states">Core States</h2><p><code>Idle</code>, <code>Run</code>, <code>Hold</code>, <code>Jog</code>, <code>Alarm</code>, <code>Door</code>, <code>Check</code>, <code>Home</code>, <code>Sleep</code></p>
+<h2 id="core-states"><a class="anchor" href="#core-states" aria-hidden="true"></a>Core States</h2><p><code>Idle</code>, <code>Run</code>, <code>Hold</code>, <code>Jog</code>, <code>Alarm</code>, <code>Door</code>, <code>Check</code>, <code>Home</code>, <code>Sleep</code></p>
 <ul>
 <li><strong>New in grblHAL:</strong> <code>Tool</code> (for <a href="https://github.com/grblHAL/core/wiki/Manual-tool-change-protocol">Tool Change Protocol</a>).</li>
 <li><strong>Substatuses:</strong><ul>
@@ -681,7 +681,7 @@ In the definitions below:</p>
 </ul>
 </li>
 </ul>
-<h2 id="report-fields">Report Fields</h2><table>
+<h2 id="report-fields"><a class="anchor" href="#report-fields" aria-hidden="true"></a>Report Fields</h2><table>
 <thead>
 <tr>
 <th align="left">Field</th>

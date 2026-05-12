@@ -20,26 +20,26 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="probing-guide">Probing Guide</h1><p>Probing is the process of using a specialized sensor (a probe) to automatically find the position of your workpiece or tool. It turns your CNC machine into a measuring device, allowing you to set Work Zero offsets with extreme accuracy.</p>
-<h2 id="how-it-works">How it Works</h2><p>A probe acts like a switch. When the tool touches the probe (or the workpiece), the circuit closes, and grblHAL captures the exact position.</p>
-<h3 id="common-probe-types">Common Probe Types</h3><ol>
+      <h1 id="probing-guide"><a class="anchor" href="#probing-guide" aria-hidden="true"></a>Probing Guide</h1><p>Probing is the process of using a specialized sensor (a probe) to automatically find the position of your workpiece or tool. It turns your CNC machine into a measuring device, allowing you to set Work Zero offsets with extreme accuracy.</p>
+<h2 id="how-it-works"><a class="anchor" href="#how-it-works" aria-hidden="true"></a>How it Works</h2><p>A probe acts like a switch. When the tool touches the probe (or the workpiece), the circuit closes, and grblHAL captures the exact position.</p>
+<h3 id="common-probe-types"><a class="anchor" href="#common-probe-types" aria-hidden="true"></a>Common Probe Types</h3><ol>
 <li><strong>Touch Plate (Z-Probe):</strong> A metal plate of known thickness used to find the top of the material.</li>
 <li><strong>XYZ Probe / Corner Finder:</strong> A block that allows finding X, Y, and Z zero simultaneously at a corner.</li>
 <li><strong>Tool Setter:</strong> A fixed switch on the table used to measure tool lengths.</li>
 <li><strong>3D Touch Probe:</strong> A precision stylus mounted in the spindle for digitizing surfaces or finding edges.</li>
 </ol>
 <hr>
-<h2 id="configuration">Configuration</h2><h3 id="1-wiring"><strong>1. Wiring</strong></h3><ul>
+<h2 id="configuration"><a class="anchor" href="#configuration" aria-hidden="true"></a>Configuration</h2><h3 id="1-wiring"><a class="anchor" href="#1-wiring" aria-hidden="true"></a><strong>1. Wiring</strong></h3><ul>
 <li><strong>Signal Pin:</strong> Connect to the <code>Probe</code> input on your controller.</li>
 <li><strong>Ground:</strong> Connect to the machine ground (often the spindle body or a clip attached to the end mill).</li>
 <li><strong>Test:</strong> Use a multimeter to ensure continuity when the tool touches the plate.</li>
 </ul>
-<h3 id="2-inverting-input-6"><strong>2. Inverting Input (<code>$6</code>)</strong></h3><ul>
+<h3 id="2-inverting-input-6"><a class="anchor" href="#2-inverting-input-6" aria-hidden="true"></a><strong>2. Inverting Input (<code>$6</code>)</strong></h3><ul>
 <li>Use <code>$6</code> to invert the probe input if it reports &quot;Triggered&quot; when not touching.</li>
 <li>Check status with <code>?</code> status reports. <code>Pn:P</code> indicates the probe is triggered.</li>
 </ul>
 <hr>
-<h2 id="the-g38-probing-commands">The G38 Probing Commands</h2><p>grblHAL supports standard G-code probing cycles:</p>
+<h2 id="the-g38-probing-commands"><a class="anchor" href="#the-g38-probing-commands" aria-hidden="true"></a>The G38 Probing Commands</h2><p>grblHAL supports standard G-code probing cycles:</p>
 <table>
 <thead>
 <tr>
@@ -75,13 +75,13 @@
 </tr>
 </tbody></table>
 <p><strong>Most common usage:</strong> <code>G38.2</code> (Move until touch).</p>
-<h3 id="syntax"><strong>Syntax</strong></h3><p><code>G38.2 [Axis][Target] F[Rate]</code></p>
+<h3 id="syntax"><a class="anchor" href="#syntax" aria-hidden="true"></a><strong>Syntax</strong></h3><p><code>G38.2 [Axis][Target] F[Rate]</code></p>
 <p>Example:</p>
 <pre><code class="language-gcode">G38.2 Z-25 F100
 </code></pre>
 <p><em>Meaning: Move Z down toward -25mm at 100mm/min. Stop immediately upon contact.</em></p>
 <hr>
-<h2 id="practical-examples">Practical Examples</h2><h3 id="1-simple-z-zero-touch-plate"><strong>1. Simple Z-Zero (Touch Plate)</strong></h3><p>Suppose you have a 10mm thick touch plate.</p>
+<h2 id="practical-examples"><a class="anchor" href="#practical-examples" aria-hidden="true"></a>Practical Examples</h2><h3 id="1-simple-z-zero-touch-plate"><a class="anchor" href="#1-simple-z-zero-touch-plate" aria-hidden="true"></a><strong>1. Simple Z-Zero (Touch Plate)</strong></h3><p>Suppose you have a 10mm thick touch plate.</p>
 <ol>
 <li><strong>Jog</strong> the tool roughly 5-10mm above the plate.</li>
 <li><strong>Attach</strong> the magnet clip to the collet/tool.</li>
@@ -91,7 +91,7 @@ G91 G0 Z5         ; Retract 5mm relative
 </code></pre>
 <em>Result: Z0 is now exactly set to the material surface.</em></li>
 </ol>
-<h3 id="2-finding-a-corner-xyz"><strong>2. Finding a Corner (XYZ)</strong></h3><p>For a corner finder plate (let&#39;s say 10mm offset for X/Y/Z).</p>
+<h3 id="2-finding-a-corner-xyz"><a class="anchor" href="#2-finding-a-corner-xyz" aria-hidden="true"></a><strong>2. Finding a Corner (XYZ)</strong></h3><p>For a corner finder plate (let&#39;s say 10mm offset for X/Y/Z).</p>
 <ol>
 <li><strong>Position</strong> tool inside the corner area.</li>
 <li><strong>Probe Z:</strong><pre><code class="language-gcode">G38.2 Z-25 F50
@@ -110,14 +110,14 @@ G0 X5             ; Back off
 <em>(Repeat logic for Y axis)</em></li>
 </ol>
 <hr>
-<h2 id="safety-and-amp-troubleshooting">Safety &amp; Troubleshooting</h2><h3 id="always-test-connectivity-first"><strong>Always Test Connectivity First!</strong></h3><p>Before running a probe cycle, touch the clip to the plate manually and check the status report (<code>?</code>). If it doesn&#39;t show the probe pin active (<code>Pn:P</code>), <strong>DO NOT PROBE</strong>. You will crash the tool.</p>
-<h3 id="use-two-stage-probing"><strong>Use Two-Stage Probing</strong></h3><p>For best accuracy:</p>
+<h2 id="safety-and-amp-troubleshooting"><a class="anchor" href="#safety-and-amp-troubleshooting" aria-hidden="true"></a>Safety &amp; Troubleshooting</h2><h3 id="always-test-connectivity-first"><a class="anchor" href="#always-test-connectivity-first" aria-hidden="true"></a><strong>Always Test Connectivity First!</strong></h3><p>Before running a probe cycle, touch the clip to the plate manually and check the status report (<code>?</code>). If it doesn&#39;t show the probe pin active (<code>Pn:P</code>), <strong>DO NOT PROBE</strong>. You will crash the tool.</p>
+<h3 id="use-two-stage-probing"><a class="anchor" href="#use-two-stage-probing" aria-hidden="true"></a><strong>Use Two-Stage Probing</strong></h3><p>For best accuracy:</p>
 <ol>
 <li>Probe fast (<code>F300</code>) to find the approximate location.</li>
 <li>Retract slightly (<code>1-2mm</code>).</li>
 <li>Probe slow (<code>F25</code>) for the precise measurement.</li>
 </ol>
-<h3 id="probe-protection"><strong>Probe Protection</strong></h3><p>If you have a specialized probe (like a Renishaw), ensure it&#39;s wired Normally Closed (NC) if possible, so a disconnect stops the machine.</p>
+<h3 id="probe-protection"><a class="anchor" href="#probe-protection" aria-hidden="true"></a><strong>Probe Protection</strong></h3><p>If you have a specialized probe (like a Renishaw), ensure it&#39;s wired Normally Closed (NC) if possible, so a disconnect stops the machine.</p>
 <hr>
 <p><strong>Next:</strong> Learn how to handle tool changes efficiently: <a href="./automatic-tool-changer.md">Automatic Tool Changer</a></p>
 

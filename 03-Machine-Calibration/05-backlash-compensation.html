@@ -20,47 +20,47 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="backlash-compensation">Backlash Compensation</h1><p><strong>Backlash</strong> is the lost motion or &quot;slop&quot; in a mechanical system caused by gaps between mating parts (e.g., a lead screw and nut, or loose belt teeth).</p>
+      <h1 id="backlash-compensation"><a class="anchor" href="#backlash-compensation" aria-hidden="true"></a>Backlash Compensation</h1><p><strong>Backlash</strong> is the lost motion or &quot;slop&quot; in a mechanical system caused by gaps between mating parts (e.g., a lead screw and nut, or loose belt teeth).</p>
 <p>When an axis reverses direction, the motor turns for a brief moment to take up this slack before the load actually moves. This results in:</p>
 <ul>
 <li>Circles that are slightly flat at the quadrants (ovals).</li>
 <li>Undersized features.</li>
 <li>Poor surface finish.</li>
 </ul>
-<h2 id="the-golden-rule-fix-mechanics-first">The Golden Rule: Fix Mechanics First!</h2><p>Software compensation is a <strong>band-aid</strong>, not a cure. Before enabling compensation:</p>
+<h2 id="the-golden-rule-fix-mechanics-first"><a class="anchor" href="#the-golden-rule-fix-mechanics-first" aria-hidden="true"></a>The Golden Rule: Fix Mechanics First!</h2><p>Software compensation is a <strong>band-aid</strong>, not a cure. Before enabling compensation:</p>
 <ol>
 <li><strong>Belts:</strong> Ensure they are tight (like a guitar string).</li>
 <li><strong>Couplers:</strong> Check for loose set screws on motor couplers.</li>
 <li><strong>Anti-Backlash Nuts:</strong> Adjust or replace worn anti-backlash nuts on lead screws.</li>
 <li><strong>Pinions:</strong> Ensure rack-and-pinion gears differ mesh properly.</li>
 </ol>
-<h2 id="measuring-backlash">Measuring Backlash</h2><p>To configure compensation, you must first measure the exact amount of backlash on each axis.</p>
-<h3 id="method-dial-indicator-best"><strong>Method: Dial Indicator (Best)</strong></h3><ol>
+<h2 id="measuring-backlash"><a class="anchor" href="#measuring-backlash" aria-hidden="true"></a>Measuring Backlash</h2><p>To configure compensation, you must first measure the exact amount of backlash on each axis.</p>
+<h3 id="method-dial-indicator-best"><a class="anchor" href="#method-dial-indicator-best" aria-hidden="true"></a><strong>Method: Dial Indicator (Best)</strong></h3><ol>
 <li>Mount a dial indicator against a solid block on the axis.</li>
 <li>Zero the axis and the indicator.</li>
 <li>Move the axis <strong>away</strong> (e.g., <code>G0 X10</code>).</li>
 <li>Move the axis <strong>back</strong> to zero (<code>G0 X0</code>).</li>
 <li>Read the indicator. The potential difference from zero is your backlash (repeat 5 times and average).</li>
 </ol>
-<h3 id="method-test-cut"><strong>Method: Test Cut</strong></h3><ol>
+<h3 id="method-test-cut"><a class="anchor" href="#method-test-cut" aria-hidden="true"></a><strong>Method: Test Cut</strong></h3><ol>
 <li>Cut a 20mm circle.</li>
 <li>Measure the diameter across X and Y.</li>
 <li>Calculate the difference between the expected diameter and the measured diameter.</li>
 </ol>
-<h2 id="configuring-compensation">Configuring Compensation</h2><p><strong>Note:</strong> Backlash compensation must be enabled in your firmware build (<code>#define BACKLASH_COMPENSATION</code> in <code>my_machine.h</code>). If these settings don&#39;t stick, you may need a firmware update.</p>
-<h3 id="settings"><strong>Settings:</strong></h3><ul>
+<h2 id="configuring-compensation"><a class="anchor" href="#configuring-compensation" aria-hidden="true"></a>Configuring Compensation</h2><p><strong>Note:</strong> Backlash compensation must be enabled in your firmware build (<code>#define BACKLASH_COMPENSATION</code> in <code>my_machine.h</code>). If these settings don&#39;t stick, you may need a firmware update.</p>
+<h3 id="settings"><a class="anchor" href="#settings" aria-hidden="true"></a><strong>Settings:</strong></h3><ul>
 <li><strong><code>$160</code></strong>: X-axis backlash distance (mm)</li>
 <li><strong><code>$161</code></strong>: Y-axis backlash distance (mm)</li>
 <li><strong><code>$162</code></strong>: Z-axis backlash distance (mm)</li>
 </ul>
-<h3 id="procedure"><strong>Procedure:</strong></h3><ol>
+<h3 id="procedure"><a class="anchor" href="#procedure" aria-hidden="true"></a><strong>Procedure:</strong></h3><ol>
 <li>Enter your measured backlash value (e.g., <code>$160=0.05</code> for 0.05mm of slop).</li>
 <li>Run a test circle.</li>
 <li>Adjust until the circle is perfectly round.</li>
 </ol>
 <p><strong>Tip:</strong> Be conservative. Compensating too much can cause jerky motion or &quot;clunking&quot; sounds.</p>
 <hr>
-<h2 id="conclusion">Conclusion</h2><p>You have now completed the core machine calibration! Your machine is:</p>
+<h2 id="conclusion"><a class="anchor" href="#conclusion" aria-hidden="true"></a>Conclusion</h2><p>You have now completed the core machine calibration! Your machine is:</p>
 <ul>
 <li><strong>Accurate</strong> (Steps/mm)</li>
 <li><strong>Fast &amp; Smooth</strong> (Motion Tuning)</li>

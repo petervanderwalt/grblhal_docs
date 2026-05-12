@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="grbl-vs-grblhal">Grbl vs. grblHAL</h1><p>Understanding the differences between original <strong>Grbl</strong> and <strong>grblHAL</strong> will help you appreciate why grblHAL represents a significant evolution in open-source CNC control. This page breaks down the key differences and improvements.</p>
-<h2 id="quick-comparison-table">Quick Comparison Table</h2><table>
+      <h1 id="grbl-vs-grblhal"><a class="anchor" href="#grbl-vs-grblhal" aria-hidden="true"></a>Grbl vs. grblHAL</h1><p>Understanding the differences between original <strong>Grbl</strong> and <strong>grblHAL</strong> will help you appreciate why grblHAL represents a significant evolution in open-source CNC control. This page breaks down the key differences and improvements.</p>
+<h2 id="quick-comparison-table"><a class="anchor" href="#quick-comparison-table" aria-hidden="true"></a>Quick Comparison Table</h2><table>
 <thead>
 <tr>
 <th>Feature</th>
@@ -95,13 +95,13 @@
 <td>Active, ongoing development</td>
 </tr>
 </tbody></table>
-<h2 id="architecture-the-fundamental-difference">Architecture: The Fundamental Difference</h2><h3 id="original-grbl"><strong>Original Grbl</strong></h3><p>Grbl was designed specifically for 8-bit AVR microcontrollers (primarily the Arduino Uno). The code was tightly integrated with the hardware, making it:</p>
+<h2 id="architecture-the-fundamental-difference"><a class="anchor" href="#architecture-the-fundamental-difference" aria-hidden="true"></a>Architecture: The Fundamental Difference</h2><h3 id="original-grbl"><a class="anchor" href="#original-grbl" aria-hidden="true"></a><strong>Original Grbl</strong></h3><p>Grbl was designed specifically for 8-bit AVR microcontrollers (primarily the Arduino Uno). The code was tightly integrated with the hardware, making it:</p>
 <ul>
 <li><strong>Difficult to port</strong> to other platforms</li>
 <li><strong>Limited by 8-bit constraints</strong> in memory and processing power</li>
 <li><strong>Fragmented</strong> when developers created independent 32-bit ports</li>
 </ul>
-<h3 id="grblhal"><strong>grblHAL</strong></h3><p>grblHAL introduces a <strong>Hardware Abstraction Layer (HAL)</strong> that separates:</p>
+<h3 id="grblhal"><a class="anchor" href="#grblhal" aria-hidden="true"></a><strong>grblHAL</strong></h3><p>grblHAL introduces a <strong>Hardware Abstraction Layer (HAL)</strong> that separates:</p>
 <ul>
 <li><strong>Core GRBL logic</strong> (motion planning, G-code parsing, etc.)</li>
 <li><strong>Hardware-specific code</strong> (GPIO, timers, interrupts, etc.)</li>
@@ -112,7 +112,7 @@
 <li><strong>Consistently updated</strong> across all supported boards</li>
 <li><strong>Unified</strong> with a single codebase for all platforms</li>
 </ul>
-<h2 id="performance-improvements">Performance Improvements</h2><h3 id="step-rate-and-amp-speed"><strong>Step Rate &amp; Speed</strong></h3><p><strong>Original Grbl:</strong></p>
+<h2 id="performance-improvements"><a class="anchor" href="#performance-improvements" aria-hidden="true"></a>Performance Improvements</h2><h3 id="step-rate-and-amp-speed"><a class="anchor" href="#step-rate-and-amp-speed" aria-hidden="true"></a><strong>Step Rate &amp; Speed</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>Maximum step rate: ~30 kHz</li>
 <li>Limits machine speed and microstepping resolution</li>
@@ -126,7 +126,7 @@
 <li>Handles complex toolpaths smoothly</li>
 </ul>
 <p><strong>Real-world impact:</strong> You can run your machine faster, use higher microstepping for smoother motion, or both.</p>
-<h3 id="processing-power"><strong>Processing Power</strong></h3><p><strong>Original Grbl:</strong></p>
+<h3 id="processing-power"><a class="anchor" href="#processing-power" aria-hidden="true"></a><strong>Processing Power</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>16 MHz 8-bit processor</li>
 <li>Limited lookahead buffer</li>
@@ -139,7 +139,7 @@
 <li>Smoother motion through complex curves</li>
 <li>More headroom for additional features</li>
 </ul>
-<h2 id="feature-enhancements">Feature Enhancements</h2><h3 id="g-code-compatibility"><strong>G-code Compatibility</strong></h3><p><strong>Original Grbl:</strong></p>
+<h2 id="feature-enhancements"><a class="anchor" href="#feature-enhancements" aria-hidden="true"></a>Feature Enhancements</h2><h3 id="g-code-compatibility"><a class="anchor" href="#g-code-compatibility" aria-hidden="true"></a><strong>G-code Compatibility</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>Basic G-code support (G0, G1, G2, G3, etc.)</li>
 <li>Limited work coordinate systems</li>
@@ -157,7 +157,7 @@
 <li><strong>Optional parameters</strong> for advanced operations</li>
 <li><strong>M62-M65</strong> digital output control</li>
 </ul>
-<h3 id="connectivity"><strong>Connectivity</strong></h3><p><strong>Original Grbl:</strong></p>
+<h3 id="connectivity"><a class="anchor" href="#connectivity" aria-hidden="true"></a><strong>Connectivity</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>USB serial connection only</li>
 <li>Requires a computer to be connected</li>
@@ -172,7 +172,7 @@
 <li><strong>SD card</strong> for standalone operation</li>
 </ul>
 <p><strong>Real-world impact:</strong> Run jobs from SD card without a computer, or control your CNC remotely via Wi-Fi.</p>
-<h3 id="multi-axis-support"><strong>Multi-Axis Support</strong></h3><p><strong>Original Grbl:</strong></p>
+<h3 id="multi-axis-support"><a class="anchor" href="#multi-axis-support" aria-hidden="true"></a><strong>Multi-Axis Support</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>3-6 axes depending on configuration</li>
 <li>Limited auto-squaring support</li>
@@ -184,7 +184,7 @@
 <li><strong>Ganged axes</strong> configuration</li>
 <li>Better support for complex machine configurations</li>
 </ul>
-<h3 id="extensibility"><strong>Extensibility</strong></h3><p><strong>Original Grbl:</strong></p>
+<h3 id="extensibility"><a class="anchor" href="#extensibility" aria-hidden="true"></a><strong>Extensibility</strong></h3><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>Monolithic codebase</li>
 <li>Modifications require editing core code</li>
@@ -198,7 +198,7 @@
 <li><strong>Third-party driver support</strong></li>
 <li>Examples: ATC plugins, custom I/O control, specialized machine configurations</li>
 </ul>
-<h3 id="advanced-features"><strong>Advanced Features</strong></h3><p>Features available in grblHAL but not in original Grbl:</p>
+<h3 id="advanced-features"><a class="anchor" href="#advanced-features" aria-hidden="true"></a><strong>Advanced Features</strong></h3><p>Features available in grblHAL but not in original Grbl:</p>
 <ul>
 <li><strong>Backlash compensation</strong> for mechanical play</li>
 <li><strong>High-precision spindle synchronization</strong> (threading, tapping)</li>
@@ -209,28 +209,28 @@
 <li><strong>Jog commands</strong> while idle</li>
 <li><strong>Macro support</strong> (in compatible senders)</li>
 </ul>
-<h2 id="memory-and-amp-resources">Memory &amp; Resources</h2><h3 id="original-grbl"><strong>Original Grbl</strong></h3><ul>
+<h2 id="memory-and-amp-resources"><a class="anchor" href="#memory-and-amp-resources" aria-hidden="true"></a>Memory &amp; Resources</h2><h3 id="original-grbl"><a class="anchor" href="#original-grbl" aria-hidden="true"></a><strong>Original Grbl</strong></h3><ul>
 <li>32 KB Flash, 2 KB RAM</li>
 <li>Features often had to be <strong>disabled</strong> to fit firmware</li>
 <li>Trade-offs between features and available memory</li>
 </ul>
-<h3 id="grblhal"><strong>grblHAL</strong></h3><ul>
+<h3 id="grblhal"><a class="anchor" href="#grblhal" aria-hidden="true"></a><strong>grblHAL</strong></h3><ul>
 <li>256 KB - 16 MB Flash, 64 KB - 1 MB RAM</li>
 <li><strong>All features enabled</strong> without memory constraints</li>
 <li>Room for future expansion and plugins</li>
 </ul>
-<h2 id="development-and-amp-maintenance">Development &amp; Maintenance</h2><h3 id="original-grbl"><strong>Original Grbl</strong></h3><ul>
+<h2 id="development-and-amp-maintenance"><a class="anchor" href="#development-and-amp-maintenance" aria-hidden="true"></a>Development &amp; Maintenance</h2><h3 id="original-grbl"><a class="anchor" href="#original-grbl" aria-hidden="true"></a><strong>Original Grbl</strong></h3><ul>
 <li>In <strong>maintenance mode</strong> (stable but minimal new features)</li>
 <li>Community forks for specific needs</li>
 <li>Fragmented 32-bit ports with inconsistent features</li>
 </ul>
-<h3 id="grblhal"><strong>grblHAL</strong></h3><ul>
+<h3 id="grblhal"><a class="anchor" href="#grblhal" aria-hidden="true"></a><strong>grblHAL</strong></h3><ul>
 <li><strong>Active development</strong> by Terje Io and community</li>
 <li>Regular updates and bug fixes</li>
 <li>Unified codebase ensures consistency</li>
 <li>New features benefit all supported platforms</li>
 </ul>
-<h2 id="migration-path">Migration Path</h2><h3 id="should-you-upgrade-from-grbl-to-grblhal"><strong>Should You Upgrade from Grbl to grblHAL?</strong></h3><p><strong>Consider grblHAL if you:</strong></p>
+<h2 id="migration-path"><a class="anchor" href="#migration-path" aria-hidden="true"></a>Migration Path</h2><h3 id="should-you-upgrade-from-grbl-to-grblhal"><a class="anchor" href="#should-you-upgrade-from-grbl-to-grblhal" aria-hidden="true"></a><strong>Should You Upgrade from Grbl to grblHAL?</strong></h3><p><strong>Consider grblHAL if you:</strong></p>
 <ul>
 <li>Want faster machine speeds and smoother motion</li>
 <li>Need advanced G-code features (canned cycles, tool changes)</li>
@@ -247,8 +247,8 @@
 <li>Want the simplicity of the original</li>
 <li>Have legacy toolchains dependent on Grbl</li>
 </ul>
-<h3 id="is-my-g-code-compatible"><strong>Is My G-code Compatible?</strong></h3><p><strong>Good news:</strong> grblHAL is <strong>backwards compatible</strong> with Grbl G-code. Your existing programs will work, but you&#39;ll also be able to use more advanced G-code features.</p>
-<h2 id="cost-considerations">Cost Considerations</h2><p><strong>Original Grbl:</strong></p>
+<h3 id="is-my-g-code-compatible"><a class="anchor" href="#is-my-g-code-compatible" aria-hidden="true"></a><strong>Is My G-code Compatible?</strong></h3><p><strong>Good news:</strong> grblHAL is <strong>backwards compatible</strong> with Grbl G-code. Your existing programs will work, but you&#39;ll also be able to use more advanced G-code features.</p>
+<h2 id="cost-considerations"><a class="anchor" href="#cost-considerations" aria-hidden="true"></a>Cost Considerations</h2><p><strong>Original Grbl:</strong></p>
 <ul>
 <li>Arduino Uno: ~$5-25</li>
 <li>CNC shield: ~$5-15</li>
@@ -261,7 +261,7 @@
 <li><strong>Total: ~$10-80</strong></li>
 </ul>
 <p><strong>Verdict:</strong> grblHAL can be <strong>equally affordable</strong> while offering significantly more features and performance.</p>
-<h2 id="compatibility-with-senders">Compatibility with Senders</h2><p>Both Grbl and grblHAL work with popular G-code senders:</p>
+<h2 id="compatibility-with-senders"><a class="anchor" href="#compatibility-with-senders" aria-hidden="true"></a>Compatibility with Senders</h2><p>Both Grbl and grblHAL work with popular G-code senders:</p>
 <ul>
 <li><strong>Universal Gcode Sender (UGS)</strong></li>
 <li><strong>CNCjs</strong></li>
@@ -272,8 +272,8 @@
 </ul>
 <p>Most senders work with both, though some may need minor configuration adjustments for grblHAL-specific features.</p>
 <hr>
-<h2 id="comparison-with-other-cnc-systems">Comparison with Other CNC Systems</h2><p>While <strong>grblHAL</strong> is the natural successor to Grbl, users often compare it with other popular control solutions.</p>
-<h3 id="1-grblhal-vs-fluidnc"><strong>1. grblHAL vs. FluidNC</strong></h3><p><strong>FluidNC</strong> is another modern, 32-bit Grbl-based firmware, specifically optimized for the <strong>ESP32</strong> ecosystem.</p>
+<h2 id="comparison-with-other-cnc-systems"><a class="anchor" href="#comparison-with-other-cnc-systems" aria-hidden="true"></a>Comparison with Other CNC Systems</h2><p>While <strong>grblHAL</strong> is the natural successor to Grbl, users often compare it with other popular control solutions.</p>
+<h3 id="1-grblhal-vs-fluidnc"><a class="anchor" href="#1-grblhal-vs-fluidnc" aria-hidden="true"></a><strong>1. grblHAL vs. FluidNC</strong></h3><p><strong>FluidNC</strong> is another modern, 32-bit Grbl-based firmware, specifically optimized for the <strong>ESP32</strong> ecosystem.</p>
 <table>
 <thead>
 <tr>
@@ -308,7 +308,7 @@
 <td align="left">Users wanting a &quot;no-compile&quot; WiFi experience on ESP32.</td>
 </tr>
 </tbody></table>
-<h3 id="2-grblhal-vs-mach3-mach4"><strong>2. grblHAL vs. Mach3 / Mach4</strong></h3><p><strong>Mach3</strong> was the hobbyist standard for years, running on Windows PCs.</p>
+<h3 id="2-grblhal-vs-mach3-mach4"><a class="anchor" href="#2-grblhal-vs-mach3-mach4" aria-hidden="true"></a><strong>2. grblHAL vs. Mach3 / Mach4</strong></h3><p><strong>Mach3</strong> was the hobbyist standard for years, running on Windows PCs.</p>
 <table>
 <thead>
 <tr>
@@ -348,7 +348,7 @@
 <td align="left">Legacy retrofits or users deeply invested in the Mach ecosystem.</td>
 </tr>
 </tbody></table>
-<h3 id="3-grblhal-vs-linuxcnc"><strong>3. grblHAL vs. LinuxCNC</strong></h3><p><strong>LinuxCNC</strong> is a professional-grade controller running on Linux with a Real-Time Kernel.</p>
+<h3 id="3-grblhal-vs-linuxcnc"><a class="anchor" href="#3-grblhal-vs-linuxcnc" aria-hidden="true"></a><strong>3. grblHAL vs. LinuxCNC</strong></h3><p><strong>LinuxCNC</strong> is a professional-grade controller running on Linux with a Real-Time Kernel.</p>
 <table>
 <thead>
 <tr>
@@ -384,7 +384,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="summary">Summary</h2><ul>
+<h2 id="summary"><a class="anchor" href="#summary" aria-hidden="true"></a>Summary</h2><ul>
 <li><strong>Upgrade to grblHAL</strong> if you want a modern, fast, and feature-rich controller that runs on cheap hardware and frees your PC from real-time duties.</li>
 <li><strong>Use FluidNC</strong> if you specifically want an ESP32-based, WiFi-centric controller with zero compilation.</li>
 <li><strong>Use LinuxCNC</strong> if you are building an industrial 5-axis machine or robot arm and need absolute unchecked power.</li>

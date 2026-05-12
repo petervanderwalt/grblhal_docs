@@ -20,13 +20,13 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="troubleshooting-guide">Troubleshooting Guide</h1><p>This page covers common issues encountered when setting up grblHAL.</p>
-<h2 id="1-connection-issues">1. Connection Issues</h2><h3 id="and-quotno-port-found-and-quot"><strong>&quot;No Port Found&quot;</strong></h3><ul>
+      <h1 id="troubleshooting-guide"><a class="anchor" href="#troubleshooting-guide" aria-hidden="true"></a>Troubleshooting Guide</h1><p>This page covers common issues encountered when setting up grblHAL.</p>
+<h2 id="1-connection-issues"><a class="anchor" href="#1-connection-issues" aria-hidden="true"></a>1. Connection Issues</h2><h3 id="and-quotno-port-found-and-quot"><a class="anchor" href="#and-quotno-port-found-and-quot" aria-hidden="true"></a><strong>&quot;No Port Found&quot;</strong></h3><ul>
 <li><strong>Driver Missing:</strong> Ensure you have installed the CH340, CP2102, or STM32 VCP driver for your board.</li>
 <li><strong>Cable:</strong> Try a different USB cable. Many are &quot;charge only.&quot;</li>
 <li><strong>Permissions:</strong> (Linux/Mac) Ensure your user is in the <code>dialout</code> or <code>tty</code> group.</li>
 </ul>
-<h3 id="and-quotgarbage-characters-and-quot"><strong>&quot;Garbage Characters&quot;</strong></h3><ul>
+<h3 id="and-quotgarbage-characters-and-quot"><a class="anchor" href="#and-quotgarbage-characters-and-quot" aria-hidden="true"></a><strong>&quot;Garbage Characters&quot;</strong></h3><ul>
 <li><strong>Baud Rate:</strong> Ensure your sender is set to match the firmware.<ul>
 <li>Standard Grbl: <code>115200</code></li>
 <li>Native USB (STM32/RP2040): Any baud rate works, but some senders default to <code>115200</code>.</li>
@@ -34,25 +34,25 @@
 </li>
 </ul>
 <hr>
-<h2 id="2-motion-issues">2. Motion Issues</h2><h3 id="motors-buzz-but-don-and-39t-move"><strong>Motors Buzz but Don&#39;t Move</strong></h3><ul>
+<h2 id="2-motion-issues"><a class="anchor" href="#2-motion-issues" aria-hidden="true"></a>2. Motion Issues</h2><h3 id="motors-buzz-but-don-and-39t-move"><a class="anchor" href="#motors-buzz-but-don-and-39t-move" aria-hidden="true"></a><strong>Motors Buzz but Don&#39;t Move</strong></h3><ul>
 <li><strong>Wiring:</strong> Check motor coil pairs. Verify continuity.</li>
 <li><strong>Acceleration:</strong> Your <code>$120-$122</code> might be too high. Lower it drastically (e.g., <code>50</code>) and re-test.</li>
 <li><strong>Current:</strong> Adjust the potentiometer on your stepper driver.</li>
 </ul>
-<h3 id="axis-moves-wrong-direction"><strong>Axis Moves Wrong Direction</strong></h3><ul>
+<h3 id="axis-moves-wrong-direction"><a class="anchor" href="#axis-moves-wrong-direction" aria-hidden="true"></a><strong>Axis Moves Wrong Direction</strong></h3><ul>
 <li>Invert the direction using setting <strong><code>$3</code></strong>.<ul>
 <li>(See <a href="./04-Reference/complete-settings-reference.md#3--direction-invert-mask">Settings Reference</a>)</li>
 </ul>
 </li>
 </ul>
-<h3 id="dimensions-are-wrong"><strong>Dimensions are Wrong</strong></h3><ul>
+<h3 id="dimensions-are-wrong"><a class="anchor" href="#dimensions-are-wrong" aria-hidden="true"></a><strong>Dimensions are Wrong</strong></h3><ul>
 <li>Calibrate your steps per mm (<code>$100-$102</code>).<ul>
 <li>(See <a href="./03-Machine-Calibration/02-calibrating-steps.md">Calibration Guide</a>)</li>
 </ul>
 </li>
 </ul>
 <hr>
-<h2 id="3-homing-failures">3. Homing Failures</h2><h3 id="alarm-9-homing-fail"><strong>Alarm 9 (Homing Fail)</strong></h3><ul>
+<h2 id="3-homing-failures"><a class="anchor" href="#3-homing-failures" aria-hidden="true"></a>3. Homing Failures</h2><h3 id="alarm-9-homing-fail"><a class="anchor" href="#alarm-9-homing-fail" aria-hidden="true"></a><strong>Alarm 9 (Homing Fail)</strong></h3><ul>
 <li><strong>Switch didn&#39;t trigger:</strong> The axis moved the max distance (<code>$130</code> * 1.5) without hitting a switch.<ul>
 <li>Check wiring.</li>
 <li>Check switch functionality with <code>?</code> status report (pins should correspond to <code>Pn:XYZ</code>).</li>
@@ -60,11 +60,11 @@
 </li>
 <li><strong>Switch triggered immediately:</strong> The switch is wired Normally Closed (NC) but configured as Normally Open (NO) in <code>$5</code>, or vice versa.</li>
 </ul>
-<h3 id="axis-moves-away-from-switch"><strong>Axis Moves Away from Switch</strong></h3><ul>
+<h3 id="axis-moves-away-from-switch"><a class="anchor" href="#axis-moves-away-from-switch" aria-hidden="true"></a><strong>Axis Moves Away from Switch</strong></h3><ul>
 <li>Invert homing direction using <strong><code>$23</code></strong>.</li>
 </ul>
 <hr>
-<h2 id="4-common-alarms">4. Common Alarms</h2><table>
+<h2 id="4-common-alarms"><a class="anchor" href="#4-common-alarms" aria-hidden="true"></a>4. Common Alarms</h2><table>
 <thead>
 <tr>
 <th align="left">Alarm</th>
@@ -99,7 +99,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="5-spindle-laser-issues">5. Spindle / Laser Issues</h2><h3 id="laser-won-and-39t-turn-off"><strong>Laser Won&#39;t Turn Off</strong></h3><ul>
+<h2 id="5-spindle-laser-issues"><a class="anchor" href="#5-spindle-laser-issues" aria-hidden="true"></a>5. Spindle / Laser Issues</h2><h3 id="laser-won-and-39t-turn-off"><a class="anchor" href="#laser-won-and-39t-turn-off" aria-hidden="true"></a><strong>Laser Won&#39;t Turn Off</strong></h3><ul>
 <li>Check <code>$32</code> (Laser Mode).</li>
 <li>Ensure you are using <code>M4</code> (Dynamic Power) for engraving.</li>
 <li>Check if <code>$31</code> (Min Spindle Speed) is <code>0</code>.</li>
@@ -108,14 +108,14 @@
 <p><strong>Need more help?</strong>
 Check the <a href="https://github.com/grblHAL/core/issues">GitHub Issues</a> or join the community Discord.</p>
 <hr>
-<h2 id="6-electromagnetic-interference-emi">6. Electromagnetic Interference (EMI)</h2><p>EMI is a common cause of unexplainable random issues, usually triggered by high-power devices like spindles, VFDs, or plasma cutters.</p>
-<h3 id="symptoms"><strong>Symptoms</strong></h3><ul>
+<h2 id="6-electromagnetic-interference-emi"><a class="anchor" href="#6-electromagnetic-interference-emi" aria-hidden="true"></a>6. Electromagnetic Interference (EMI)</h2><p>EMI is a common cause of unexplainable random issues, usually triggered by high-power devices like spindles, VFDs, or plasma cutters.</p>
+<h3 id="symptoms"><a class="anchor" href="#symptoms" aria-hidden="true"></a><strong>Symptoms</strong></h3><ul>
 <li><strong>USB Disconnections:</strong> The controller disconnects from the PC when the spindle starts or under load.</li>
 <li><strong>False Hard Limits:</strong> &quot;Alarm 1&quot; triggers randomly even when the machine is nowhere near a switch.</li>
 <li><strong>Corrupted Data:</strong> Strange characters in the console or the machine making erratic moves.</li>
 <li><strong>Frozen Probing:</strong> Probes trigger falsely or fail to trigger.</li>
 </ul>
-<h3 id="mitigation-steps"><strong>Mitigation Steps</strong></h3><ol>
+<h3 id="mitigation-steps"><a class="anchor" href="#mitigation-steps" aria-hidden="true"></a><strong>Mitigation Steps</strong></h3><ol>
 <li><p><strong>Cable Separation:</strong></p>
 <ul>
 <li><strong>Keep low-voltage signals</strong> (USB, Limit Switches, Probe) <strong>FAR AWAY</strong> from high-voltage power cables (Spindle, Stepper Motors, VFD).</li>

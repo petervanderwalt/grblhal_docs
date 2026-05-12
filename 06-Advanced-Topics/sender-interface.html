@@ -20,13 +20,13 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="sender-developer-guide">Sender Developer Guide</h1><p><strong>grblHAL</strong> extends the original Grbl v1.1 protocol to support advanced hardware, plugins, and networking. While it remains backward compatible with most legacy senders, fully unlocking its potential requires understanding key differences.</p>
-<h2 id="1-connection-and-amp-startup">1. Connection &amp; Startup</h2><p>Unlike 8-bit Grbl on Arduino Uno, <strong>grblHAL controllers do NOT always auto-reset</strong> upon serial connection.</p>
-<h3 id="the-problem">The Problem</h3><ul>
+      <h1 id="sender-developer-guide"><a class="anchor" href="#sender-developer-guide" aria-hidden="true"></a>Sender Developer Guide</h1><p><strong>grblHAL</strong> extends the original Grbl v1.1 protocol to support advanced hardware, plugins, and networking. While it remains backward compatible with most legacy senders, fully unlocking its potential requires understanding key differences.</p>
+<h2 id="1-connection-and-amp-startup"><a class="anchor" href="#1-connection-and-amp-startup" aria-hidden="true"></a>1. Connection &amp; Startup</h2><p>Unlike 8-bit Grbl on Arduino Uno, <strong>grblHAL controllers do NOT always auto-reset</strong> upon serial connection.</p>
+<h3 id="the-problem"><a class="anchor" href="#the-problem" aria-hidden="true"></a>The Problem</h3><ul>
 <li><strong>Native USB / Network:</strong> Hard resetting the MCU (DTR/RTS toggle) often drops the USB/Network link entirely.</li>
 <li><strong>MPG / Pendant:</strong> A secondary sender (MPG) might be in control at startup.</li>
 </ul>
-<h3 id="recommended-sequence">Recommended Sequence</h3><ol>
+<h3 id="recommended-sequence"><a class="anchor" href="#recommended-sequence" aria-hidden="true"></a>Recommended Sequence</h3><ol>
 <li><strong>Open Port:</strong> Connect to the serial/network port.</li>
 <li><strong>Wait &amp; Listen (500ms):</strong> Do NOT immediately send <code>\r\n</code> or <code>$</code>. Listen for incoming data.<ul>
 <li>If you see <code>|MPG:0</code>, a pendant is yielding control.</li>
@@ -39,7 +39,7 @@
 </ul>
 </li>
 </ol>
-<h2 id="2-real-time-status-reports">2. Real-Time Status Reports</h2><p>The status report format is extended. Senders <strong>must</strong> parse these robustly by:</p>
+<h2 id="2-real-time-status-reports"><a class="anchor" href="#2-real-time-status-reports" aria-hidden="true"></a>2. Real-Time Status Reports</h2><p>The status report format is extended. Senders <strong>must</strong> parse these robustly by:</p>
 <ol>
 <li>Checking for new fields (e.g., <code>|Pn:</code>, <code>|A:</code>).</li>
 <li>Handling variable field order.</li>
@@ -47,7 +47,7 @@
 </ol>
 <p><strong>Example Extended Report:</strong>
 ``</p>
-<h3 id="new-fields-detailed">New Fields detailed</h3><ul>
+<h3 id="new-fields-detailed"><a class="anchor" href="#new-fields-detailed" aria-hidden="true"></a>New Fields detailed</h3><ul>
 <li><strong><code>|Pn:</code></strong>: Input pin states. Now supports many more letters:<ul>
 <li><code>P</code> (Probe), <code>D</code> (Door), <code>H</code> (Hold), <code>S</code> (Start), <code>R</code> (Reset).</li>
 <li><code>E</code> (E-Stop), <code>O</code> (Probe Disconnected), <code>M</code>/<code>F</code> (Motor Fault).</li>
@@ -61,7 +61,7 @@
 <li><strong><code>|H:,</code></strong>: Homing status. <code>1</code>=Homed. Mask=Axes homed.</li>
 <li><strong><code>|TLR:</code></strong>: Tool Length Reference set.</li>
 </ul>
-<h2 id="3-real-time-commands">3. Real-Time Commands</h2><p>Legacy Grbl commands (<code>?</code>, <code>!</code>, <code>~</code>, <code>0x18</code>) act as expected. grblHAL adds &quot;Top-Bit-Set&quot; alternates to avoid conflicts with string settings (e.g., WiFi passwords containing <code>?</code>).</p>
+<h2 id="3-real-time-commands"><a class="anchor" href="#3-real-time-commands" aria-hidden="true"></a>3. Real-Time Commands</h2><p>Legacy Grbl commands (<code>?</code>, <code>!</code>, <code>~</code>, <code>0x18</code>) act as expected. grblHAL adds &quot;Top-Bit-Set&quot; alternates to avoid conflicts with string settings (e.g., WiFi passwords containing <code>?</code>).</p>
 <table>
 <thead>
 <tr>
@@ -99,7 +99,7 @@
 <li><strong><code>0x8A</code></strong>: Toggle Fan (if plugin installed).</li>
 <li><strong><code>0x8B</code></strong>: Toggle MPG Mode.</li>
 </ul>
-<h2 id="4-enumerations-no-more-hardcoded-lists">4. Enumerations (No More Hardcoded Lists)</h2><p>Senders should <strong>dynamically query</strong> the controller for supported capabilities instead of hardcoding lists (which go out of date with plugins).</p>
+<h2 id="4-enumerations-no-more-hardcoded-lists"><a class="anchor" href="#4-enumerations-no-more-hardcoded-lists" aria-hidden="true"></a>4. Enumerations (No More Hardcoded Lists)</h2><p>Senders should <strong>dynamically query</strong> the controller for supported capabilities instead of hardcoding lists (which go out of date with plugins).</p>
 <ul>
 <li><strong><code>$EA</code> (Enumerate Alarms):</strong> Returns <code>[ALARM:||]</code>.</li>
 <li><strong><code>$EE</code> (Enumerate Errors):</strong> Returns <code>[ERROR:||]</code>.</li>
@@ -109,8 +109,8 @@
 </ul>
 </li>
 </ul>
-<h2 id="5-line-termination">5. Line Termination</h2><p>grblHAL accepts <strong><code>CR</code>, <code>LF</code>, or <code>CRLF</code></strong> as valid line terminators. It treats <code>\r\n</code> as a single terminator, unlike legacy Grbl which might double-execute.</p>
-<h2 id="6-push-messages">6. Push Messages</h2><p>Enable <strong>Push Messages</strong> via <code>$10</code> settings to receive automatic updates for:</p>
+<h2 id="5-line-termination"><a class="anchor" href="#5-line-termination" aria-hidden="true"></a>5. Line Termination</h2><p>grblHAL accepts <strong><code>CR</code>, <code>LF</code>, or <code>CRLF</code></strong> as valid line terminators. It treats <code>\r\n</code> as a single terminator, unlike legacy Grbl which might double-execute.</p>
+<h2 id="6-push-messages"><a class="anchor" href="#6-push-messages" aria-hidden="true"></a>6. Push Messages</h2><p>Enable <strong>Push Messages</strong> via <code>$10</code> settings to receive automatic updates for:</p>
 <ul>
 <li><strong>Parser State (<code>$G</code>):</strong> Pushed on change.</li>
 <li><strong>Probe Results:</strong> Pushed on completion.</li>

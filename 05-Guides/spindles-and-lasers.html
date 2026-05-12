@@ -20,11 +20,11 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="spindles-and-amp-lasers-setup">Spindles &amp; Lasers Setup</h1><p>grblHAL is unique in its ability to support <strong>multiple active tools</strong> on the same machine. You can have a high-speed spindle for milling, a laser for engraving, and a drag knife for cutting vinyl—all controlled by the same board, switching between them with a simple command.</p>
+      <h1 id="spindles-and-amp-lasers-setup"><a class="anchor" href="#spindles-and-amp-lasers-setup" aria-hidden="true"></a>Spindles &amp; Lasers Setup</h1><p>grblHAL is unique in its ability to support <strong>multiple active tools</strong> on the same machine. You can have a high-speed spindle for milling, a laser for engraving, and a drag knife for cutting vinyl—all controlled by the same board, switching between them with a simple command.</p>
 <p>This guide covers how to configure spindles, lasers, and dual-tool setups.</p>
 <hr>
-<h2 id="1-multiple-spindles-the-basics">1. Multiple Spindles: The Basics</h2><p>In grblHAL, a &quot;Spindle&quot; is any device that spins, cuts, or emits light. The system can manage multiple such devices, referring to them by an index (<code>0</code>, <code>1</code>, <code>2</code>...).</p>
-<h3 id="identifying-your-spindles"><strong>Identifying Your Spindles</strong></h3><p>By sending <code>$SPINDLES</code>, grblHAL lists available spindles:</p>
+<h2 id="1-multiple-spindles-the-basics"><a class="anchor" href="#1-multiple-spindles-the-basics" aria-hidden="true"></a>1. Multiple Spindles: The Basics</h2><p>In grblHAL, a &quot;Spindle&quot; is any device that spins, cuts, or emits light. The system can manage multiple such devices, referring to them by an index (<code>0</code>, <code>1</code>, <code>2</code>...).</p>
+<h3 id="identifying-your-spindles"><a class="anchor" href="#identifying-your-spindles" aria-hidden="true"></a><strong>Identifying Your Spindles</strong></h3><p>By sending <code>$SPINDLES</code>, grblHAL lists available spindles:</p>
 <pre><code class="language-text">2 - H-100, enabled as spindle 0, active
 0 - PWM
 1 - PWM2
@@ -32,7 +32,7 @@
 <ul>
 <li><strong>Note:</strong> In this example, Spindle <code>2</code> (H-100) is the currently active &quot;Spindle 0&quot;. The others (PWM, PWM2) are available but not currently selected or enabled.</li>
 </ul>
-<h3 id="enabling-spindles"><strong>Enabling Spindles</strong></h3><p>Just because a spindle is listed doesn&#39;t mean it&#39;s ready to use. You often need to:</p>
+<h3 id="enabling-spindles"><a class="anchor" href="#enabling-spindles" aria-hidden="true"></a><strong>Enabling Spindles</strong></h3><p>Just because a spindle is listed doesn&#39;t mean it&#39;s ready to use. You often need to:</p>
 <ol>
 <li><strong>Set the Default Spindle:</strong> Use <strong><code>$395</code></strong> to select which physical tool index is the &quot;Primary&quot; spindle on startup.</li>
 <li><strong>Enable Additional Spindles:</strong><ul>
@@ -44,12 +44,12 @@
 <li><strong>Configure it:</strong> Set options in <code>$9</code> (Primary), <code>$709</code> (Secondary), etc.</li>
 <li><strong>Select it:</strong> Use <code>M104 Q...</code> to make it the active tool.</li>
 </ol>
-<h3 id="switching-tools-m104"><strong>Switching Tools (<code>M104</code>)</strong></h3><p>To switch the active device, use the <code>M104</code> command with the <code>Q</code> parameter:</p>
+<h3 id="switching-tools-m104"><a class="anchor" href="#switching-tools-m104" aria-hidden="true"></a><strong>Switching Tools (<code>M104</code>)</strong></h3><p>To switch the active device, use the <code>M104</code> command with the <code>Q</code> parameter:</p>
 <ul>
 <li><strong><code>M104 Q0</code></strong>: Selects Spindle 0.</li>
 <li><strong><code>M104 Q1</code></strong>: Selects Spindle 1.</li>
 </ul>
-<h3 id="automatic-spindle-switching-tool-mapping"><strong>Automatic Spindle Switching (Tool Mapping)</strong></h3><p>Instead of manually inserting <code>M104</code> commands, you can configure grblHAL to automatically switch spindles based on the Tool Number (<code>T</code>) used in <code>M6</code>.</p>
+<h3 id="automatic-spindle-switching-tool-mapping"><a class="anchor" href="#automatic-spindle-switching-tool-mapping" aria-hidden="true"></a><strong>Automatic Spindle Switching (Tool Mapping)</strong></h3><p>Instead of manually inserting <code>M104</code> commands, you can configure grblHAL to automatically switch spindles based on the Tool Number (<code>T</code>) used in <code>M6</code>.</p>
 <table>
 <thead>
 <tr>
@@ -91,7 +91,7 @@ M3 S100     ; Turn on Laser at 10% power (focus)
 ... laser path ...
 </code></pre>
 <hr>
-<h2 id="2-configuring-spindles-9-709-etc">2. Configuring Spindles (<code>$9</code>, <code>$709</code>, etc.)</h2><p>Each spindle has its own configuration setting (bitmask) that defines its behavior.</p>
+<h2 id="2-configuring-spindles-9-709-etc"><a class="anchor" href="#2-configuring-spindles-9-709-etc" aria-hidden="true"></a>2. Configuring Spindles (<code>$9</code>, <code>$709</code>, etc.)</h2><p>Each spindle has its own configuration setting (bitmask) that defines its behavior.</p>
 <ul>
 <li><strong>Primary Spindle (<code>$9</code>)</strong>: Controls the main output.</li>
 <li><strong>Secondary Spindle (<code>$709</code>)</strong>: Controls the second output (if supported by board/firmware).</li>
@@ -104,8 +104,8 @@ M3 S100     ; Turn on Laser at 10% power (focus)
 </ul>
 <p><em>(See <a href="../04-Reference/complete-settings-reference.md#9--pwm-spindle-options-primary">Settings Reference</a> for bitmask details.)</em></p>
 <hr>
-<h2 id="3-laser-mode-guide-32">3. Laser Mode Guide (<code>$32</code>)</h2><p>When using a laser, enabling <strong>Laser Mode</strong> (<code>$32=1</code>) changes grblHAL&#39;s physics to produce cleaner engravings.</p>
-<h3 id="what-laser-mode-does"><strong>What Laser Mode Does</strong></h3><ol>
+<h2 id="3-laser-mode-guide-32"><a class="anchor" href="#3-laser-mode-guide-32" aria-hidden="true"></a>3. Laser Mode Guide (<code>$32</code>)</h2><p>When using a laser, enabling <strong>Laser Mode</strong> (<code>$32=1</code>) changes grblHAL&#39;s physics to produce cleaner engravings.</p>
+<h3 id="what-laser-mode-does"><a class="anchor" href="#what-laser-mode-does" aria-hidden="true"></a><strong>What Laser Mode Does</strong></h3><ol>
 <li><strong>Eliminates Pauses:</strong> No dwell for spindle spin-up/down.</li>
 <li><strong>Enables Dynamic Power (<code>M4</code>):</strong> Scales power with speed to prevent burning corners.<ul>
 <li><em>Accelerating?</em> Power drops.</li>
@@ -114,7 +114,7 @@ M3 S100     ; Turn on Laser at 10% power (focus)
 </ul>
 </li>
 </ol>
-<h3 id="m3-vs-m4-critical-difference"><strong>M3 vs M4: Critical Difference</strong></h3><table>
+<h3 id="m3-vs-m4-critical-difference"><a class="anchor" href="#m3-vs-m4-critical-difference" aria-hidden="true"></a><strong>M3 vs M4: Critical Difference</strong></h3><table>
 <thead>
 <tr>
 <th align="left">Command</th>
@@ -144,9 +144,9 @@ M3 S100     ; Turn on Laser at 10% power (focus)
 </tbody></table>
 <p><strong>Warning:</strong> Using <strong>M3</strong> for engraving will burn deep holes at every corner where the machine slows down. Always use <strong>M4</strong> for engraving.</p>
 <hr>
-<h2 id="4-advanced-dual-mill-laser-setup">4. Advanced: Dual Mill + Laser Setup</h2><p>If your machine has both a spindle and a laser, you don&#39;t want to manually toggle <code>$32</code> every time you swap tools. 
+<h2 id="4-advanced-dual-mill-laser-setup"><a class="anchor" href="#4-advanced-dual-mill-laser-setup" aria-hidden="true"></a>4. Advanced: Dual Mill + Laser Setup</h2><p>If your machine has both a spindle and a laser, you don&#39;t want to manually toggle <code>$32</code> every time you swap tools. 
 Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode.</p>
-<h3 id="step-by-step-configuration"><strong>Step-by-Step Configuration:</strong></h3><ol>
+<h3 id="step-by-step-configuration"><a class="anchor" href="#step-by-step-configuration" aria-hidden="true"></a><strong>Step-by-Step Configuration:</strong></h3><ol>
 <li><p><strong>Enable Laser Mode Globally:</strong></p>
 <ul>
 <li>Send <code>$32=1</code>. This makes the <em>system</em> ready for laser moves.</li>
@@ -171,7 +171,7 @@ Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode
 </ul>
 </li>
 </ol>
-<h3 id="workflow-example"><strong>Workflow Example</strong></h3><ol>
+<h3 id="workflow-example"><a class="anchor" href="#workflow-example" aria-hidden="true"></a><strong>Workflow Example</strong></h3><ol>
 <li><strong>Job 1 (Milling):</strong><ul>
 <li><code>M104 Q0</code> (Select Spindle)</li>
 <li><code>M3 S12000</code> (Spindle starts, machine waits for spin-up)</li>
@@ -186,8 +186,8 @@ Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode
 </li>
 </ol>
 <hr>
-<h2 id="5-handling-physical-offsets">5. Handling Physical Offsets</h2><p>When you switch from your Spindle to your Laser, the &quot;cutting point&quot; physically moves because they are mounted in different spots. If you don&#39;t account for this, your laser engraving will be offset from your milled pocket.</p>
-<h3 id="method-a-work-coordinate-systems-standard"><strong>Method A: Work Coordinate Systems (Standard)</strong></h3><p>The most robust way to handle this is using G-code Work Coordinate Systems (WCS).</p>
+<h2 id="5-handling-physical-offsets"><a class="anchor" href="#5-handling-physical-offsets" aria-hidden="true"></a>5. Handling Physical Offsets</h2><p>When you switch from your Spindle to your Laser, the &quot;cutting point&quot; physically moves because they are mounted in different spots. If you don&#39;t account for this, your laser engraving will be offset from your milled pocket.</p>
+<h3 id="method-a-work-coordinate-systems-standard"><a class="anchor" href="#method-a-work-coordinate-systems-standard" aria-hidden="true"></a><strong>Method A: Work Coordinate Systems (Standard)</strong></h3><p>The most robust way to handle this is using G-code Work Coordinate Systems (WCS).</p>
 <ol>
 <li><strong>Assign G54 to Spindle:</strong> Zero your Spindle on the workpiece.</li>
 <li><strong>Assign G55 to Laser:</strong><ul>
@@ -202,7 +202,7 @@ Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode
 </ul>
 </li>
 </ol>
-<h3 id="method-b-firmware-offsets-770771"><strong>Method B: Firmware Offsets (<code>$770</code>/<code>$771</code>)</strong></h3><p>Some builds of grblHAL include a <strong>Spindle Offset Plugin</strong> that handles this automatically in firmware.</p>
+<h3 id="method-b-firmware-offsets-770771"><a class="anchor" href="#method-b-firmware-offsets-770771" aria-hidden="true"></a><strong>Method B: Firmware Offsets (<code>$770</code>/<code>$771</code>)</strong></h3><p>Some builds of grblHAL include a <strong>Spindle Offset Plugin</strong> that handles this automatically in firmware.</p>
 <ul>
 <li><strong><code>$770</code></strong>: X Offset for Secondary Spindle.</li>
 <li><strong><code>$771</code></strong>: Y Offset for Secondary Spindle.</li>
@@ -210,16 +210,16 @@ Instead, configure the <strong>Spindle</strong> to &quot;ignore&quot; Laser Mode
 <p><strong>⚠️ Note:</strong> If you do not see these settings, the plugin is <strong>not compiled into your firmware</strong>.
 To enable it, you must compile with <strong><code>SPINDLE_OFFSET=1</code></strong> defined in your configuration (e.g., <code>my_machine.h</code> map). Otherwise, use <strong>Method A</strong> (which works on all controllers).</p>
 <hr>
-<h2 id="troubleshooting">Troubleshooting</h2><h3 id="laser-won-and-39t-turn-on"><strong>Laser Won&#39;t Turn On</strong></h3><ul>
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting" aria-hidden="true"></a>Troubleshooting</h2><h3 id="laser-won-and-39t-turn-on"><a class="anchor" href="#laser-won-and-39t-turn-on" aria-hidden="true"></a><strong>Laser Won&#39;t Turn On</strong></h3><ul>
 <li>Check <code>$32=1</code>.</li>
 <li>Check <code>$30</code> matches your sender&#39;s Max S-Value (usually 1000).</li>
 <li>Wiring: Ensure PWM and Ground are connected correctly.</li>
 <li>Safety: Some lasers require a separate &quot;Enable&quot; pin triggered.</li>
 </ul>
-<h3 id="weak-output"><strong>Weak Output</strong></h3><ul>
+<h3 id="weak-output"><a class="anchor" href="#weak-output" aria-hidden="true"></a><strong>Weak Output</strong></h3><ul>
 <li>Check <code>$30</code> (Max RPM). If grblHAL expects 10000 RPM (<code>$30=10000</code>) but you send <code>S1000</code>, your laser is only at 10% power. Set <code>$30=1000</code> for 0-100% control logic.</li>
 </ul>
-<h3 id="spindle-replaces-laser-in-status-report"><strong>Spindle Replaces Laser in Status Report</strong></h3><ul>
+<h3 id="spindle-replaces-laser-in-status-report"><a class="anchor" href="#spindle-replaces-laser-in-status-report" aria-hidden="true"></a><strong>Spindle Replaces Laser in Status Report</strong></h3><ul>
 <li>This is normal. The status report (<code>?</code>) shows the current <em>active</em> tool state. Sending <code>M104 Qx</code> changes which one is reported.</li>
 </ul>
 <blockquote>

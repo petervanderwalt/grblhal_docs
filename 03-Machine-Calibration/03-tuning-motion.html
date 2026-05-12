@@ -20,7 +20,7 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="tuning-motion-settings">Tuning Motion Settings</h1><p>Once your steps per mm are calibrated for accuracy, the next step is tuning for performance. This involves finding the maximum reliable speed and acceleration your machine can handle without losing steps (stalling).</p>
+      <h1 id="tuning-motion-settings"><a class="anchor" href="#tuning-motion-settings" aria-hidden="true"></a>Tuning Motion Settings</h1><p>Once your steps per mm are calibrated for accuracy, the next step is tuning for performance. This involves finding the maximum reliable speed and acceleration your machine can handle without losing steps (stalling).</p>
 <p>There are three key settings to tune:</p>
 <ol>
 <li><strong>Max Rate (<code>$110</code>-<code>$112</code>)</strong> - Top speed for G0 rapids.</li>
@@ -28,12 +28,12 @@
 <li><strong>Junction Deviation (<code>$11</code>)</strong> - Cornering speed management.</li>
 </ol>
 <hr>
-<h2 id="1-max-rate-110-111-112">1. Max Rate (<code>$110</code>, <code>$111</code>, <code>$112</code>)</h2><p>This setting limits the maximum velocity for each axis in mm/min.</p>
-<h3 id="why-tune-it"><strong>Why Tune It?</strong></h3><ul>
+<h2 id="1-max-rate-110-111-112"><a class="anchor" href="#1-max-rate-110-111-112" aria-hidden="true"></a>1. Max Rate (<code>$110</code>, <code>$111</code>, <code>$112</code>)</h2><p>This setting limits the maximum velocity for each axis in mm/min.</p>
+<h3 id="why-tune-it"><a class="anchor" href="#why-tune-it" aria-hidden="true"></a><strong>Why Tune It?</strong></h3><ul>
 <li><strong>Too Low:</strong> Jobs take forever.</li>
 <li><strong>Too High:</strong> Motors stall (make a buzzing/grinding noise) and lose position.</li>
 </ul>
-<h3 id="tuning-procedure"><strong>Tuning Procedure:</strong></h3><ol>
+<h3 id="tuning-procedure"><a class="anchor" href="#tuning-procedure" aria-hidden="true"></a><strong>Tuning Procedure:</strong></h3><ol>
 <li><strong>Start Conservative:</strong> Set a low value (e.g., 1000 mm/min).</li>
 <li><strong>Test:</strong> Jog the axis back and forth over a long distance.</li>
 <li><strong>Increase:</strong> Raise the value by 500-1000 mm/min.</li>
@@ -47,12 +47,12 @@
 <li>Belt driven machines: 5000 - 15000+ mm/min</li>
 </ul>
 <hr>
-<h2 id="2-acceleration-120-121-122">2. Acceleration (<code>$120</code>, <code>$121</code>, <code>$122</code>)</h2><p>This setting controls how fast the motor ramps up to the Max Rate, in mm/sec².</p>
-<h3 id="why-tune-it"><strong>Why Tune It?</strong></h3><ul>
+<h2 id="2-acceleration-120-121-122"><a class="anchor" href="#2-acceleration-120-121-122" aria-hidden="true"></a>2. Acceleration (<code>$120</code>, <code>$121</code>, <code>$122</code>)</h2><p>This setting controls how fast the motor ramps up to the Max Rate, in mm/sec².</p>
+<h3 id="why-tune-it"><a class="anchor" href="#why-tune-it" aria-hidden="true"></a><strong>Why Tune It?</strong></h3><ul>
 <li><strong>Too Low:</strong> Machine feels sluggish; laser raster engraving is slow at edges.</li>
 <li><strong>Too High:</strong> Motors stall during direction changes; machine shakes violently.</li>
 </ul>
-<h3 id="tuning-procedure"><strong>Tuning Procedure:</strong></h3><ol>
+<h3 id="tuning-procedure"><a class="anchor" href="#tuning-procedure" aria-hidden="true"></a><strong>Tuning Procedure:</strong></h3><ol>
 <li><strong>Reset:</strong> Set to a conservative value (e.g., 50 mm/sec²).</li>
 <li><strong>Test:</strong> Command short, rapid back-and-forth moves (e.g., <code>G0 X100</code> then <code>G0 X0</code>).</li>
 <li><strong>Increase:</strong> Raise by 50-100 mm/sec².</li>
@@ -66,19 +66,19 @@
 <li>Light/Belt drive: 500 - 2000+ mm/sec²</li>
 </ul>
 <hr>
-<h2 id="3-junction-deviation-11">3. Junction Deviation (<code>$11</code>)</h2><p>This setting determines how much the machine slows down for corners. It&#39;s grblHAL&#39;s way of managing &quot;cornering speed.&quot;</p>
+<h2 id="3-junction-deviation-11"><a class="anchor" href="#3-junction-deviation-11" aria-hidden="true"></a>3. Junction Deviation (<code>$11</code>)</h2><p>This setting determines how much the machine slows down for corners. It&#39;s grblHAL&#39;s way of managing &quot;cornering speed.&quot;</p>
 <ul>
 <li><strong>Higher Value:</strong> Faster corners, but risks losing steps or rounding off sharp corners.</li>
 <li><strong>Lower Value:</strong> Slower, more precise corners, but increases job time.</li>
 </ul>
-<h3 id="recommended-values"><strong>Recommended Values:</strong></h3><ul>
+<h3 id="recommended-values"><a class="anchor" href="#recommended-values" aria-hidden="true"></a><strong>Recommended Values:</strong></h3><ul>
 <li><strong>Standard CNC Router:</strong> <code>0.01</code> to <code>0.02</code> mm</li>
 <li><strong>3D Printer / Light Laser:</strong> <code>0.02</code> to <code>0.05</code> mm</li>
 <li><strong>Heavy Mill:</strong> <code>0.005</code> to <code>0.01</code> mm</li>
 </ul>
 <p><strong>Tip:</strong> For most users, the default <code>0.010</code> is a good balance. Only adjust if you see corner rounding (decrease it) or stuttering in complex curves (increase it).</p>
 <hr>
-<h2 id="the-motion-stress-test">The Motion Stress Test</h2><p>After setting your initial values, run a &quot;stress test&quot; program to verify reliability.</p>
+<h2 id="the-motion-stress-test"><a class="anchor" href="#the-motion-stress-test" aria-hidden="true"></a>The Motion Stress Test</h2><p>After setting your initial values, run a &quot;stress test&quot; program to verify reliability.</p>
 <p><strong>Run this G-code (adjust X/Y distance for your bed size):</strong></p>
 <pre><code class="language-gcode">G21 G90
 G0 X0 Y0

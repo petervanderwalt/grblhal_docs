@@ -20,9 +20,9 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="macros-expressions-and-amp-flow-control">Macros, Expressions &amp; Flow Control</h1><p>grblHAL supports advanced G-code features allowing for <strong>parametric programming</strong>, <strong>conditional logic</strong>, and <strong>math expressions</strong>. This brings capabilities similar to LinuxCNC&#39;s O-codes and RS274NGC standards to your microcontroller.</p>
-<h2 id="1-expressions-and-amp-math">1. Expressions &amp; Math</h2><p>You can use math expressions anywhere a numeric value is expected by enclosing them in <code>[]</code>.</p>
-<h3 id="operators-and-amp-precedence">Operators &amp; Precedence</h3><p>Expressions are evaluated based on standard precedence rules:</p>
+      <h1 id="macros-expressions-and-amp-flow-control"><a class="anchor" href="#macros-expressions-and-amp-flow-control" aria-hidden="true"></a>Macros, Expressions &amp; Flow Control</h1><p>grblHAL supports advanced G-code features allowing for <strong>parametric programming</strong>, <strong>conditional logic</strong>, and <strong>math expressions</strong>. This brings capabilities similar to LinuxCNC&#39;s O-codes and RS274NGC standards to your microcontroller.</p>
+<h2 id="1-expressions-and-amp-math"><a class="anchor" href="#1-expressions-and-amp-math" aria-hidden="true"></a>1. Expressions &amp; Math</h2><p>You can use math expressions anywhere a numeric value is expected by enclosing them in <code>[]</code>.</p>
+<h3 id="operators-and-amp-precedence"><a class="anchor" href="#operators-and-amp-precedence" aria-hidden="true"></a>Operators &amp; Precedence</h3><p>Expressions are evaluated based on standard precedence rules:</p>
 <table>
 <thead>
 <tr>
@@ -63,7 +63,7 @@
 <li><code>[[1 + 2] * 3]</code> evaluates to <code>9</code>.</li>
 <li><code>[# GT 100]</code> returns <code>1</code> (true) or <code>0</code> (false).</li>
 </ul>
-<h3 id="functions">Functions</h3><table>
+<h3 id="functions"><a class="anchor" href="#functions" aria-hidden="true"></a>Functions</h3><table>
 <thead>
 <tr>
 <th align="left">Function</th>
@@ -108,20 +108,20 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="2-parameters-variables">2. Parameters (Variables)</h2><p>Variables in G-code are called <strong>Parameters</strong>. They start with <code>#</code>.</p>
-<h3 id="numbered-parameters">Numbered Parameters</h3><ul>
+<h2 id="2-parameters-variables"><a class="anchor" href="#2-parameters-variables" aria-hidden="true"></a>2. Parameters (Variables)</h2><p>Variables in G-code are called <strong>Parameters</strong>. They start with <code>#</code>.</p>
+<h3 id="numbered-parameters"><a class="anchor" href="#numbered-parameters" aria-hidden="true"></a>Numbered Parameters</h3><ul>
 <li><strong><code>#1 - #30</code></strong>: Local subroutine arguments (passed via <code>G65</code>).</li>
 <li><strong><code>#31 - #5000</code></strong>: Global user variables (non-persistent).</li>
 <li><strong><code>#5000+</code></strong>: Read-only system variables.</li>
 </ul>
-<h3 id="named-parameters">Named Parameters</h3><p>You can create readable variable names. System named parameters are read-only and start with <code>_</code>.</p>
+<h3 id="named-parameters"><a class="anchor" href="#named-parameters" aria-hidden="true"></a>Named Parameters</h3><p>You can create readable variable names. System named parameters are read-only and start with <code>_</code>.</p>
 <p><strong>User Variables:</strong></p>
 <ul>
 <li><strong>Syntax:</strong> <code>#</code></li>
 <li><strong>Assignment:</strong> <code># = 100.5</code></li>
 <li><strong>Usage:</strong> <code>G1 X#</code></li>
 </ul>
-<h3 id="system-parameters-reference">System Parameters Reference</h3><p>These are automatically updated by grblHAL.</p>
+<h3 id="system-parameters-reference"><a class="anchor" href="#system-parameters-reference" aria-hidden="true"></a>System Parameters Reference</h3><p>These are automatically updated by grblHAL.</p>
 <table>
 <thead>
 <tr>
@@ -307,9 +307,9 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="3-flow-control-o-codes">3. Flow Control (O-Codes)</h2><p>Logic statements allow your G-code to make decisions. These are essential for <strong>Automatic Tool Changers (ATC)</strong> and complex probing macro scripts.</p>
+<h2 id="3-flow-control-o-codes"><a class="anchor" href="#3-flow-control-o-codes" aria-hidden="true"></a>3. Flow Control (O-Codes)</h2><p>Logic statements allow your G-code to make decisions. These are essential for <strong>Automatic Tool Changers (ATC)</strong> and complex probing macro scripts.</p>
 <p><strong>Important:</strong> Flow control commands (<code>if</code>, <code>while</code>, <code>goto</code>) are best supported when running <strong>Macro Files</strong> from the SD card. Streaming them line-by-line from a sender can be unreliable depending on the sender&#39;s implementation.</p>
-<h3 id="if-else-endif"><code>IF</code> / <code>ELSE</code> / <code>ENDIF</code></h3><p>Execute code only if a condition is true.</p>
+<h3 id="if-else-endif"><a class="anchor" href="#if-else-endif" aria-hidden="true"></a><code>IF</code> / <code>ELSE</code> / <code>ENDIF</code></h3><p>Execute code only if a condition is true.</p>
 <pre><code class="language-gcode">o100 if [# EQ 0]
   (print, Error: Please switch to Metric G21)
   M2
@@ -317,7 +317,7 @@ o100 else
   (print, Metric mode confirmed)
 o100 endif
 </code></pre>
-<h3 id="while-loop"><code>WHILE</code> Loop</h3><p>Repeat code while a condition is true.</p>
+<h3 id="while-loop"><a class="anchor" href="#while-loop" aria-hidden="true"></a><code>WHILE</code> Loop</h3><p>Repeat code while a condition is true.</p>
 <pre><code class="language-gcode"># = 0
 o101 while [# LT 5]
   G1 X10
@@ -325,12 +325,12 @@ o101 while [# LT 5]
   # = [# + 1]
 o101 endwhile
 </code></pre>
-<h3 id="do-while"><code>DO</code> / <code>WHILE</code></h3><p>Execute at least once, then check condition.</p>
+<h3 id="do-while"><a class="anchor" href="#do-while" aria-hidden="true"></a><code>DO</code> / <code>WHILE</code></h3><p>Execute at least once, then check condition.</p>
 <pre><code class="language-gcode">o102 do
   (probe logic...)
 o102 while [#5070 EQ 0] (Repeat until probe hits)
 </code></pre>
-<h3 id="sub-endsub-call-return"><code>SUB</code> / <code>ENDSUB</code> / <code>CALL</code> / <code>RETURN</code></h3><p>Define reusable subroutines.</p>
+<h3 id="sub-endsub-call-return"><a class="anchor" href="#sub-endsub-call-return" aria-hidden="true"></a><code>SUB</code> / <code>ENDSUB</code> / <code>CALL</code> / <code>RETURN</code></h3><p>Define reusable subroutines.</p>
 <p><strong>Defining a Sub (e.g., file <code>probe_z.macro</code>):</strong></p>
 <pre><code class="language-gcode">o sub
   G91 G38.2 Z-20 F100
@@ -344,13 +344,13 @@ o endsub
 <pre><code class="language-gcode">O call
 </code></pre>
 <hr>
-<h2 id="4-automatic-tool-change-atc-macros">4. Automatic Tool Change (ATC) Macros</h2><p>grblHAL allows remaping the <code>M6</code> command to a macro file. This works perfectly for DIY tool changers (Rack/Umbrella) or manual changes with auto-touchoff.</p>
-<h3 id="enabling-m6-remap">Enabling M6 Remap</h3><ol>
+<h2 id="4-automatic-tool-change-atc-macros"><a class="anchor" href="#4-automatic-tool-change-atc-macros" aria-hidden="true"></a>4. Automatic Tool Change (ATC) Macros</h2><p>grblHAL allows remaping the <code>M6</code> command to a macro file. This works perfectly for DIY tool changers (Rack/Umbrella) or manual changes with auto-touchoff.</p>
+<h3 id="enabling-m6-remap"><a class="anchor" href="#enabling-m6-remap" aria-hidden="true"></a>Enabling M6 Remap</h3><ol>
 <li>Enable ATC support in <code>config.h</code> (or Web Builder).</li>
 <li>Set <code>$341</code> (Tool Change Mode) to match your logic.</li>
 <li>When <code>M6 T</code> is issued, grblHAL can call a macro named <code>tc.macro</code> (or similar) from the SD card.</li>
 </ol>
-<h3 id="example-tcmacro-structure">Example <code>tc.macro</code> Structure</h3><p>This macro handles the physical act of changing the tool.</p>
+<h3 id="example-tcmacro-structure"><a class="anchor" href="#example-tcmacro-structure" aria-hidden="true"></a>Example <code>tc.macro</code> Structure</h3><p>This macro handles the physical act of changing the tool.</p>
 <pre><code class="language-gcode">o sub
   (Save current state)
   M70
@@ -382,7 +382,7 @@ M99
 <p><strong>RapidChange ATC / Sienci ATC:</strong>
 These systems often use standardized macros (e.g., <code>M6</code> calls <code>P200.macro</code>) that handle the complex logic of rack management, calibration, and tool offsets.</p>
 <hr>
-<h2 id="5-advanced-g65-macro-calls">5. Advanced G65 Macro Calls</h2><p><code>G65</code> macro calls allow passing arguments into a subroutine, mapping P/Q/R words to local variables.</p>
+<h2 id="5-advanced-g65-macro-calls"><a class="anchor" href="#5-advanced-g65-macro-calls" aria-hidden="true"></a>5. Advanced G65 Macro Calls</h2><p><code>G65</code> macro calls allow passing arguments into a subroutine, mapping P/Q/R words to local variables.</p>
 <p><strong>Syntax:</strong> <code>G65 P [L] A- B- C-...</code></p>
 <table>
 <thead>
@@ -438,7 +438,7 @@ These systems often use standardized macros (e.g., <code>M6</code> calls <code>P
 <li><strong><code>G65 P3 I Q</code></strong>: Set Parameter <code>to</code>.</li>
 </ul>
 <hr>
-<h2 id="6-modal-macros-g66-g67">6. Modal Macros (G66 / G67)</h2><p><strong>Available from Build 20260125.</strong></p>
+<h2 id="6-modal-macros-g66-g67"><a class="anchor" href="#6-modal-macros-g66-g67" aria-hidden="true"></a>6. Modal Macros (G66 / G67)</h2><p><strong>Available from Build 20260125.</strong></p>
 <p>Modal macros are called automatically after every motion command.</p>
 <ul>
 <li><strong><code>G66 P [L] </code></strong>: Enable modal macro.</li>

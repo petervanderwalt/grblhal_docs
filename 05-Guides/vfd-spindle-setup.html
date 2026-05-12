@@ -20,8 +20,8 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="vfd-spindle-setup">VFD Spindle Setup</h1><p>grblHAL supports controlling VFD (Variable Frequency Drive) spindles directly via Modbus (RS485). This allows for precise RPM control, direction switching, and real-time status feedback (voltage, current, actual RPM) without using a simple 0-10V analog signal.</p>
-<h2 id="supported-vfds">Supported VFDs</h2><p>The following VFDs are supported by the <code>plugins/spindle/vfd</code> modules:</p>
+      <h1 id="vfd-spindle-setup"><a class="anchor" href="#vfd-spindle-setup" aria-hidden="true"></a>VFD Spindle Setup</h1><p>grblHAL supports controlling VFD (Variable Frequency Drive) spindles directly via Modbus (RS485). This allows for precise RPM control, direction switching, and real-time status feedback (voltage, current, actual RPM) without using a simple 0-10V analog signal.</p>
+<h2 id="supported-vfds"><a class="anchor" href="#supported-vfds" aria-hidden="true"></a>Supported VFDs</h2><p>The following VFDs are supported by the <code>plugins/spindle/vfd</code> modules:</p>
 <ul>
 <li><strong>Huanyang</strong> (SL series and others using the common protocol)</li>
 <li><strong>H-100</strong> (Common cheap VFDs)</li>
@@ -31,7 +31,7 @@
 <li><strong>ModVFD</strong> (Generic configurable driver)</li>
 </ul>
 <hr>
-<h2 id="1-wiring-rs485">1. Wiring (RS485)</h2><p>To connect a VFD, you nominally need an RS485 module connected to your microcontroller&#39;s UART pins.</p>
+<h2 id="1-wiring-rs485"><a class="anchor" href="#1-wiring-rs485" aria-hidden="true"></a>1. Wiring (RS485)</h2><p>To connect a VFD, you nominally need an RS485 module connected to your microcontroller&#39;s UART pins.</p>
 <table>
 <thead>
 <tr>
@@ -62,7 +62,7 @@
 </ul>
 </blockquote>
 <hr>
-<h2 id="2-firmware-compilation">2. Firmware Compilation</h2><p>VFD support is enabled by defining the spindle type for a specific spindle slot (0-3). Use the following IDs:</p>
+<h2 id="2-firmware-compilation"><a class="anchor" href="#2-firmware-compilation" aria-hidden="true"></a>2. Firmware Compilation</h2><p>VFD support is enabled by defining the spindle type for a specific spindle slot (0-3). Use the following IDs:</p>
 <table>
 <thead>
 <tr>
@@ -91,15 +91,15 @@
 <td align="left">H-100</td>
 </tr>
 </tbody></table>
-<h3 id="example-configuration"><strong>Example Configuration</strong></h3><p>In your map file or CMake configuration (e.g., <code>my_machine.h</code>), assign the ID to a spindle enable slot:</p>
+<h3 id="example-configuration"><a class="anchor" href="#example-configuration" aria-hidden="true"></a><strong>Example Configuration</strong></h3><p>In your map file or CMake configuration (e.g., <code>my_machine.h</code>), assign the ID to a spindle enable slot:</p>
 <pre><code class="language-c">// Example: Spindle 0 is PWM, Spindle 1 is Huanyang
 #define SPINDLE0_ENABLE 11  // PWM Spindle
 #define SPINDLE1_ENABLE 1   // Huanyang VFD
 #define SPINDLE_OFFSET  1   // Enable Offset Plugin
 </code></pre>
 <hr>
-<h2 id="3-grblhal-configuration">3. grblHAL Configuration</h2><p>Once flashed, you must tell grblHAL which spindle is the VFD and how to talk to it.</p>
-<h3 id="step-a-configure-modbus-communication"><strong>Step A: Configure Modbus Communication</strong></h3><p>Before binding a spindle, ensure grblHAL talks the same language as your VFD.</p>
+<h2 id="3-grblhal-configuration"><a class="anchor" href="#3-grblhal-configuration" aria-hidden="true"></a>3. grblHAL Configuration</h2><p>Once flashed, you must tell grblHAL which spindle is the VFD and how to talk to it.</p>
+<h3 id="step-a-configure-modbus-communication"><a class="anchor" href="#step-a-configure-modbus-communication" aria-hidden="true"></a><strong>Step A: Configure Modbus Communication</strong></h3><p>Before binding a spindle, ensure grblHAL talks the same language as your VFD.</p>
 <table>
 <thead>
 <tr>
@@ -128,14 +128,14 @@
 <td align="left"><code>1</code>=8E1, <code>2</code>=8O1. (Default: 0/8N1).</td>
 </tr>
 </tbody></table>
-<h3 id="step-b-bind-the-spindle"><strong>Step B: Bind the Spindle</strong></h3><p>Use the following settings to map the VFD to a Spindle ID.</p>
+<h3 id="step-b-bind-the-spindle"><a class="anchor" href="#step-b-bind-the-spindle" aria-hidden="true"></a><strong>Step B: Bind the Spindle</strong></h3><p>Use the following settings to map the VFD to a Spindle ID.</p>
 <ul>
 <li><strong><code>$395</code></strong>: Selects the <strong>Primary Spindle</strong> type.</li>
 <li><strong><code>$511</code></strong>: Selects <strong>Spindle 1</strong> (Secondary).</li>
 <li><strong><code>$512</code></strong>: Selects <strong>Spindle 2</strong> (Tertiary).</li>
 </ul>
 <p><em>Use <code>$SPINDLES</code> to verify which ID corresponds to your VFD.</em></p>
-<h3 id="step-c-set-modbus-address"><strong>Step C: Set Modbus Address</strong></h3><p>The VFD must have a Modbus address set in its own front panel parameters (usually <code>PD002</code> or similar). grblHAL needs to match this.</p>
+<h3 id="step-c-set-modbus-address"><a class="anchor" href="#step-c-set-modbus-address" aria-hidden="true"></a><strong>Step C: Set Modbus Address</strong></h3><p>The VFD must have a Modbus address set in its own front panel parameters (usually <code>PD002</code> or similar). grblHAL needs to match this.</p>
 <table>
 <thead>
 <tr>
@@ -160,7 +160,7 @@
 <td align="left">3</td>
 </tr>
 </tbody></table>
-<h3 id="step-d-generic-modvfd-configuration"><strong>Step D: Generic ModVFD Configuration</strong></h3><p>If you are using the <strong>ModVFD</strong> driver (ID 5) for a VFD that doesn&#39;t have a native driver, you must map the grblHAL settings to your VFD&#39;s Modbus registers. Consult your VFD manual&#39;s &quot;Communication&quot; or &quot;Modbus&quot; section.</p>
+<h3 id="step-d-generic-modvfd-configuration"><a class="anchor" href="#step-d-generic-modvfd-configuration" aria-hidden="true"></a><strong>Step D: Generic ModVFD Configuration</strong></h3><p>If you are using the <strong>ModVFD</strong> driver (ID 5) for a VFD that doesn&#39;t have a native driver, you must map the grblHAL settings to your VFD&#39;s Modbus registers. Consult your VFD manual&#39;s &quot;Communication&quot; or &quot;Modbus&quot; section.</p>
 <table>
 <thead>
 <tr>
@@ -232,8 +232,8 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="4-vfd-specific-settings-examples">4. VFD-Specific Settings (Examples)</h2><p>Different VFDs require different handling. Identify yours below.</p>
-<h4 id="1-huanyang-sl-series"><strong>1. Huanyang (SL Series)</strong></h4><ul>
+<h2 id="4-vfd-specific-settings-examples"><a class="anchor" href="#4-vfd-specific-settings-examples" aria-hidden="true"></a>4. VFD-Specific Settings (Examples)</h2><p>Different VFDs require different handling. Identify yours below.</p>
+<h4 id="1-huanyang-sl-series"><a class="anchor" href="#1-huanyang-sl-series" aria-hidden="true"></a><strong>1. Huanyang (SL Series)</strong></h4><ul>
 <li><strong>Driver ID:</strong> <code>1</code></li>
 <li><strong>VFD Panel Settings:</strong><ul>
 <li><code>PD001</code> = <code>2</code> (Source of Run Commands: Comm Port)</li>
@@ -244,7 +244,7 @@
 </ul>
 </li>
 </ul>
-<h4 id="2-h-100-vfd"><strong>2. H-100 VFD</strong></h4><ul>
+<h4 id="2-h-100-vfd"><a class="anchor" href="#2-h-100-vfd" aria-hidden="true"></a><strong>2. H-100 VFD</strong></h4><ul>
 <li><strong>Driver ID:</strong> <code>6</code></li>
 <li><strong>VFD Panel Settings:</strong><ul>
 <li><code>F001</code> = <code>2</code> (Control Mode: Comm)</li>
@@ -255,7 +255,7 @@
 </ul>
 </li>
 </ul>
-<h4 id="3-pwncnc-vfd"><strong>3. PwnCNC VFD</strong></h4><ul>
+<h4 id="3-pwncnc-vfd"><a class="anchor" href="#3-pwncnc-vfd" aria-hidden="true"></a><strong>3. PwnCNC VFD</strong></h4><ul>
 <li><strong>Driver ID:</strong> <code>5</code> (ModVFD)</li>
 <li><strong>grblHAL Manual Register Mapping:</strong><ul>
 <li><code>$395</code> = (Select ModVFD ID)</li>
@@ -276,33 +276,33 @@
 </ul>
 </li>
 </ul>
-<h4 id="4-gs20-yl-620a"><strong>4. GS20 / YL-620A</strong></h4><ul>
+<h4 id="4-gs20-yl-620a"><a class="anchor" href="#4-gs20-yl-620a" aria-hidden="true"></a><strong>4. GS20 / YL-620A</strong></h4><ul>
 <li><strong>Driver ID:</strong> <code>3</code> (GS20) or <code>4</code> (YL-620A)</li>
 <li><strong>Settings:</strong> <code>$461</code>: RPM to Hz ratio. (Default: 60).</li>
 </ul>
 <hr>
-<h2 id="5-spindle-offsets-laserdual-tool">5. Spindle Offsets (Laser/Dual Tool)</h2><p>If using the VFD as a primary spindle and a laser as secondary, you can configure physical offsets if the <code>spindle_laser_offset</code> plugin is enabled.</p>
+<h2 id="5-spindle-offsets-laserdual-tool"><a class="anchor" href="#5-spindle-offsets-laserdual-tool" aria-hidden="true"></a>5. Spindle Offsets (Laser/Dual Tool)</h2><p>If using the VFD as a primary spindle and a laser as secondary, you can configure physical offsets if the <code>spindle_laser_offset</code> plugin is enabled.</p>
 <ul>
 <li><strong><code>$770</code></strong>: Laser X Offset (mm).</li>
 <li><strong><code>$771</code></strong>: Laser Y Offset (mm).</li>
 <li><strong><code>$772</code></strong>: Offset Options (Update G92 vs. Keep Position).</li>
 </ul>
 <hr>
-<h2 id="troubleshooting">Troubleshooting</h2><h3 id="and-quoterror-spindle-not-responding-and-quot"><strong>&quot;Error: Spindle not responding&quot;</strong></h3><ol>
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting" aria-hidden="true"></a>Troubleshooting</h2><h3 id="and-quoterror-spindle-not-responding-and-quot"><a class="anchor" href="#and-quoterror-spindle-not-responding-and-quot" aria-hidden="true"></a><strong>&quot;Error: Spindle not responding&quot;</strong></h3><ol>
 <li><strong>Check Baud Rate:</strong> standard grblHAL VFD plugins usually default to 9600 or 19200. Check the source (<code>init</code> function) or your VFD manual.</li>
 <li><strong>Swap lines:</strong> A/B signaling is often mislabeled. Swap them and retry.</li>
 <li><strong>Ground:</strong> Ensure common ground between VFD control board and CNC controller.</li>
 </ol>
-<h3 id="spindle-runs-backward"><strong>Spindle Runs Backward</strong></h3><ul>
+<h3 id="spindle-runs-backward"><a class="anchor" href="#spindle-runs-backward" aria-hidden="true"></a><strong>Spindle Runs Backward</strong></h3><ul>
 <li>Swap any two of the three uvw phase wires connecting the VFD to the motor. Do <strong>not</strong> swap input power wires.</li>
 </ul>
-<h3 id="alarm-14-spindle-at-speed-timeout"><strong>Alarm 14: Spindle at Speed Timeout</strong></h3><p>This alarm triggers if the spindle takes too long to reach the target RPM.</p>
+<h3 id="alarm-14-spindle-at-speed-timeout"><a class="anchor" href="#alarm-14-spindle-at-speed-timeout" aria-hidden="true"></a><strong>Alarm 14: Spindle at Speed Timeout</strong></h3><p>This alarm triggers if the spindle takes too long to reach the target RPM.</p>
 <ul>
 <li><strong>Increase Timeout:</strong> Check your <strong>Spindle at Speed Timeout</strong> setting (often <code>$339</code>). VFDs ramp up slowly; increase this value.</li>
 <li><strong>Increase On Delay:</strong> Increase <code>$394</code> (Spindle On Delay) if not using at-speed feedback.</li>
 <li><strong>Check Feedback:</strong> If using &quot;at-speed&quot; feedback (e.g., encoder or VFD register), ensure the signal is valid.</li>
 </ul>
-<h3 id="error-19-modbus-exception"><strong>Error 19: Modbus Exception</strong></h3><p>The VFD received a command it rejected, or communication failed entirely.</p>
+<h3 id="error-19-modbus-exception"><a class="anchor" href="#error-19-modbus-exception" aria-hidden="true"></a><strong>Error 19: Modbus Exception</strong></h3><p>The VFD received a command it rejected, or communication failed entirely.</p>
 <ul>
 <li><strong>VFD Not Ready:</strong> The VFD may still be booting up or not powered on.</li>
 <li><strong>Modbus Disconnected:</strong> Check for broken wires or loose terminals on the RS485 wiring.</li>

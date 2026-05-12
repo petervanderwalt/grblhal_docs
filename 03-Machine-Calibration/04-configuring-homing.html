@@ -20,13 +20,13 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="configuring-homing">Configuring Homing</h1><p>This guide covers the practical steps to enable and configure the homing cycle on your machine. For a theoretical explanation of how homing works, see <a href="../02-Core-Concepts/01-homing-explained.md">Homing Explained</a>.</p>
-<h2 id="step-1-enable-homing">Step 1: Enable Homing</h2><p>By default, homing is disabled. To enable it:</p>
+      <h1 id="configuring-homing"><a class="anchor" href="#configuring-homing" aria-hidden="true"></a>Configuring Homing</h1><p>This guide covers the practical steps to enable and configure the homing cycle on your machine. For a theoretical explanation of how homing works, see <a href="../02-Core-Concepts/01-homing-explained.md">Homing Explained</a>.</p>
+<h2 id="step-1-enable-homing"><a class="anchor" href="#step-1-enable-homing" aria-hidden="true"></a>Step 1: Enable Homing</h2><p>By default, homing is disabled. To enable it:</p>
 <ol>
 <li>Send <code>$22=1</code> in the console.</li>
 </ol>
 <p><strong>Note:</strong> Once enabled, grblHAL will likely lock the machine upon startup (Alarm 1) until you perform a homing cycle (<code>$H</code>).</p>
-<h2 id="step-2-set-homing-direction-23">Step 2: Set Homing Direction (<code>$23</code>)</h2><p>This is the most critical step. You must tell grblHAL which direction to move to find the switches.</p>
+<h2 id="step-2-set-homing-direction-23"><a class="anchor" href="#step-2-set-homing-direction-23" aria-hidden="true"></a>Step 2: Set Homing Direction (<code>$23</code>)</h2><p>This is the most critical step. You must tell grblHAL which direction to move to find the switches.</p>
 <p><strong>Default Behavior:</strong></p>
 <ul>
 <li>Z axis moves <strong>UP</strong> (Positive)</li>
@@ -85,7 +85,7 @@
 <li>Send <code>$H</code></li>
 <li>If an axis moves the wrong way, reset, change <code>$23</code>, and try again.</li>
 </ul>
-<h2 id="step-3-configure-switch-type-5">Step 3: Configure Switch Type (<code>$5</code>)</h2><p>Are your limit switches <strong>Normally Open (NO)</strong> or <strong>Normally Closed (NC)</strong>?</p>
+<h2 id="step-3-configure-switch-type-5"><a class="anchor" href="#step-3-configure-switch-type-5" aria-hidden="true"></a>Step 3: Configure Switch Type (<code>$5</code>)</h2><p>Are your limit switches <strong>Normally Open (NO)</strong> or <strong>Normally Closed (NC)</strong>?</p>
 <ul>
 <li><strong>$5=0</strong> (Default): Normally Open (NO). Signal is HIGH when triggered.</li>
 <li><strong>$5=...</strong>: Invert specific axes where switches are Normally Closed (NC) or logically inverted.</li>
@@ -132,30 +132,30 @@
 </tbody></table>
 <p><strong>Example:</strong> To invert X and Y but keep Z normal: Add 1 + 2 = <strong><code>$5=3</code></strong>.</p>
 <p><strong>Recommendation:</strong> Use <strong>Normally Closed (NC)</strong> switches if possible. They are safer because a broken wire will trigger the alarm immediately, rather than failing silently.</p>
-<h2 id="step-4-fine-tuning">Step 4: Fine Tuning</h2><h3 id="homing-search-rate-25"><strong>Homing Search Rate (<code>$25</code>)</strong></h3><ul>
+<h2 id="step-4-fine-tuning"><a class="anchor" href="#step-4-fine-tuning" aria-hidden="true"></a>Step 4: Fine Tuning</h2><h3 id="homing-search-rate-25"><a class="anchor" href="#homing-search-rate-25" aria-hidden="true"></a><strong>Homing Search Rate (<code>$25</code>)</strong></h3><ul>
 <li>Speed at which the machine &quot;seeks&quot; the switch initially.</li>
 <li><strong>Default:</strong> 500 mm/min</li>
 <li><strong>Tune:</strong> Make it fast enough to be convenient, but slow enough to not crash hard into the switch.</li>
 </ul>
-<h3 id="homing-locate-rate-24"><strong>Homing Locate Rate (<code>$24</code>)</strong></h3><ul>
+<h3 id="homing-locate-rate-24"><a class="anchor" href="#homing-locate-rate-24" aria-hidden="true"></a><strong>Homing Locate Rate (<code>$24</code>)</strong></h3><ul>
 <li>Speed for the second, precise touch-off.</li>
 <li><strong>Default:</strong> 25 mm/min</li>
 <li><strong>Tune:</strong> Keep this slow for maximum repeatability.</li>
 </ul>
-<h3 id="homing-pull-off-27"><strong>Homing Pull-off (<code>$27</code>)</strong></h3><ul>
+<h3 id="homing-pull-off-27"><a class="anchor" href="#homing-pull-off-27" aria-hidden="true"></a><strong>Homing Pull-off (<code>$27</code>)</strong></h3><ul>
 <li>Distance the machine backs away from the switch after triggering it.</li>
 <li><strong>Default:</strong> 1.0 mm</li>
 <li><strong>Tune:</strong> If your switch stays triggered (Alarm 8), increase this to <code>2.0</code> or <code>5.0</code> mm. It must back off enough to clear the internal switch mechanism.</li>
 </ul>
 <hr>
-<h2 id="troubleshooting-homing">Troubleshooting Homing</h2><h3 id="machine-moves-wrong-way"><strong>Machine moves wrong way</strong></h3><ul>
+<h2 id="troubleshooting-homing"><a class="anchor" href="#troubleshooting-homing" aria-hidden="true"></a>Troubleshooting Homing</h2><h3 id="machine-moves-wrong-way"><a class="anchor" href="#machine-moves-wrong-way" aria-hidden="true"></a><strong>Machine moves wrong way</strong></h3><ul>
 <li>Adjust <code>$23</code> (Homing Direction Invert).</li>
 </ul>
-<h3 id="alarm-8-homing-fail"><strong>Alarm 8: Homing Fail</strong></h3><ul>
+<h3 id="alarm-8-homing-fail"><a class="anchor" href="#alarm-8-homing-fail" aria-hidden="true"></a><strong>Alarm 8: Homing Fail</strong></h3><ul>
 <li>The switch did not clear after pull-off. Increase <code>$27</code> (Pull-off distance).</li>
 <li>Or, interference/noise on the switch line.</li>
 </ul>
-<h3 id="alarm-9-homing-fail"><strong>Alarm 9: Homing Fail</strong></h3><ul>
+<h3 id="alarm-9-homing-fail"><a class="anchor" href="#alarm-9-homing-fail" aria-hidden="true"></a><strong>Alarm 9: Homing Fail</strong></h3><ul>
 <li>The switch was not found within the expected distance (<code>$130</code>, <code>$131</code>, <code>$132</code> max travel settings).</li>
 <li>Ensure your Max Travel settings are accurate or slightly larger than physical travel.</li>
 </ul>

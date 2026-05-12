@@ -20,10 +20,10 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="coordinate-systems">Coordinate Systems</h1><p>Understanding coordinate systems is <strong>fundamental</strong> to CNC operation. Coordinate systems define how the machine interprets positions and movements. grblHAL supports multiple coordinate systems that work together to provide flexibility, accuracy, and ease of use.</p>
+      <h1 id="coordinate-systems"><a class="anchor" href="#coordinate-systems" aria-hidden="true"></a>Coordinate Systems</h1><p>Understanding coordinate systems is <strong>fundamental</strong> to CNC operation. Coordinate systems define how the machine interprets positions and movements. grblHAL supports multiple coordinate systems that work together to provide flexibility, accuracy, and ease of use.</p>
 <p>This guide will explain the different coordinate systems, how they relate to each other, and how to use them effectively.</p>
 <hr>
-<h2 id="the-big-picture-two-main-coordinate-systems">The Big Picture: Two Main Coordinate Systems</h2><p>CNC machines use two primary coordinate systems that work together:</p>
+<h2 id="the-big-picture-two-main-coordinate-systems"><a class="anchor" href="#the-big-picture-two-main-coordinate-systems" aria-hidden="true"></a>The Big Picture: Two Main Coordinate Systems</h2><p>CNC machines use two primary coordinate systems that work together:</p>
 <ol>
 <li><strong>Machine Coordinate System (MCS)</strong> - The machine&#39;s fixed, absolute reference</li>
 <li><strong>Work Coordinate System (WCS)</strong> - Your workpiece&#39;s movable reference</li>
@@ -34,14 +34,14 @@
 <li><strong>Work coordinates</strong> = Where the tool is relative to your workpiece</li>
 </ul>
 <hr>
-<h2 id="machine-coordinate-system-mcs">Machine Coordinate System (MCS)</h2><p>The <strong>Machine Coordinate System</strong> is the machine&#39;s absolute, fixed reference frame. It never changes.</p>
-<h3 id="key-characteristics">Key Characteristics</h3><ul>
+<h2 id="machine-coordinate-system-mcs"><a class="anchor" href="#machine-coordinate-system-mcs" aria-hidden="true"></a>Machine Coordinate System (MCS)</h2><p>The <strong>Machine Coordinate System</strong> is the machine&#39;s absolute, fixed reference frame. It never changes.</p>
+<h3 id="key-characteristics"><a class="anchor" href="#key-characteristics" aria-hidden="true"></a>Key Characteristics</h3><ul>
 <li><strong>Origin (Machine Zero):</strong> Established by the homing cycle (<code>$H</code>)</li>
 <li><strong>Fixed:</strong> Does not change unless you re-home the machine</li>
 <li><strong>Absolute:</strong> Always represents the machine&#39;s physical position</li>
 <li><strong>Accessed with <code>G53</code>:</strong> Bypasses all work offsets</li>
 </ul>
-<h3 id="machine-zero-location">Machine Zero Location</h3><p>Machine zero is typically located at one of the machine&#39;s physical limits:</p>
+<h3 id="machine-zero-location"><a class="anchor" href="#machine-zero-location" aria-hidden="true"></a>Machine Zero Location</h3><p>Machine zero is typically located at one of the machine&#39;s physical limits:</p>
 <ul>
 <li><strong>X/Y:</strong> Usually at the <strong>back-right</strong> corner. This means the working area is typically in negative coordinates. (Exceptions exist for machines configured with <code>HOMING_FORCE_SET_ORIGIN</code>, where zero depends on switch locations).</li>
 <li><strong>Z:</strong> Usually at the top (maximum Z height).</li>
@@ -50,7 +50,7 @@
 <pre><code>After homing, machine position might be:
 MPos: 0.000, 0.000, 0.000
 </code></pre>
-<h3 id="when-to-use-machine-coordinates">When to Use Machine Coordinates</h3><p>Use <code>G53</code> (machine coordinate system) when you need to move to a <strong>fixed physical location</strong> on the machine:</p>
+<h3 id="when-to-use-machine-coordinates"><a class="anchor" href="#when-to-use-machine-coordinates" aria-hidden="true"></a>When to Use Machine Coordinates</h3><p>Use <code>G53</code> (machine coordinate system) when you need to move to a <strong>fixed physical location</strong> on the machine:</p>
 <ul>
 <li><strong>Tool changes</strong> - Move to a fixed tool change position</li>
 <li><strong>Parking</strong> - Move to a safe parking location</li>
@@ -66,10 +66,10 @@ G53 G0 X0 Y0     ; Rapid to machine X/Y zero
 <strong>Only use <code>G53</code> after homing!</strong> Machine coordinates are meaningless if the machine hasn&#39;t been homed. Using <code>G53</code> without homing can cause crashes.</p>
 </blockquote>
 <hr>
-<h2 id="work-coordinate-systems-wcs">Work Coordinate Systems (WCS)</h2><p>The <strong>Work Coordinate System</strong> is a user-defined coordinate system that represents your workpiece&#39;s position and orientation. This is where you do all your actual machining.</p>
-<h3 id="why-work-coordinates-matter">Why Work Coordinates Matter</h3><p>Imagine you&#39;re machining a part. Your CAM software generates G-code assuming the part&#39;s origin is at a specific location (e.g., the front-left corner). But when you clamp the part on your machine table, it could be anywhere!</p>
+<h2 id="work-coordinate-systems-wcs"><a class="anchor" href="#work-coordinate-systems-wcs" aria-hidden="true"></a>Work Coordinate Systems (WCS)</h2><p>The <strong>Work Coordinate System</strong> is a user-defined coordinate system that represents your workpiece&#39;s position and orientation. This is where you do all your actual machining.</p>
+<h3 id="why-work-coordinates-matter"><a class="anchor" href="#why-work-coordinates-matter" aria-hidden="true"></a>Why Work Coordinates Matter</h3><p>Imagine you&#39;re machining a part. Your CAM software generates G-code assuming the part&#39;s origin is at a specific location (e.g., the front-left corner). But when you clamp the part on your machine table, it could be anywhere!</p>
 <p><strong>Work offsets</strong> solve this problem by telling the machine: <em>&quot;The part&#39;s origin is at this location relative to machine zero.&quot;</em></p>
-<h3 id="available-work-coordinate-systems">Available Work Coordinate Systems</h3><p>grblHAL supports <strong>multiple work coordinate systems</strong>, allowing you to have several parts or setups loaded simultaneously:</p>
+<h3 id="available-work-coordinate-systems"><a class="anchor" href="#available-work-coordinate-systems" aria-hidden="true"></a>Available Work Coordinate Systems</h3><p>grblHAL supports <strong>multiple work coordinate systems</strong>, allowing you to have several parts or setups loaded simultaneously:</p>
 <table>
 <thead>
 <tr>
@@ -137,8 +137,8 @@ G53 G0 X0 Y0     ; Rapid to machine X/Y zero
 </ul>
 </blockquote>
 <hr>
-<h2 id="how-work-offsets-work">How Work Offsets Work</h2><p>A work offset is simply a <strong>translation</strong> (shift) applied to all programmed coordinates.</p>
-<h3 id="the-math">The Math</h3><pre><code>Machine Position = Work Position + Work Offset
+<h2 id="how-work-offsets-work"><a class="anchor" href="#how-work-offsets-work" aria-hidden="true"></a>How Work Offsets Work</h2><p>A work offset is simply a <strong>translation</strong> (shift) applied to all programmed coordinates.</p>
+<h3 id="the-math"><a class="anchor" href="#the-math" aria-hidden="true"></a>The Math</h3><pre><code>Machine Position = Work Position + Work Offset
 </code></pre>
 <p><strong>Example:</strong></p>
 <ul>
@@ -148,8 +148,8 @@ G53 G0 X0 Y0     ; Rapid to machine X/Y zero
 </ul>
 <p>When you command <code>G0 X20 Y30</code>, the machine actually moves to machine coordinates X=120, Y=80.</p>
 <hr>
-<h2 id="setting-work-offsets">Setting Work Offsets</h2><p>There are several ways to set work offsets in grblHAL:</p>
-<h3 id="method-1-using-g10-l20-recommended">Method 1: Using <code>G10 L20</code> (Recommended)</h3><p>The <code>G10 L20</code> command sets the work offset so that the <strong>current machine position</strong> becomes the specified work coordinate.</p>
+<h2 id="setting-work-offsets"><a class="anchor" href="#setting-work-offsets" aria-hidden="true"></a>Setting Work Offsets</h2><p>There are several ways to set work offsets in grblHAL:</p>
+<h3 id="method-1-using-g10-l20-recommended"><a class="anchor" href="#method-1-using-g10-l20-recommended" aria-hidden="true"></a>Method 1: Using <code>G10 L20</code> (Recommended)</h3><p>The <code>G10 L20</code> command sets the work offset so that the <strong>current machine position</strong> becomes the specified work coordinate.</p>
 <p><strong>Syntax:</strong></p>
 <pre><code class="language-gcode">G10 L20 P X Y Z
 </code></pre>
@@ -167,7 +167,7 @@ G10 L20 P1 X0 Y0 Z0
 
 ; Now the current position is work coordinate 0,0,0
 </code></pre>
-<h3 id="method-2-using-g10-l2-absolute-offset">Method 2: Using <code>G10 L2</code> (Absolute Offset)</h3><p>The <code>G10 L2</code> command sets the work offset to an <strong>absolute value</strong> in machine coordinates.</p>
+<h3 id="method-2-using-g10-l2-absolute-offset"><a class="anchor" href="#method-2-using-g10-l2-absolute-offset" aria-hidden="true"></a>Method 2: Using <code>G10 L2</code> (Absolute Offset)</h3><p>The <code>G10 L2</code> command sets the work offset to an <strong>absolute value</strong> in machine coordinates.</p>
 <p><strong>Syntax:</strong></p>
 <pre><code class="language-gcode">G10 L2 P X Y Z
 </code></pre>
@@ -175,7 +175,7 @@ G10 L20 P1 X0 Y0 Z0
 <pre><code class="language-gcode">; Set G54 origin to machine position X=100, Y=50, Z=10
 G10 L2 P1 X100 Y50 Z10
 </code></pre>
-<h3 id="method-3-manual-entry-sender-specific">Method 3: Manual Entry (Sender-Specific)</h3><p>Most G-code senders have a &quot;Set Work Zero&quot; or &quot;Zero XYZ&quot; button that:</p>
+<h3 id="method-3-manual-entry-sender-specific"><a class="anchor" href="#method-3-manual-entry-sender-specific" aria-hidden="true"></a>Method 3: Manual Entry (Sender-Specific)</h3><p>Most G-code senders have a &quot;Set Work Zero&quot; or &quot;Zero XYZ&quot; button that:</p>
 <ol>
 <li>Reads the current machine position</li>
 <li>Sets the active work offset so that position = 0,0,0</li>
@@ -187,7 +187,7 @@ G10 L2 P1 X100 Y50 Z10
 <li>The sender sends <code>G10 L20 P1 X0 Y0 Z0</code> for you</li>
 </ol>
 <hr>
-<h2 id="viewing-work-offsets">Viewing Work Offsets</h2><p>To see all current work offset values, send:</p>
+<h2 id="viewing-work-offsets"><a class="anchor" href="#viewing-work-offsets" aria-hidden="true"></a>Viewing Work Offsets</h2><p>To see all current work offset values, send:</p>
 <pre><code>$#
 </code></pre>
 <p><strong>Example output:</strong></p>
@@ -211,8 +211,8 @@ G10 L2 P1 X100 Y50 Z10
 <li>G57-G59 are not set (0,0,0)</li>
 </ul>
 <hr>
-<h2 id="practical-example-multiple-parts">Practical Example: Multiple Parts</h2><p>Let&#39;s say you&#39;re machining 3 identical parts on your table:</p>
-<h3 id="setup">Setup</h3><ol>
+<h2 id="practical-example-multiple-parts"><a class="anchor" href="#practical-example-multiple-parts" aria-hidden="true"></a>Practical Example: Multiple Parts</h2><p>Let&#39;s say you&#39;re machining 3 identical parts on your table:</p>
+<h3 id="setup"><a class="anchor" href="#setup" aria-hidden="true"></a>Setup</h3><ol>
 <li><strong>Home the machine:</strong> <code>$H</code></li>
 <li><strong>Clamp three parts</strong> at different locations on the table</li>
 <li><strong>Set work offsets</strong> for each part:</li>
@@ -229,7 +229,7 @@ G10 L20 P2 X0 Y0 Z0  ; Set G55
 G0 X400 Y50 Z10      ; Jog to Part 3 origin
 G10 L20 P3 X0 Y0 Z0  ; Set G56
 </code></pre>
-<h3 id="running-the-job">Running the Job</h3><pre><code class="language-gcode">; Machine Part 1
+<h3 id="running-the-job"><a class="anchor" href="#running-the-job" aria-hidden="true"></a>Running the Job</h3><pre><code class="language-gcode">; Machine Part 1
 G54              ; Select Part 1 coordinate system
 M98 P100         ; Call machining program (P100.macro)
 
@@ -245,10 +245,10 @@ M30              ; End program
 </code></pre>
 <p>The <strong>same G-code program</strong> runs three times, but at three different physical locations thanks to work offsets!</p>
 <hr>
-<h2 id="g92-temporary-coordinate-offset">G92: Temporary Coordinate Offset</h2><p><code>G92</code> is a <strong>temporary, volatile</strong> coordinate offset that&#39;s applied <strong>on top of</strong> the active work coordinate system (G54-G59).</p>
-<h3 id="how-g92-works">How G92 Works</h3><pre><code>Final Position = Work Position + Work Offset (G54) + G92 Offset
+<h2 id="g92-temporary-coordinate-offset"><a class="anchor" href="#g92-temporary-coordinate-offset" aria-hidden="true"></a>G92: Temporary Coordinate Offset</h2><p><code>G92</code> is a <strong>temporary, volatile</strong> coordinate offset that&#39;s applied <strong>on top of</strong> the active work coordinate system (G54-G59).</p>
+<h3 id="how-g92-works"><a class="anchor" href="#how-g92-works" aria-hidden="true"></a>How G92 Works</h3><pre><code>Final Position = Work Position + Work Offset (G54) + G92 Offset
 </code></pre>
-<h3 id="when-to-use-g92">When to Use G92</h3><ul>
+<h3 id="when-to-use-g92"><a class="anchor" href="#when-to-use-g92" aria-hidden="true"></a>When to Use G92</h3><ul>
 <li><strong>Rotary axis zeroing</strong> - Reset A/B/C axis to 0° at current position</li>
 <li><strong>Legacy G-code</strong> - Some old CAM posts use G92</li>
 <li><strong>Quick adjustments</strong> - Temporary shift without changing work offset</li>
@@ -257,7 +257,7 @@ M30              ; End program
 <p>⚠️ <strong>Warning</strong>
 <code>G92</code> is <strong>easy to forget</strong> and can cause crashes. Modern practice favors using dedicated work coordinate systems (G54-G59) instead of G92.</p>
 </blockquote>
-<h3 id="g92-commands">G92 Commands</h3><table>
+<h3 id="g92-commands"><a class="anchor" href="#g92-commands" aria-hidden="true"></a>G92 Commands</h3><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -289,7 +289,7 @@ G0 X5 Y5         ; Move to X=5, Y=5 (relative to G92)
 G92.1            ; Cancel G92, back to normal G54
 </code></pre>
 <hr>
-<h2 id="position-display-wpos-vs-mpos">Position Display: WPos vs MPos</h2><p>When you query position with <code>?</code>, you&#39;ll see two types of coordinates:</p>
+<h2 id="position-display-wpos-vs-mpos"><a class="anchor" href="#position-display-wpos-vs-mpos" aria-hidden="true"></a>Position Display: WPos vs MPos</h2><p>When you query position with <code>?</code>, you&#39;ll see two types of coordinates:</p>
 <pre><code>
 </code></pre>
 <ul>
@@ -306,43 +306,43 @@ G92.1            ; Cancel G92, back to normal G54
 <li>Therefore, work offset (G54) is: X=100, Y=50, Z=10</li>
 </ul>
 <hr>
-<h2 id="best-practices">Best Practices</h2><h3 id="1-always-use-work-coordinates-for-machining">1. <strong>Always Use Work Coordinates for Machining</strong></h3><p><strong>Bad:</strong></p>
+<h2 id="best-practices"><a class="anchor" href="#best-practices" aria-hidden="true"></a>Best Practices</h2><h3 id="1-always-use-work-coordinates-for-machining"><a class="anchor" href="#1-always-use-work-coordinates-for-machining" aria-hidden="true"></a>1. <strong>Always Use Work Coordinates for Machining</strong></h3><p><strong>Bad:</strong></p>
 <pre><code class="language-gcode">G53 G0 X150 Y200  ; Using machine coordinates for cutting
 </code></pre>
 <p><strong>Good:</strong></p>
 <pre><code class="language-gcode">G54               ; Select work coordinate system
 G0 X50 Y100       ; Use work coordinates
 </code></pre>
-<h3 id="2-set-work-zero-at-a-consistent-location">2. <strong>Set Work Zero at a Consistent Location</strong></h3><p>Choose a repeatable reference point on your workpiece:</p>
+<h3 id="2-set-work-zero-at-a-consistent-location"><a class="anchor" href="#2-set-work-zero-at-a-consistent-location" aria-hidden="true"></a>2. <strong>Set Work Zero at a Consistent Location</strong></h3><p>Choose a repeatable reference point on your workpiece:</p>
 <ul>
 <li><strong>Front-left corner, top surface</strong> (most common)</li>
 <li><strong>Center of part, top surface</strong></li>
 <li><strong>Center of a hole or feature</strong></li>
 </ul>
-<h3 id="3-document-your-setup">3. <strong>Document Your Setup</strong></h3><p>Keep notes on:</p>
+<h3 id="3-document-your-setup"><a class="anchor" href="#3-document-your-setup" aria-hidden="true"></a>3. <strong>Document Your Setup</strong></h3><p>Keep notes on:</p>
 <ul>
 <li>Which work offset (G54-G59) is used for which part/setup</li>
 <li>Where the work zero is located on the part</li>
 <li>Any special considerations (rotated parts, fixtures, etc.)</li>
 </ul>
-<h3 id="4-use-g53-for-safety-moves">4. <strong>Use G53 for Safety Moves</strong></h3><p>Always use <code>G53</code> for moves to fixed machine locations:</p>
+<h3 id="4-use-g53-for-safety-moves"><a class="anchor" href="#4-use-g53-for-safety-moves" aria-hidden="true"></a>4. <strong>Use G53 for Safety Moves</strong></h3><p>Always use <code>G53</code> for moves to fixed machine locations:</p>
 <pre><code class="language-gcode">G53 G0 Z0        ; Retract to machine top (safe)
 T2 M6            ; Tool change
 G53 G0 X0 Y0     ; Move to tool change position
 </code></pre>
-<h3 id="5-verify-offsets-before-machining">5. <strong>Verify Offsets Before Machining</strong></h3><p>After setting work offsets:</p>
+<h3 id="5-verify-offsets-before-machining"><a class="anchor" href="#5-verify-offsets-before-machining" aria-hidden="true"></a>5. <strong>Verify Offsets Before Machining</strong></h3><p>After setting work offsets:</p>
 <ol>
 <li>Jog to work zero: <code>G0 X0 Y0 Z0</code></li>
 <li>Verify the tool is at the expected location</li>
 <li>Test with air cuts before actual machining</li>
 </ol>
-<h3 id="6-avoid-g92-unless-necessary">6. <strong>Avoid G92 Unless Necessary</strong></h3><p>Use G54-G59 work offsets instead of G92 for better clarity and safety.</p>
+<h3 id="6-avoid-g92-unless-necessary"><a class="anchor" href="#6-avoid-g92-unless-necessary" aria-hidden="true"></a>6. <strong>Avoid G92 Unless Necessary</strong></h3><p>Use G54-G59 work offsets instead of G92 for better clarity and safety.</p>
 <hr>
-<h2 id="common-coordinate-system-mistakes">Common Coordinate System Mistakes</h2><h3 id="mistake-1-using-g53-without-homing">Mistake 1: Using G53 Without Homing</h3><pre><code class="language-gcode">; Machine not homed!
+<h2 id="common-coordinate-system-mistakes"><a class="anchor" href="#common-coordinate-system-mistakes" aria-hidden="true"></a>Common Coordinate System Mistakes</h2><h3 id="mistake-1-using-g53-without-homing"><a class="anchor" href="#mistake-1-using-g53-without-homing" aria-hidden="true"></a>Mistake 1: Using G53 Without Homing</h3><pre><code class="language-gcode">; Machine not homed!
 G53 G0 Z0  ; CRASH! Machine doesn&#39;t know where Z0 is
 </code></pre>
 <p><strong>Fix:</strong> Always home first: <code>$H</code></p>
-<h3 id="mistake-2-forgetting-active-work-offset">Mistake 2: Forgetting Active Work Offset</h3><pre><code class="language-gcode">G55              ; Switch to G55
+<h3 id="mistake-2-forgetting-active-work-offset"><a class="anchor" href="#mistake-2-forgetting-active-work-offset" aria-hidden="true"></a>Mistake 2: Forgetting Active Work Offset</h3><pre><code class="language-gcode">G55              ; Switch to G55
 ; ... do some work ...
 ; Forget that G55 is still active
 G0 X0 Y0         ; Oops! Moving to G55 zero, not G54 zero
@@ -351,7 +351,7 @@ G0 X0 Y0         ; Oops! Moving to G55 zero, not G54 zero
 <pre><code class="language-gcode">G54              ; Always specify which offset to use
 G0 X0 Y0
 </code></pre>
-<h3 id="mistake-3-setting-work-zero-while-in-g91-incremental-mode">Mistake 3: Setting Work Zero While in G91 (Incremental Mode)</h3><pre><code class="language-gcode">G91              ; Incremental mode
+<h3 id="mistake-3-setting-work-zero-while-in-g91-incremental-mode"><a class="anchor" href="#mistake-3-setting-work-zero-while-in-g91-incremental-mode" aria-hidden="true"></a>Mistake 3: Setting Work Zero While in G91 (Incremental Mode)</h3><pre><code class="language-gcode">G91              ; Incremental mode
 G10 L20 P1 X0    ; This won&#39;t work as expected!
 </code></pre>
 <p><strong>Fix:</strong> Always use <code>G90</code> (absolute mode) when setting work offsets:</p>
@@ -359,7 +359,7 @@ G10 L20 P1 X0    ; This won&#39;t work as expected!
 G10 L20 P1 X0 Y0 Z0
 </code></pre>
 <hr>
-<h2 id="quick-reference-commands">Quick Reference Commands</h2><table>
+<h2 id="quick-reference-commands"><a class="anchor" href="#quick-reference-commands" aria-hidden="true"></a>Quick Reference Commands</h2><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -400,7 +400,7 @@ G10 L20 P1 X0 Y0 Z0
 </tr>
 </tbody></table>
 <hr>
-<h2 id="coordinate-system-hierarchy">Coordinate System Hierarchy</h2><p>Understanding the order of coordinate transformations:</p>
+<h2 id="coordinate-system-hierarchy"><a class="anchor" href="#coordinate-system-hierarchy" aria-hidden="true"></a>Coordinate System Hierarchy</h2><p>Understanding the order of coordinate transformations:</p>
 <pre><code>1. Machine Coordinates (MCS)
    ↓
 2. + Work Offset (G54-G59)
@@ -420,7 +420,7 @@ G10 L20 P1 X0 Y0 Z0
 <li><strong>Final position:</strong> X=160, Z=25</li>
 </ul>
 <hr>
-<h2 id="next-steps">Next Steps</h2><p>Now that you understand coordinate systems:</p>
+<h2 id="next-steps"><a class="anchor" href="#next-steps" aria-hidden="true"></a>Next Steps</h2><p>Now that you understand coordinate systems:</p>
 <ol>
 <li><strong>Practice setting work offsets</strong> - Set up a simple part and practice zeroing</li>
 <li><strong>Learn about tool offsets</strong> - See <a href="../05-Guides/automatic-tool-changer.md">Automatic Tool Changer</a></li>

@@ -20,29 +20,29 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="what-is-grblhal">What is grblHAL?</h1><p><strong>grblHAL</strong> is a sophisticated, high-performance CNC (Computer Numerical Control) firmware designed to control CNC machines, routers, mills, lathes, laser cutters, and other motion control systems. It represents a complete evolution of the popular open-source GRBL firmware, specifically engineered to leverage the power of modern 32-bit microcontrollers.</p>
-<h2 id="overview">Overview</h2><p>grblHAL interprets G-code commands (the standard programming language for CNC machines) and translates them into precise motion control signals that drive your machine&#39;s motors, spindle, and other peripherals. Think of it as the &quot;brain&quot; of your CNC machine - it takes instructions from your CAM software and executes them with precision and reliability.</p>
+      <h1 id="what-is-grblhal"><a class="anchor" href="#what-is-grblhal" aria-hidden="true"></a>What is grblHAL?</h1><p><strong>grblHAL</strong> is a sophisticated, high-performance CNC (Computer Numerical Control) firmware designed to control CNC machines, routers, mills, lathes, laser cutters, and other motion control systems. It represents a complete evolution of the popular open-source GRBL firmware, specifically engineered to leverage the power of modern 32-bit microcontrollers.</p>
+<h2 id="overview"><a class="anchor" href="#overview" aria-hidden="true"></a>Overview</h2><p>grblHAL interprets G-code commands (the standard programming language for CNC machines) and translates them into precise motion control signals that drive your machine&#39;s motors, spindle, and other peripherals. Think of it as the &quot;brain&quot; of your CNC machine - it takes instructions from your CAM software and executes them with precision and reliability.</p>
 <p>Developed by <strong>Terje Io</strong>, grblHAL was created to address the limitations of 8-bit GRBL implementations and the fragmentation that occurred when various developers attempted to port GRBL to 32-bit platforms independently.</p>
-<h2 id="core-architecture-the-hardware-abstraction-layer-hal">Core Architecture: The Hardware Abstraction Layer (HAL)</h2><p>The defining feature of grblHAL is its <strong>Hardware Abstraction Layer (HAL)</strong> architecture. This design separates the core GRBL logic from processor-specific code, making the firmware:</p>
+<h2 id="core-architecture-the-hardware-abstraction-layer-hal"><a class="anchor" href="#core-architecture-the-hardware-abstraction-layer-hal" aria-hidden="true"></a>Core Architecture: The Hardware Abstraction Layer (HAL)</h2><p>The defining feature of grblHAL is its <strong>Hardware Abstraction Layer (HAL)</strong> architecture. This design separates the core GRBL logic from processor-specific code, making the firmware:</p>
 <ul>
 <li><strong>Highly portable</strong> across different microcontroller platforms</li>
 <li><strong>Easier to maintain</strong> with consistent bug fixes and features across all supported boards</li>
 <li><strong>Future-proof</strong> as new hardware platforms can be added without rewriting core functionality</li>
 </ul>
 <p>This means whether you&#39;re running grblHAL on an ESP32, STM32, Teensy 4.1, or Raspberry Pi Pico, you get the same core functionality and feature set.</p>
-<h2 id="key-features">Key Features</h2><h3 id="high-performance"><strong>High Performance</strong></h3><ul>
+<h2 id="key-features"><a class="anchor" href="#key-features" aria-hidden="true"></a>Key Features</h2><h3 id="high-performance"><a class="anchor" href="#high-performance" aria-hidden="true"></a><strong>High Performance</strong></h3><ul>
 <li><strong>Step rates exceeding 300 kHz</strong> (some implementations reach 400-600 kHz)</li>
 <li>Supports clock speeds from 40 MHz up to 600 MHz</li>
 <li>Jitter-free, stable control pulses for smooth motion</li>
 <li>Significantly faster than 8-bit GRBL (~30 kHz maximum)</li>
 </ul>
-<h3 id="advanced-motion-control"><strong>Advanced Motion Control</strong></h3><ul>
+<h3 id="advanced-motion-control"><a class="anchor" href="#advanced-motion-control" aria-hidden="true"></a><strong>Advanced Motion Control</strong></h3><ul>
 <li><strong>Up to 9-axis control</strong> for complex machines</li>
 <li>Auto-squaring for dual-motor gantry systems</li>
 <li>Backlash compensation</li>
 <li>High-precision spindle synchronization (for threading operations)</li>
 </ul>
-<h3 id="extended-g-code-support"><strong>Extended G-code Support</strong></h3><ul>
+<h3 id="extended-g-code-support"><a class="anchor" href="#extended-g-code-support" aria-hidden="true"></a><strong>Extended G-code Support</strong></h3><ul>
 <li>Comprehensive G-code compatibility aligned with <strong>LinuxCNC standards</strong></li>
 <li>Canned cycles (drilling, pocketing, etc.)</li>
 <li>Full set of coordinate system offsets (G54-G59.3)</li>
@@ -50,21 +50,21 @@
 <li>Parameter programming and expressions</li>
 <li>Optional parameters for advanced operations</li>
 </ul>
-<h3 id="connectivity-options"><strong>Connectivity Options</strong></h3><ul>
+<h3 id="connectivity-options"><a class="anchor" href="#connectivity-options" aria-hidden="true"></a><strong>Connectivity Options</strong></h3><ul>
 <li><strong>Wi-Fi</strong> (on supported controllers)</li>
 <li><strong>Ethernet</strong> (on supported controllers)</li>
 <li><strong>Bluetooth</strong> (on supported controllers)</li>
 <li>Traditional USB serial connection</li>
 <li>WebUI for browser-based control</li>
 </ul>
-<h3 id="plugin-architecture"><strong>Plugin Architecture</strong></h3><ul>
+<h3 id="plugin-architecture"><a class="anchor" href="#plugin-architecture" aria-hidden="true"></a><strong>Plugin Architecture</strong></h3><ul>
 <li>Open, extensible plugin system</li>
 <li>Add custom M-codes and functionality</li>
 <li>Third-party driver support</li>
 <li>User-defined event handlers</li>
 <li>Examples: SD card support, automatic tool changers, custom I/O control</li>
 </ul>
-<h3 id="rich-feature-set"><strong>Rich Feature Set</strong></h3><ul>
+<h3 id="rich-feature-set"><a class="anchor" href="#rich-feature-set" aria-hidden="true"></a><strong>Rich Feature Set</strong></h3><ul>
 <li>SD card support for standalone operation</li>
 <li>Multiple work coordinate systems</li>
 <li>Probing cycles for tool measurement and workpiece setup</li>
@@ -72,7 +72,7 @@
 <li>Safety features: E-Stop, Safety Door, Reset</li>
 <li>Real-time override controls (feed rate, spindle speed, rapid rate)</li>
 </ul>
-<h2 id="who-should-use-grblhal">Who Should Use grblHAL?</h2><p>grblHAL is ideal for:</p>
+<h2 id="who-should-use-grblhal"><a class="anchor" href="#who-should-use-grblhal" aria-hidden="true"></a>Who Should Use grblHAL?</h2><p>grblHAL is ideal for:</p>
 <ul>
 <li><strong>Hobbyists</strong> building or upgrading CNC routers, mills, or laser cutters</li>
 <li><strong>Makers</strong> who want professional-grade features at low cost</li>
@@ -80,15 +80,15 @@
 <li><strong>Developers</strong> wanting to extend or customize CNC firmware</li>
 <li><strong>Anyone upgrading</strong> from 8-bit GRBL seeking better performance</li>
 </ul>
-<h2 id="what-you-and-39ll-need">What You&#39;ll Need</h2><p>To use grblHAL, you&#39;ll need:</p>
+<h2 id="what-you-and-39ll-need"><a class="anchor" href="#what-you-and-39ll-need" aria-hidden="true"></a>What You&#39;ll Need</h2><p>To use grblHAL, you&#39;ll need:</p>
 <ol>
 <li><strong>A compatible controller board</strong> (see <a href="./03-controller-support.md">Hardware Selection</a>)</li>
 <li><strong>A CNC machine</strong> (router, mill, lathe, laser cutter, etc.)</li>
 <li><strong>A G-code sender application</strong> (such as ioSender, gSender, or bCNC)</li>
 <li><strong>CAM software</strong> to generate G-code from your designs</li>
 </ol>
-<h2 id="cost-effective-professional-features">Cost-Effective Professional Features</h2><p>Despite offering features typically found in expensive industrial controllers, grblHAL remains a <strong>low-cost solution</strong> thanks to the affordability of modern 32-bit microcontrollers. You get professional-grade performance without the professional-grade price tag.</p>
-<h2 id="open-source-and-amp-community-driven">Open Source &amp; Community Driven</h2><p>grblHAL is <strong>open-source software</strong>, meaning:</p>
+<h2 id="cost-effective-professional-features"><a class="anchor" href="#cost-effective-professional-features" aria-hidden="true"></a>Cost-Effective Professional Features</h2><p>Despite offering features typically found in expensive industrial controllers, grblHAL remains a <strong>low-cost solution</strong> thanks to the affordability of modern 32-bit microcontrollers. You get professional-grade performance without the professional-grade price tag.</p>
+<h2 id="open-source-and-amp-community-driven"><a class="anchor" href="#open-source-and-amp-community-driven" aria-hidden="true"></a>Open Source &amp; Community Driven</h2><p>grblHAL is <strong>open-source software</strong>, meaning:</p>
 <ul>
 <li>Free to use and modify</li>
 <li>Active community support</li>

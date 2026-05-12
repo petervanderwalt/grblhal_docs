@@ -20,10 +20,10 @@
 <main class="main">
   <div class="content-wrap">
     <article>
-      <h1 id="complete-plugins-reference-and-quot">Complete Plugins Reference&quot;</h1><p>This guide lists plugin-specific <strong>M-codes</strong>, <strong>G-codes</strong>, and <strong>$-settings</strong> provided by grblHAL’s plugin ecosystem.<br>Each section includes the original repository URL for reference.  </p>
+      <h1 id="complete-plugins-reference-and-quot"><a class="anchor" href="#complete-plugins-reference-and-quot" aria-hidden="true"></a>Complete Plugins Reference&quot;</h1><p>This guide lists plugin-specific <strong>M-codes</strong>, <strong>G-codes</strong>, and <strong>$-settings</strong> provided by grblHAL’s plugin ecosystem.<br>Each section includes the original repository URL for reference.  </p>
 <hr>
-<h2 id="plugin-plasma-torch-height-control-thc">Plugin: Plasma / Torch Height Control (THC)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_plasma">https://github.com/grblHAL/Plugin_plasma</a></p>
-<h4 id="settings">$-Settings</h4><table>
+<h2 id="plugin-plasma-torch-height-control-thc"><a class="anchor" href="#plugin-plasma-torch-height-control-thc" aria-hidden="true"></a>Plugin: Plasma / Torch Height Control (THC)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_plasma">https://github.com/grblHAL/Plugin_plasma</a></p>
+<h4 id="settings"><a class="anchor" href="#settings" aria-hidden="true"></a>$-Settings</h4><table>
 <thead>
 <tr>
 <th>Setting</th>
@@ -67,7 +67,7 @@
 <td><code>20</code></td>
 </tr>
 </tbody></table>
-<h4 id="m-codes">M-Codes</h4><table>
+<h4 id="m-codes"><a class="anchor" href="#m-codes" aria-hidden="true"></a>M-Codes</h4><table>
 <thead>
 <tr>
 <th>M-Code</th>
@@ -106,7 +106,7 @@
 <td>Velocity reduction synchronized</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Plasma THC example
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Plasma THC example
 $350=2          ; THC mode: arc ok + up/down
 $356=20         ; VAD threshold 20%
 $361=1.5        ; Voltage scaling factor
@@ -120,8 +120,8 @@ M67 E0 Q50      ; Immediate feed reduction to 50%
 M64 P0          ; Disable THC after cut
 </code></pre>
 <hr>
-<h2 id="plugin-fan-control-plugin_fans">Plugin: Fan Control (<code>Plugin_fans</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_fans">https://github.com/grblHAL/Plugin_fans</a></p>
-<h4 id="m-codes">M-Codes</h4><table>
+<h2 id="plugin-fan-control-plugin_fans"><a class="anchor" href="#plugin-fan-control-plugin_fans" aria-hidden="true"></a>Plugin: Fan Control (<code>Plugin_fans</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_fans">https://github.com/grblHAL/Plugin_fans</a></p>
+<h4 id="m-codes"><a class="anchor" href="#m-codes" aria-hidden="true"></a>M-Codes</h4><table>
 <thead>
 <tr>
 <th>M-Code</th>
@@ -140,7 +140,7 @@ M64 P0          ; Disable THC after cut
 <td>Turn fan OFF</td>
 </tr>
 </tbody></table>
-<h4 id="settings">$-Settings</h4><table>
+<h4 id="settings"><a class="anchor" href="#settings" aria-hidden="true"></a>$-Settings</h4><table>
 <thead>
 <tr>
 <th>$-Setting</th>
@@ -160,14 +160,14 @@ M64 P0          ; Disable THC after cut
 <td>Bitmask: link fans to spindle enable</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Turn on fan 0 at PWM 200
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Turn on fan 0 at PWM 200
 M106 P0 S200
 
 ; Turn off fan 0
 M107 P0
 </code></pre>
 <hr>
-<h2 id="plugin-rgb-led-strip-m150-plugins_misc">Plugin: RGB LED Strip (<code>M150</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
+<h2 id="plugin-rgb-led-strip-m150-plugins_misc"><a class="anchor" href="#plugin-rgb-led-strip-m150-plugins_misc" aria-hidden="true"></a>Plugin: RGB LED Strip (<code>M150</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
 <table>
 <thead>
 <tr>
@@ -182,7 +182,7 @@ M107 P0
 <td>Set LED color/brightness for a strip</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Set strip 1 to bright red
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Set strip 1 to bright red
 M150 R255 U0 B0 S1
 
 ; Set strip 1 to purple
@@ -192,7 +192,7 @@ M150 R128 B128 S1
 M150 R0 U0 B0 S1
 </code></pre>
 <hr>
-<h2 id="plugin-feed-override-m220-plugins_misc">Plugin: Feed Override (<code>M220</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
+<h2 id="plugin-feed-override-m220-plugins_misc"><a class="anchor" href="#plugin-feed-override-m220-plugins_misc" aria-hidden="true"></a>Plugin: Feed Override (<code>M220</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
 <table>
 <thead>
 <tr>
@@ -207,14 +207,14 @@ M150 R0 U0 B0 S1
 <td>Feed override: B=backup, R=restore, S=set %</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Set feed override to 80%
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Set feed override to 80%
 M220 S80
 
 ; Restore previous backup and set to 50%
 M220 RS50
 </code></pre>
 <hr>
-<h2 id="plugin-servo-control-m280-plugins_misc">Plugin: Servo Control (<code>M280</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
+<h2 id="plugin-servo-control-m280-plugins_misc"><a class="anchor" href="#plugin-servo-control-m280-plugins_misc" aria-hidden="true"></a>Plugin: Servo Control (<code>M280</code>) - <code>Plugins_misc</code></h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
 <table>
 <thead>
 <tr>
@@ -229,14 +229,14 @@ M220 RS50
 <td>Control analog/PWM servo: P=index, S=angle 0–180°</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Move servo 0 to 90 degrees
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Move servo 0 to 90 degrees
 M280 P0 S90
 
 ; Query servo 1 current position
 M280 P1
 </code></pre>
 <hr>
-<h2 id="plugin-openpnp-plugin_openpnp">Plugin: OpenPNP (<code>Plugin_OpenPNP</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_OpenPNP">https://github.com/grblHAL/Plugin_OpenPNP</a></p>
+<h2 id="plugin-openpnp-plugin_openpnp"><a class="anchor" href="#plugin-openpnp-plugin_openpnp" aria-hidden="true"></a>Plugin: OpenPNP (<code>Plugin_OpenPNP</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_OpenPNP">https://github.com/grblHAL/Plugin_OpenPNP</a></p>
 <table>
 <thead>
 <tr>
@@ -276,14 +276,14 @@ M280 P1
 <td>Wait for motion buffer empty</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Turn on digital output 2
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Turn on digital output 2
 M42 P2 S1
 
 ; Set acceleration for X/Y
 M204 PXY S500
 </code></pre>
 <hr>
-<h2 id="plugin-sd-card-file-system-plugin_sd_card">Plugin: SD-Card / File System (<code>Plugin_SD_card</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_SD_card">https://github.com/grblHAL/Plugin_SD_card</a></p>
+<h2 id="plugin-sd-card-file-system-plugin_sd_card"><a class="anchor" href="#plugin-sd-card-file-system-plugin_sd_card" aria-hidden="true"></a>Plugin: SD-Card / File System (<code>Plugin_SD_card</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_SD_card">https://github.com/grblHAL/Plugin_SD_card</a></p>
 <table>
 <thead>
 <tr>
@@ -333,7 +333,7 @@ M204 PXY S500
 <td>Delete file.</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Mount SD card
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Mount SD card
 $FM
 
 ; List files
@@ -349,14 +349,14 @@ $CWD=subdir
 $PWD
 </code></pre>
 <hr>
-<h3 id="storage-systems-in-grblhal">Storage Systems in grblHAL</h3><p>grblHAL utilizes a <strong>Virtual File System (VFS)</strong> layer for unified storage access across multiple platforms.</p>
+<h3 id="storage-systems-in-grblhal"><a class="anchor" href="#storage-systems-in-grblhal" aria-hidden="true"></a>Storage Systems in grblHAL</h3><p>grblHAL utilizes a <strong>Virtual File System (VFS)</strong> layer for unified storage access across multiple platforms.</p>
 <ul>
 <li><strong>SD Card (FatFs):</strong> High-capacity storage for G-code files, typically formatted as <strong>FAT32</strong>. Mounted at <code>/</code>.</li>
 <li><strong>Internal Storage (LittleFS):</strong> Fail-safe internal storage for macros and tool tables. Supported on <strong>ESP32</strong>, <strong>Teensy 4.1</strong>, <strong>RP2040</strong>, <strong>MSP432</strong>, and others. Often mounted at <code>/flash</code>, <code>/littlefs</code>, or as the root (<code>/</code>) if no SD card is present.</li>
 </ul>
 <p><strong>Navigation:</strong> grblHAL tracks a <strong>Current Working Directory (CWD)</strong>. Use <code>$CWD=foldername</code> to enter subfolders and <code>$CWD=..</code> to go back up. You can verify your location with <code>$PWD</code>.</p>
 <hr>
-<h2 id="plugin-motor-trinamic-plugins_motor">Plugin: Motor / Trinamic (<code>Plugins_motor</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_motor">https://github.com/grblHAL/Plugins_motor</a></p>
+<h2 id="plugin-motor-trinamic-plugins_motor"><a class="anchor" href="#plugin-motor-trinamic-plugins_motor" aria-hidden="true"></a>Plugin: Motor / Trinamic (<code>Plugins_motor</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_motor">https://github.com/grblHAL/Plugins_motor</a></p>
 <table>
 <thead>
 <tr>
@@ -401,7 +401,7 @@ $PWD
 <td>Homing sensitivity</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Check driver status on X/Y
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Check driver status on X/Y
 M122 XY
 
 ; Set StealthChop mode for X axis
@@ -411,7 +411,7 @@ M569 X S1
 M906 X100 Y100 Z100
 </code></pre>
 <hr>
-<h2 id="plugin-spindle-plugins_spindle">Plugin: Spindle (<code>Plugins_spindle</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_spindle">https://github.com/grblHAL/Plugins_spindle</a></p>
+<h2 id="plugin-spindle-plugins_spindle"><a class="anchor" href="#plugin-spindle-plugins_spindle" aria-hidden="true"></a>Plugin: Spindle (<code>Plugins_spindle</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_spindle">https://github.com/grblHAL/Plugins_spindle</a></p>
 <table>
 <thead>
 <tr>
@@ -446,7 +446,7 @@ M906 X100 Y100 Z100
 <td>Enable spindle features</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Turn on spindle clockwise at 1200 RPM
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Turn on spindle clockwise at 1200 RPM
 M3 S1200
 
 ; Select spindle 1
@@ -456,7 +456,7 @@ M104 P1
 M5
 </code></pre>
 <hr>
-<h2 id="plugin-laser-plugins_laser">Plugin: Laser (<code>Plugins_laser</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_laser">https://github.com/grblHAL/Plugins_laser</a></p>
+<h2 id="plugin-laser-plugins_laser"><a class="anchor" href="#plugin-laser-plugins_laser" aria-hidden="true"></a>Plugin: Laser (<code>Plugins_laser</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_laser">https://github.com/grblHAL/Plugins_laser</a></p>
 <table>
 <thead>
 <tr>
@@ -476,14 +476,14 @@ M5
 <td>Laser off</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Laser on at 50% power
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Laser on at 50% power
 M3 S128
 
 ; Laser off
 M5
 </code></pre>
 <hr>
-<h2 id="plugin-encoder-plugin_encoder">Plugin: Encoder (<code>Plugin_encoder</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_encoder">https://github.com/grblHAL/Plugin_encoder</a></p>
+<h2 id="plugin-encoder-plugin_encoder"><a class="anchor" href="#plugin-encoder-plugin_encoder" aria-hidden="true"></a>Plugin: Encoder (<code>Plugin_encoder</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_encoder">https://github.com/grblHAL/Plugin_encoder</a></p>
 <table>
 <thead>
 <tr>
@@ -496,11 +496,11 @@ M5
 <td>Encoder pins and scaling per axis</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Read spindle encoder position
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Read spindle encoder position
 M114
 </code></pre>
 <hr>
-<h2 id="plugin-eeprom-plugin_eeprom">Plugin: EEPROM (<code>Plugin_EEPROM</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_EEPROM">https://github.com/grblHAL/Plugin_EEPROM</a></p>
+<h2 id="plugin-eeprom-plugin_eeprom"><a class="anchor" href="#plugin-eeprom-plugin_eeprom" aria-hidden="true"></a>Plugin: EEPROM (<code>Plugin_EEPROM</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_EEPROM">https://github.com/grblHAL/Plugin_EEPROM</a></p>
 <table>
 <thead>
 <tr>
@@ -513,11 +513,11 @@ M114
 <td>Extended EEPROM for custom variables</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Read/write custom EEPROM values (plugin-specific)
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Read/write custom EEPROM values (plugin-specific)
 ; Example depends on machine configuration
 </code></pre>
 <hr>
-<h2 id="plugin-webui-plugin_webui">Plugin: WebUI (<code>Plugin_WebUI</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_WebUI">https://github.com/grblHAL/Plugin_WebUI</a></p>
+<h2 id="plugin-webui-plugin_webui"><a class="anchor" href="#plugin-webui-plugin_webui" aria-hidden="true"></a>Plugin: WebUI (<code>Plugin_WebUI</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_WebUI">https://github.com/grblHAL/Plugin_WebUI</a></p>
 <table>
 <thead>
 <tr>
@@ -530,12 +530,12 @@ M114
 <td>Exposes existing M/G-codes via web interface</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; No new M-codes; use M3/M4/M5 via WebUI API
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; No new M-codes; use M3/M4/M5 via WebUI API
 </code></pre>
 <hr>
-<h2 id="plugin-sienci-atci-automatic-tool-changer-interface">Plugin: Sienci ATCi (Automatic Tool Changer Interface)</h2><p>Github Repository: <a href="https://github.com/Sienci-Labs/grblhal-atci-plugin">https://github.com/Sienci-Labs/grblhal-atci-plugin</a></p>
+<h2 id="plugin-sienci-atci-automatic-tool-changer-interface"><a class="anchor" href="#plugin-sienci-atci-automatic-tool-changer-interface" aria-hidden="true"></a>Plugin: Sienci ATCi (Automatic Tool Changer Interface)</h2><p>Github Repository: <a href="https://github.com/Sienci-Labs/grblhal-atci-plugin">https://github.com/Sienci-Labs/grblhal-atci-plugin</a></p>
 <p>This plugin provides advanced safety, state management, and sensor integration for the <strong><a href="https://sienci.com/product/automatic_tool_changer/">Sienci Automatic Tool Changer (ATC)</a></strong>.</p>
-<h4 id="settings">$-Settings</h4><table>
+<h4 id="settings"><a class="anchor" href="#settings" aria-hidden="true"></a>$-Settings</h4><table>
 <thead>
 <tr>
 <th>Setting</th>
@@ -569,7 +569,7 @@ M114
 <td>Maximum Y coordinate of the safe zone (mm)</td>
 </tr>
 </tbody></table>
-<h4 id="m-codes">M-Codes</h4><table>
+<h4 id="m-codes"><a class="anchor" href="#m-codes" aria-hidden="true"></a>M-Codes</h4><table>
 <thead>
 <tr>
 <th>M-Code</th>
@@ -583,7 +583,7 @@ M114
 <td>1]`</td>
 </tr>
 </tbody></table>
-<h4 id="real-time-report">Real-time Report</h4><p>Appends <code>|ATCI:[flags]</code> to the status string.</p>
+<h4 id="real-time-report"><a class="anchor" href="#real-time-report" aria-hidden="true"></a>Real-time Report</h4><p>Appends <code>|ATCI:[flags]</code> to the status string.</p>
 <ul>
 <li><strong>E</strong>: Enforcement Enabled</li>
 <li><strong>Z</strong>: Machine is Inside Zone</li>
@@ -593,7 +593,7 @@ M114
 <li><strong>L</strong>: Tool Loaded</li>
 <li><strong>P</strong>: Low Air Pressure</li>
 </ul>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Configure Keepout Zone
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Configure Keepout Zone
 $684=10.0   ; X Min
 $686=50.0   ; X Max
 $685=10.0   ; Y Min
@@ -604,9 +604,9 @@ $683=7      ; Enable plugin (1) + Monitor Rack (2) + Monitor Macro (4)
 M960 P0
 </code></pre>
 <hr>
-<h2 id="plugin-embroidery-plugin_embroidery">Plugin: Embroidery (<code>Plugin_embroidery</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_embroidery">https://github.com/grblHAL/Plugin_embroidery</a></p>
+<h2 id="plugin-embroidery-plugin_embroidery"><a class="anchor" href="#plugin-embroidery-plugin_embroidery" aria-hidden="true"></a>Plugin: Embroidery (<code>Plugin_embroidery</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugin_embroidery">https://github.com/grblHAL/Plugin_embroidery</a></p>
 <p>Stream embroidery files (.dst, .pes) directly from SD card. This experimental plugin bypasses G-code translation for precise stitch timing.</p>
-<h4 id="commands">Commands</h4><table>
+<h4 id="commands"><a class="anchor" href="#commands" aria-hidden="true"></a>Commands</h4><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -627,16 +627,16 @@ M960 P0
 <li><strong>Ack/Nak:</strong> <code>0xB2</code> (Ack), <code>0xB3</code> (Nak).</li>
 </ul>
 <hr>
-<h2 id="plugin-esp-at-plugins_misc">Plugin: ESP-AT (<code>Plugins_misc</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
+<h2 id="plugin-esp-at-plugins_misc"><a class="anchor" href="#plugin-esp-at-plugins_misc" aria-hidden="true"></a>Plugin: ESP-AT (<code>Plugins_misc</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
 <p>Enables WiFi connectivity using an ESP8266/ESP32 running AT-command firmware connected to a UART.</p>
-<h4 id="features">Features</h4><ul>
+<h4 id="features"><a class="anchor" href="#features" aria-hidden="true"></a>Features</h4><ul>
 <li>Telnet access to the grblHAL console.</li>
 <li>WebUI support (limited).</li>
 </ul>
 <hr>
-<h2 id="plugin-toolsetter-secondary-probe-plugins_misc">Plugin: Toolsetter / Secondary Probe (<code>Plugins_misc</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
+<h2 id="plugin-toolsetter-secondary-probe-plugins_misc"><a class="anchor" href="#plugin-toolsetter-secondary-probe-plugins_misc" aria-hidden="true"></a>Plugin: Toolsetter / Secondary Probe (<code>Plugins_misc</code>)</h2><p>Github Repository: <a href="https://github.com/grblHAL/Plugins_misc">https://github.com/grblHAL/Plugins_misc</a></p>
 <p>Adds support for a dedicated toolsetter input and a secondary probe input, allowing for advanced probing scenarios.</p>
-<h4 id="settings">$-Settings</h4><table>
+<h4 id="settings"><a class="anchor" href="#settings" aria-hidden="true"></a>$-Settings</h4><table>
 <thead>
 <tr>
 <th>Setting</th>
@@ -652,7 +652,7 @@ M960 P0
 <td><strong>Secondary Probe Input:</strong> Auxiliary input pin number.</td>
 </tr>
 </tbody></table>
-<h4 id="commands">Commands</h4><table>
+<h4 id="commands"><a class="anchor" href="#commands" aria-hidden="true"></a>Commands</h4><table>
 <thead>
 <tr>
 <th>Command</th>
@@ -666,7 +666,7 @@ M960 P0
 <td>Select probe input: <code>Q0</code>=Standard, <code>Q1</code>=Toolsetter, <code>Q2</code>=Secondary.</td>
 </tr>
 </tbody></table>
-<h4 id="example">Example</h4><pre><code class="language-gcode">; Configure toolsetter input on Aux 2
+<h4 id="example"><a class="anchor" href="#example" aria-hidden="true"></a>Example</h4><pre><code class="language-gcode">; Configure toolsetter input on Aux 2
 $678=2
 
 ; Select toolsetter to probe tool length
@@ -677,14 +677,14 @@ G38.2 Z-50 F100
 G65 P5 Q0
 </code></pre>
 <hr>
-<h2 id="template-plugins">Template Plugins</h2><p>These plugins are available as templates in the <strong><a href="http://svn.io-engineering.com:8080/">grblHAL Web Builder</a></strong> under <code>3rd party plugins</code>. They are designed to be starting points for custom functionality but often provide useful features out-of-the-box.
+<h2 id="template-plugins"><a class="anchor" href="#template-plugins" aria-hidden="true"></a>Template Plugins</h2><p>These plugins are available as templates in the <strong><a href="http://svn.io-engineering.com:8080/">grblHAL Web Builder</a></strong> under <code>3rd party plugins</code>. They are designed to be starting points for custom functionality but often provide useful features out-of-the-box.
 Github Repository: <a href="https://github.com/grblHAL/Templates">https://github.com/grblHAL/Templates</a></p>
-<h3 id="fluidnc-webui-support-fluidnc_esp3d_cmd">FluidNC WebUI Support (<code>FluidNC_ESP3D_cmd</code>)</h3><p>Adds support for extended commands required by the FluidNC WebUI (ESP3D v2 protocol).</p>
+<h3 id="fluidnc-webui-support-fluidnc_esp3d_cmd"><a class="anchor" href="#fluidnc-webui-support-fluidnc_esp3d_cmd" aria-hidden="true"></a>FluidNC WebUI Support (<code>FluidNC_ESP3D_cmd</code>)</h3><p>Adds support for extended commands required by the FluidNC WebUI (ESP3D v2 protocol).</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/FluidNC_ESP3D_cmd</code></li>
 <li><strong>Function:</strong> Enables <code>[ESP:...]</code> command handling, allowing the FluidNC generic WebUI to function with grblHAL.</li>
 </ul>
-<h3 id="mcu-load-estimator-mcu_load">MCU Load Estimator (<code>MCU_load</code>)</h3><p>Adds a <code>MCU:</code> field to the real-time status report, showing the number of idle loop iterations per 10ms.</p>
+<h3 id="mcu-load-estimator-mcu_load"><a class="anchor" href="#mcu-load-estimator-mcu_load" aria-hidden="true"></a>MCU Load Estimator (<code>MCU_load</code>)</h3><p>Adds a <code>MCU:</code> field to the real-time status report, showing the number of idle loop iterations per 10ms.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/MCU_load</code></li>
 <li><strong>Report:</strong> <code>|MCU:20000|</code> (Higher is better, meaning less load. ,,,...`</li>
@@ -694,7 +694,7 @@ Github Repository: <a href="https://github.com/grblHAL/Templates">https://github
 </ul>
 </li>
 </ul>
-<h3 id="motor-power-monitor-motor_power_monitor">Motor Power Monitor (<code>Motor_power_monitor</code>)</h3><p>Monitors a digital input for high-voltage power loss (common on Trinamic setups).</p>
+<h3 id="motor-power-monitor-motor_power_monitor"><a class="anchor" href="#motor-power-monitor-motor_power_monitor" aria-hidden="true"></a>Motor Power Monitor (<code>Motor_power_monitor</code>)</h3><p>Monitors a digital input for high-voltage power loss (common on Trinamic setups).</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Motor_power_monitor</code></li>
 <li><strong>Setting:</strong> <code>$450</code> (Input pin number).</li>
@@ -704,22 +704,22 @@ Github Repository: <a href="https://github.com/grblHAL/Templates">https://github
 </ul>
 </li>
 </ul>
-<h3 id="pause-on-sd-file-run-pause_on_sd_file_run">Pause on SD File Run (<code>Pause_on_SD_file_run</code>)</h3><p>Automatically triggers a Feed Hold when an SD card file starts execution.</p>
+<h3 id="pause-on-sd-file-run-pause_on_sd_file_run"><a class="anchor" href="#pause-on-sd-file-run-pause_on_sd_file_run" aria-hidden="true"></a>Pause on SD File Run (<code>Pause_on_SD_file_run</code>)</h3><p>Automatically triggers a Feed Hold when an SD card file starts execution.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Pause_on_SD_file_run</code></li>
 <li><strong>Usage:</strong> Useful for verifying machine state or changing tools before a job automatically begins. Requires user <code>Cycle Start</code> to proceed.</li>
 </ul>
-<h3 id="realtime-report-aux-state-realtime_report_aux_out_state">Realtime Report Aux State (<code>Realtime_report_aux_out_state</code>)</h3><p>Adds the state of auxiliary output pins to the status report.</p>
+<h3 id="realtime-report-aux-state-realtime_report_aux_out_state"><a class="anchor" href="#realtime-report-aux-state-realtime_report_aux_out_state" aria-hidden="true"></a>Realtime Report Aux State (<code>Realtime_report_aux_out_state</code>)</h3><p>Adds the state of auxiliary output pins to the status report.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Realtime_report_aux_out_state</code></li>
 <li><strong>Report:</strong> <code>|AUX:0010|</code> (Bitmask of output states). Only reports ports available via M62-M65.</li>
 </ul>
-<h3 id="realtime-report-timestamp-realtime_report_timestamp">Realtime Report Timestamp (<code>Realtime_report_timestamp</code>)</h3><p>Adds the system uptime to the status report.</p>
+<h3 id="realtime-report-timestamp-realtime_report_timestamp"><a class="anchor" href="#realtime-report-timestamp-realtime_report_timestamp" aria-hidden="true"></a>Realtime Report Timestamp (<code>Realtime_report_timestamp</code>)</h3><p>Adds the system uptime to the status report.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Realtime_report_timestamp</code></li>
 <li><strong>Report:</strong> <code>|TS:123456|</code> (Milliseconds since boot).</li>
 </ul>
-<h3 id="solenoid-spindle-solenoid_spindle">Solenoid Spindle (<code>Solenoid_spindle</code>)</h3><p>Optimizes PWM output for driving solenoids (Kick-and-Hold strategy).</p>
+<h3 id="solenoid-spindle-solenoid_spindle"><a class="anchor" href="#solenoid-spindle-solenoid_spindle" aria-hidden="true"></a>Solenoid Spindle (<code>Solenoid_spindle</code>)</h3><p>Optimizes PWM output for driving solenoids (Kick-and-Hold strategy).</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Solenoid_spindle</code></li>
 <li><strong>Behavior:</strong><ul>
@@ -728,7 +728,7 @@ Github Repository: <a href="https://github.com/grblHAL/Templates">https://github
 </ul>
 </li>
 </ul>
-<h3 id="stepper-enable-control-stepper_enable_control">Stepper Enable Control (<code>Stepper_enable_control</code>)</h3><p>Adds Marlin-style G-codes for individual stepper control.</p>
+<h3 id="stepper-enable-control-stepper_enable_control"><a class="anchor" href="#stepper-enable-control-stepper_enable_control" aria-hidden="true"></a>Stepper Enable Control (<code>Stepper_enable_control</code>)</h3><p>Adds Marlin-style G-codes for individual stepper control.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/Stepper_enable_control</code></li>
 <li><strong>Commands:</strong><ul>
@@ -738,7 +738,7 @@ Github Repository: <a href="https://github.com/grblHAL/Templates">https://github
 </ul>
 </li>
 </ul>
-<h3 id="hpgl-plotter-hpgl">HPGL Plotter (<code>hpgl</code>)</h3><p>Adds an HPGL interpreter mode, allowing the CNC to act as a native pen plotter.</p>
+<h3 id="hpgl-plotter-hpgl"><a class="anchor" href="#hpgl-plotter-hpgl" aria-hidden="true"></a>HPGL Plotter (<code>hpgl</code>)</h3><p>Adds an HPGL interpreter mode, allowing the CNC to act as a native pen plotter.</p>
 <ul>
 <li><strong>Repo:</strong> <code>my_plugin/hpgl</code></li>
 <li><strong>Command:</strong> <code>$HPGL</code> (Enter HPGL mode).</li>
