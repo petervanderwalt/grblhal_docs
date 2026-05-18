@@ -50,7 +50,20 @@ npm run edit
 
 ### 3. Point it at this project
 
-On **first run only**, the editor asks for your project path. Enter the full path to this folder (e.g. `C:\Users\you\grblhal_docs` or `/home/you/grblhal_docs`).
+First, fork or clone this repo to your computer:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/grblhal_docs.git
+```
+
+Then start the editor:
+
+```bash
+cd cheetah
+npm run edit
+```
+
+On **first run only**, the editor asks for your project path. Enter the full path to where you cloned this repo (e.g. `C:\Users\you\grblhal_docs` or `/home/you/grblhal_docs`).
 
 The editor remembers this path in `.cheetah-path` (inside the cheetah engine folder).
 
@@ -69,8 +82,14 @@ The right pane shows a live rendered preview as you type.
 
 Click **Deploy** in the editor toolbar. A prompt asks for the **base path**:
 
-- **For GitHub Pages** with this repo: enter `/grblhal_docs`
-- **For FTP to a domain root**: leave empty
+The base path is the URL subdirectory where the site will be served:
+
+| Where it's hosted | Base path to enter | Example URL |
+|---|---|---|
+| GitHub Pages user site (`user.github.io`) | leave empty | `https://user.github.io/01-Getting-Started/...` |
+| GitHub Pages project site (`user.github.io/repo`) | `/repo-name` | `https://user.github.io/grblhal_docs/01-Getting-Started/...` |
+| FTP to domain root | leave empty | `https://domain.com/01-Getting-Started/...` |
+| FTP to subdirectory | `/subdir` | `https://domain.com/subdir/01-Getting-Started/...` |
 
 The build outputs to `docs/`. Push this repo to GitHub:
 
@@ -81,6 +100,17 @@ git push
 ```
 
 GitHub Pages (configured at Settings → Pages → Deploy from `main` `/docs`) will update automatically after a minute.
+
+### Editing without the editor
+
+You are not tied to the editor. Since everything is plain Markdown on disk, you can also:
+
+- Edit `.md` files directly in any text editor
+- Use AI tools to batch-generate or update content
+- Edit on your phone, commit via GitHub's web interface
+- Use your favourite IDE with Markdown plugins
+
+Then open the cheetah editor to preview changes, check formatting, and run a clean deploy.
 
 ## Updating the engine
 
