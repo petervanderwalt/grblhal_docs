@@ -5607,7 +5607,7 @@ Assigns a physical auxiliary digital output port to control a relay for the tool
 > - This setting specifies which auxiliary digital output port will be used to activate a relay associated with the toolsetter.
 > - A common use case is a mechanism to deploy/retract the toolsetter, or to select the toolsetter itself using a relay.
 > - Set this value to `-1` to disable the relay output for the toolsetter.
-> - **Probe selection is handled by the inbuilt `G65 P5 Q` macro**, where `` is the probe ID (e.g., `Q1` for toolsetter). The toolsetter can also be selected automatically during `@G59.3` tool changes.
+> - **Probe selection is handled by the inbuilt `G65 P5 Q<n>` macro**, where `<n>` is the probe ID (e.g., `Q1` for toolsetter). The toolsetter can also be selected automatically during `@G59.3` tool changes.
 
 
 | Value | Meaning |
@@ -5635,7 +5635,7 @@ Assigns a physical auxiliary digital output port to control a relay for the seco
 > - This setting specifies which auxiliary digital output port (by its hardware number) will be used to activate a relay associated with a secondary probe (e.g., a touch plate, or an additional part probe).
 > - This can be used for deploying the probe or selecting between multiple probe inputs using a relay.
 > - Set this value to `-1` to disable the relay output for the secondary probe.
-> - **Probe selection is handled by the inbuilt `G65 P5 Q` macro**, where `` is the probe ID (e.g., `Q2` for secondary probe).
+> - **Probe selection is handled by the inbuilt `G65 P5 Q<n>` macro**, where `<n>` is the probe ID (e.g., `Q2` for secondary probe).
 
 
 | Value | Meaning |

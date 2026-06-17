@@ -154,6 +154,13 @@
     "text": "VFD Spindle Setup grblHAL supports controlling VFD (Variable Frequency Drive) spindles directly via Modbus (RS485). This allows for precise RPM control, direction switching, and real-time status feedback (voltage, current, actual RPM) without using a simple 0-10V analog signal. Supported VFDs The following VFDs are supported by the plugins/spindle/vfd modules: - Huanyang (SL series and others using the common protocol) - H-100 (Common cheap VFDs) - GS20 - YL-620 - Nowforever - ModVFD (Generic configurable driver) --- 1. Wiring (RS485) To connect a VFD, you nominally need an RS485 module connected to your microcontroller's UART pins. | RS485 Module | VFD Terminal | | :--- | :--- | | A+ | RS+ / A+ / 485+ | | B- | RS- / B- / 485- | | GND | GND / COM | > 💡 Tip > Use twisted pair cable for A and B. > Use shielded cable , grounding the shield at the controller side only. > RS485 is sensitive to noise; keep it away from the main spindle power cables. > If communication fails, try swapping A "
   },
   {
+    "title": "ADVANCED TOPICS: DEFAULTS",
+    "path": "06-Advanced-Topics/defaults.md",
+    "url": "/grblhal_docs/06-Advanced-Topics/defaults.html",
+    "excerpt": "Defaults and Profile Configuration grblHAL uses a layered default system. This document covers: - DEFAULT_ symbols — compile-time defaults in config.h that set initial values for every $ setting - Pro",
+    "text": "Defaults and Profile Configuration grblHAL uses a layered default system. This document covers: - DEFAULT_ symbols — compile-time defaults in config.h that set initial values for every $ setting - Profile configuration symbols — compile-time defines in my_machine.h that select hardware features, spindle types, motor count, ganging, and more - Machine profiles — pre-baked $ setting overrides used by the web builder and gsender --- 1. The Defaults Precedence Chain Values are resolved in this order (last wins): | Layer | Source | Example | |:------|:-------|:--------| | 1. Core default | core/config.h | define DEFAULT_STEP_PULSE_MICROSECONDS 5.0f | | 2. Driver override | driver.h / my_machine.h | undef DEFAULT_HOMING_ENABLE / define DEFAULT_HOMING_ENABLE 1 | | 3. Runtime EEPROM | $x command or gsender profile | $24=150.0 | | 4. Startup script | $N0 / $N1 | $N0=$24=150.0 | The DEFAULT_ symbols are baked into the firmware binary. After flashing, the runtime values are written to EEPROM (emu"
+  },
+  {
     "title": "ADVANCED TOPICS: MACROS AND EXPRESSIONS",
     "path": "06-Advanced-Topics/macros-and-expressions.md",
     "url": "/grblhal_docs/06-Advanced-Topics/macros-and-expressions.html",

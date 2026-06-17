@@ -27,10 +27,10 @@ Expressions are evaluated based on standard precedence rules:
 | :--- | :--- | :--- |
 | **`SQRT[n]`** | Square Root | `G1 X[SQRT[100]]` (= X10) |
 | **`SIN[n]`, `COS[n]`, `TAN[n]`** | Trigonometry (Degrees) | `G1 Y[SIN[45]*10]` |
-| **`ASIN`, `ACOS`, `ATAN`** | Inverse Trig | |
-| **`ABS[n]`** | Absolute Value | |
-| **`ROUND[n]`, `FIX[n]`, `FUP[n]`** | Rounding functions | `FIX[3.9]` (= 3) |
-| **`LN[n]`, `EXP[n]`** | Logarithms | |
+| **`ASIN[n]`, `ACOS[n]`, `ATAN[n]`** | Inverse Trig | `# = ASIN[0.5]` (= 30) |
+| **`ABS[n]`** | Absolute Value | `# = ABS[-5]` (= 5) |
+| **`ROUND[n]`, `FIX[n]`, `FUP[n]`** | Rounding functions | `FIX[3.9]` (= 3), `FUP[3.1]` (= 4) |
+| **`LN[n]`, `EXP[n]`** | Base-e log / exponential | `EXP[1]` (= 2.71828) |
 | **`PRM[n]`** | Read grblHAL Setting | `# = PRM[110]` |
 
 ---
@@ -48,9 +48,9 @@ Variables in G-code are called **Parameters**. They start with `#`.
 You can create readable variable names. System named parameters are read-only and start with `_`.
 
 **User Variables:**
-- **Syntax:** `#`
-- **Assignment:** `# = 100.5`
-- **Usage:** `G1 X#`
+- **Syntax:** `#<name>`
+- **Assignment:** `#<myvar> = 100.5`
+- **Usage:** `G1 X#<myvar>`
 
 ### System Parameters Reference
 These are automatically updated by grblHAL.
@@ -58,40 +58,65 @@ These are automatically updated by grblHAL.
 | Parameter | Description | Equivalent # |
 | :--- | :--- | :--- |
 | **State & Modes** | | |
-| `#` | `1` if Metric (G21), `0` if Imperial | |
-| `#` | `1` if Absolute (G90), `0` if Relative | |
-| `#` | `1` if Spindle is ON | |
-| `#` | `1` if Flood Coolant (M8) ON | |
-| `#` | `1` if Tool Offset (G43) Active | |
-| `#` | `1` if machine is Homed | |
-| `#` | Bitmask of Homed Axes (X=1, Y=2...) | |
+| `#<_metric>` | `1` if Metric (G21), `0` if Imperial | |
+| `#<_absolute>` | `1` if Absolute (G90), `0` if Relative | |
+| `#<_incremental>` | `1` if Relative (G91), `0` if Absolute | |
+| `#<_imperial>` | `1` if Imperial (G20), `0` if not | |
+| `#<_spindle_on>` | `1` if Spindle is ON | |
+| `#<_flood>` | `1` if Flood Coolant (M8) ON | |
+| `#<_mist>` | `1` if Mist Coolant (M7) ON | |
+| `#<_tool_offset>` | `1` if Tool Offset (G43) Active | |
+| `#<_feed_override>` | `1` if Feed Override (M48/M50P2) ON | |
+| `#<_speed_override>` | `1` if Speed Override (M48/M50P1) ON | |
+| `#<_feed_hold>` | `1` if Feed Hold (M53.1) Active | |
+| `#<_homed_state>` | `1` if machine is Homed | |
+| `#<_homed_axes>` | Bitmask of Homed Axes (X=1, Y=2, Z=4...) | |
 | **Tools & Pockets** | | |
-| `#` | Current Tool Number (T) | `#5400` |
-| `#` | Selected Tool Number (Pre-M6) | |
-| `#`| Current Pocket Number | |
-| `#`| Selected Pocket Number | |
-| `#`| Number of tools in table (0 if disabled) | |
+| `#<_current_tool>` | Current Tool Number | `#5400` |
+| `#<_selected_tool>` | Selected Tool Number (T word) | |
+| `#<_current_pocket>` | Current Pocket Number | |
+| `#<_selected_pocket>` | Selected Pocket Number | |
+| `#<_tool_table_size>` | Number of tools in table (0 if disabled) | |
 | **Probes** | | |
-| `#` | State of Primary Probe Input | |
-| `#` | State of Secondary Probe Input | |
-| `#`| State of Toolsetter Input | |
-| `#` | ID of currently active probe (-1 if none) | |
+| `#<_probe_state>` | State of Primary Probe Input (-1 if N/A) | |
+| `#<_probe2_state>` | State of Secondary Probe Input (-1 if N/A) | |
+| `#<_toolsetter_state>` | State of Toolsetter Input (-1 if N/A) | |
+| `#<_active_probe>` | ID of currently active probe (-1 if none) | |
 | **System Info** | | |
-| `#` | Free Heap Memory (KBytes) | |
-| `#` | Current Subroutine Nesting Level | |
-| `#` | Return value from G65/M98 calls | |
-| `#`| `1` if last call returned a value | |
-| **Coordinates (Current WCS)** | | |
-| `#`, `#`, `#` | Current WPos X, Y, Z | `#5420`... |
-| `#`, `#`, `#` | Current WPos A, B, C | `#5423`... |
-| **Coordinates (Machine)** | | |
-| `#`, `#`... | Machine Position (G53) | |
+| `#<_free_memory>` | Free Heap Memory (KBytes, -1 if N/A) | |
+| `#<_call_level>` | Current Subroutine Nesting Level | |
+| `#<_value>` | Return value from G65/M98 calls (reset to 0 on entry) | |
+| `#<_value_returned>` | `1` if last G65/macro call returned a value | |
+| `#<_line>` | Current G-Code line number | |
+| **Coordinates (Current WCS — includes all offsets)** | | |
+| `#<_x>`, `#<_y>`, `#<_z>` | Current WorkPos X, Y, Z | `#5420`–`#5422` |
+| `#<_a>`, `#<_b>`, `#<_c>` | Current WorkPos A, B, C | `#5423`–`#5425` |
+| `#<_u>`, `#<_v>`, `#<_w>` | Current WorkPos U, V, W | `#5426`–`#5428` |
+| **Coordinates (Machine — G53 absolute)** | | |
+| `#<_abs_x>`, `#<_abs_y>`, `#<_abs_z>` | Machine Position X, Y, Z | |
+| `#<_abs_a>`, `#<_abs_b>`, `#<_abs_c>` | Machine Position A, B, C | |
+| `#<_abs_u>`, `#<_abs_v>`, `#<_abs_w>` | Machine Position U, V, W | |
 | **Probe Results** | | |
-| `#5061` - `#5069` | Probe Contact Position (X, Y, Z...) | |
+| `#5061`–`#5069` | Probe Contact Position (X, Y, Z, A, B, C, U, V, W) | |
 | `#5070` | Probe Success (`1`=Hit, `0`=Miss) | |
 | **Work Offsets** | | |
-| `#5221` - `#5229` | G54 Offset Vector | |
-| `#5241` - `#5249` | G55 Offset Vector | |
+| `#5221`–`#5229` | G54 (CS 1) Offset | |
+| `#5241`–`#5249` | G55 (CS 2) Offset | |
+| `#5261`–`#5269` | G56 (CS 3) Offset | |
+| `#5281`–`#5289` | G57 (CS 4) Offset | |
+| `#5301`–`#5319` | G58 (CS 5) Offset | |
+| `#5321`–`#5329` | G59 (CS 6) Offset | |
+| `#5341`–`#5349` | G59.1 (CS 7) Offset | |
+| `#5361`–`#5369` | G59.2 (CS 8) Offset | |
+| `#5381`–`#5389` | G59.3 (CS 9) Offset | |
+| `#5220` | Active Coordinate System number (1=G54 … 9=G59.3) | |
+| **G92 / G28 / G30** | | |
+| `#5210` | `1` if G92 offset is active, `0` if not | |
+| `#5211`–`#5219` | G92 offset (X, Y, Z, A, B, C, U, V, W) | |
+| `#5161`–`#5169` | G28 home position | |
+| `#5181`–`#5189` | G30 home position | |
+| **Motion Mode** | | |
+| `#<_motion_mode>` | Current G motion mode (1=G1, 2=G2, 3=G3, 80=G80…) | |
 
 ---
 
@@ -105,7 +130,7 @@ Logic statements allow your G-code to make decisions. These are essential for **
 Execute code only if a condition is true.
 
 ```gcode
-o100 if [# EQ 0]
+o100 if [#<_metric> EQ 0]
   (print, Error: Please switch to Metric G21)
   M2
 o100 else
@@ -117,11 +142,11 @@ o100 endif
 Repeat code while a condition is true.
 
 ```gcode
-# = 0
-o101 while [# LT 5]
+#<count> = 0
+o101 while [#<count> LT 5]
   G1 X10
   G0 X0
-  # = [# + 1]
+  #<count> = [#<count> + 1]
 o101 endwhile
 ```
 
@@ -150,7 +175,8 @@ o endsub
 
 **Calling a Sub:**
 ```gcode
-O call
+O100 call         (calls o100.macro)
+Omyprobe call     (calls myprobe.macro)
 ```
 
 ---

@@ -77,9 +77,9 @@ Pre-selects a tool number for a subsequent `M6` tool change command.
 
 The `O`-word (numeric) serves as a general label within a G-code file (e.g., for `GOTO` commands if supported by the sender). More significantly, grblHAL utilizes `O`-words to define and call subroutines stored in external files, largely following [LinuxCNC's "O-Code"](https://linuxcnc.org/docs/html/gcode/o-code.html) specification for file-based macros.
 
-**Syntax (Numeric Label):** `O`  
-**Syntax (Subroutine Call - External File):** `O call [L]`  
-**Syntax (Numeric Subroutine Call - External File):** `O call [L]`
+**Syntax (Numeric Label):** `O<number>`  
+**Syntax (Subroutine Call - External File):** `O<name> call [L]`  
+**Syntax (Numeric Subroutine Call - External File):** `O<number> call [L]`
 
 
 > ℹ️ **Info**
@@ -828,7 +828,7 @@ These commands control how the machine handles corners and transitions between s
 ## `G65` – Subprogram Call with Arguments
 
 **Syntax:**  
-> `G65 P [L] [A- B- C- ...]`  
+> `G65 P<number> [L] [A- B- C- ...]`  
 
 `G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
@@ -836,7 +836,7 @@ These commands control how the machine handles corners and transitions between s
 > ℹ️ **Info**
 > - **Requires NGC Expressions:** `G65` is supported in grblHAL only if NGC expressions (G-code expressions and flow control) are enabled in the firmware.
 > - **Subprogram Location:**
-> - User-defined `G65` macros are typically stored on an SD card (or in LittleFS) in the root folder, named `P.macro`, where `` is the `P` argument.
+> - User-defined `G65` macros are typically stored on an SD card (or in LittleFS) in the root folder, named `P<number>.macro`, where `<number>` is the `P` argument (e.g. `P100.macro`).
 > - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 > - **Nesting:** Nesting of `G65` macros is not allowed.
@@ -853,10 +853,10 @@ These commands control how the machine handles corners and transitions between s
 
 * **Call a custom macro `P100.macro` to drill a hole with a specific depth and feed rate:**  
   `(Content of P100.macro: )`  
-  `# = #1 ; A argument becomes local variable #`  
-  `# = #2 ; B argument becomes local variable #`  
-  `G91 G1 Z-# F#`  
-  `G0 Z#`  
+  `#<depth> = #1 ; A argument (drill depth)`  
+  `#<feed> = #2 ; B argument (feed rate)`  
+  `G91 G1 Z-#<depth> F#<feed>`  
+  `G0 Z#<depth>`  
   `M99` (Return from subprogram)
 
   `(Main program G-code: )`  

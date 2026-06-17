@@ -914,6 +914,21 @@ iMXRT1062 boards that support encoder input define QEI pins:
    ```
 4. Build and flash
 
+### Build System Integration
+
+The map header alone (no build system changes) works on all platforms because every `driver.h` already has a `BOARD_MY_MACHINE` case in its preprocessor ladder and the `boards/` directory is already in the compiler include path.
+
+Only add the companion `.c` file to the build system if your map uses `HAS_BOARD_INIT`:
+
+| Platform   | Build system   | Action needed for new `.c` file                          |
+|:-----------|:---------------|:----------------------------------------------------------|
+| ESP32      | ESP-IDF        | Add `boards/my_machine.c` to the `SRCS` list in `main/CMakeLists.txt` |
+| RP2040     | Pico SDK       | Add `boards/my_machine.c` to `add_executable()` in `CMakeLists.txt`   |
+| STM32F4xx  | PlatformIO     | None (picks up `Src/boards/` files automatically)         |
+| iMXRT1062  | PlatformIO     | None (picks up `src/boards/` files automatically)         |
+
+**ESP32 special case — `BOARD_BLACKBOX_X32`:** This board must be enabled in `main/CMakeLists.txt` via `OPTION(BOARD_BLACKBOX_X32 ...)` and `target_compile_definitions(... BOARD_BLACKBOX_X32)` because it also sets board-specific core defaults. All other boards are defined purely in `my_machine.h`.
+
 ### Required Defines
 
 At minimum, a board map must define:
@@ -932,13 +947,13 @@ At minimum, a board map must define:
 
 ### board_init() Custom Startup
 
-If the board needs custom initialization (I2C DAC setup, pin repurposing, etc.), define `HAS_BOARD_INIT` in the map header and implement `board_init()` in a companion `.c` file:
+If the board needs custom initialization (I2C DAC setup, pin repurposing, etc.), define `HAS_BOARD_INIT` in the map header and implement `board_init()` in a companion `.c` file in the same `boards/` directory:
 
 ```c
-// my_machine_map.h
+// boards/my_machine_map.h
 #define HAS_BOARD_INIT
 
-// my_machine.c
+// boards/my_machine.c
 #include "driver.h"
 
 void board_init (void)
@@ -947,6 +962,8 @@ void board_init (void)
     // Pin claiming, I2C setup, etc.
 }
 ```
+
+If you add a companion `.c` file, you may need to register it in the build system (see the table in the Workflow section above). On ESP32 (ESP-IDF), add it to `SRCS` in `main/CMakeLists.txt`. On RP2040 (Pico SDK), add it to `add_executable()` in `CMakeLists.txt`. PlatformIO-based platforms (STM32F4xx, iMXRT1062) pick up files automatically.
 
 ---
 
