@@ -27,7 +27,7 @@ This means whether you're running grblHAL on an ESP32, STM32, Teensy 4.1, or Ras
 - Significantly faster than 8-bit GRBL (~30 kHz maximum)
 
 ### **Advanced Motion Control**
-- **Up to 8-axis control** for complex machines
+- **Up to 8-axis control** for complex machines with compile time selectable axis letters for axes 3 - 7
 - Auto-squaring for dual-motor gantry systems
 - Backlash compensation
 - High-precision spindle synchronization (for threading operations)
@@ -46,17 +46,17 @@ This means whether you're running grblHAL on an ESP32, STM32, Teensy 4.1, or Ras
 - **Bluetooth** (on supported controllers)
 - Traditional USB serial connection via UART <> USB converter chip
 - 'Native' USB CDC serial connection via MCU USB peripherhal (on supported controllers, speed limited by the USB stack - not the baud rate)
-- WebUI for browser-based control
+- [WebUI](https://github.com/grblHAL/Plugin_WebUI/) for browser-based control (on supported controllers with WiFi or Ethernet connectivity)
 
 ### **Plugin Architecture**
-- Open, extensible plugin system
+- Open, extensible [plugin system](https://github.com/grblHAL/plugins)
 - Add custom M-codes, system commands and functionality
-- Third-party driver support
+- [Third-party driver](https://github.com/grblHAL/3rd_party_drivers) support
 - User-defined event handlers
 - Examples: SD card support, automatic tool changers, custom I/O control
 
 ### **Rich Feature Set**
-- SD card support for standalone operation
+- [SD card](https://github.com/grblHAL/Plugin_SD_card/) support for standalone operation
 - Multiple work coordinate systems
 - Probing cycles for tool measurement and workpiece setup
 - Laser mode with dynamic power control

@@ -17,7 +17,7 @@ Use the table of contents on the right to navigate, or use your browser's search
 
 2.  **Explicit is Better Than Implicit:** Don't assume the machine is in the correct state. Explicitly command `G90`/`G91`, `G20`/`G21`, and select your work offset (`G54`, etc.) in your program.
 
-3.  **Understand Modality:** Remember which commands are modal. Forgetting that a `G1` is active can lead to an unintended cutting move when you meant to make a rapid `G0` move. Forgetting a canned cycle (`G81`) is active can lead to unintended drilling. Always cancel modes (use `G80` or `G0` / `G1` can also be used ) when you are done with them.
+3.  **Understand Modality:** Remember which commands are modal. Forgetting that a `G1` is active can lead to an unintended cutting move when you meant to make a rapid `G0` move. Forgetting a canned cycle (`G81`) is active can lead to unintended drilling. Always cancel modes (use `G80`, `G0`/`G1` can also be used ) when you are done with them.
 
 4.  **Use `G53` for Safety:** When you need to move to a known, fixed machine position (like a tool change station or home), use `G53`. It bypasses all offsets and is the most reliable way to avoid collisions in these situations. A `G53 G0 Z0` is one of the safest commands in G-code.  NB! **only use if the machine is homed! as G53 depends on machine coordinates**
 
@@ -50,7 +50,7 @@ These letters have a specific, singular meaning in a G-code block. They can appe
 | **`O-`** | **Program Name / Subroutine Number.**|
 
 ## `F` – Feed Rate
-Sets the velocity for linear moves (`G1`, `G2`, `G3`) in units per minute (`G94`) or units per revolution (`G95`).
+Sets the velocity for motion (`G1`, `G2`, `G3`) in units per minute (`G94`) or units per revolution (`G95`).
 #### Examples
 * **Set feed rate, then start the a move:**  
   `F500`  
@@ -70,73 +70,12 @@ Pre-selects a tool number for a subsequent `M6` tool change command.
 * **Pre-select tool number 5 for a later change:**  
   `T5`  
   `( ... some cutting operations ... )`  
-  `M6 T5` (The `T5` here is often optional if the tool is already pre-selected)
+  `M6 T5` (The `T5` here is optional if the tool is already pre-selected)
 
 
-## `O` – O-Code Subroutines and Labels
+## `O` – O-Code Labels and Subroutines
 
-The `O`-word (numeric) serves as a general label within a G-code file (e.g., for `GOTO` commands if supported by the sender). More significantly, grblHAL utilizes `O`-words to define and call subroutines stored in external files, largely following [LinuxCNC's "O-Code"](https://linuxcnc.org/docs/html/gcode/o-code.html) specification for file-based macros.
-
-**Syntax (Numeric Label):** `O<number>`  
-**Syntax (Subroutine Call - External File):** `O<name> call [L]`  
-**Syntax (Numeric Subroutine Call - External File):** `O<number> call [L]`
-
-
-> ℹ️ **Info**
-> -   **Labels:** An `O` on a line by itself can function as a target for a `GOTO` command within the G-code stream (the `GOTO` command itself is typically handled by the G-code sender, not grblHAL's core).
-> -   **External File Subroutines (Macros):** This is grblHAL's primary method for direct controller-level O-code execution.
-> -   `O call` (e.g., `Otool_probe call`) or `O call` instructs grblHAL to look for and execute a specific file from storage (e.g., SD card, LittleFS).
-> -   The file name is derived from the `O`-word: `o.macro` or `o.macro` (the `.macro` extension is configurable, but common).
-> -   File lookup paths are specified in the grblHAL configuration's INI file, typically `PROGRAM_PREFIX` or `SUBROUTINE_PATH`.
-> -   File names must consist of lowercase letters, numbers, dashes (`-`), and underscores (`_`) only. The interpreter will convert uppercase letters in the `O` to lowercase for the filename lookup (e.g., `O call` looks for `myfile.macro`).
-> -   An external subroutine file must contain a single subroutine definition, enclosed by `o sub` and `o endsub` (or `o sub` and `o endsub`).
-> -   The optional `L` parameter specifies how many times the subroutine file should be executed.
-> -   **In-file Numeric Subroutines (`O sub`...`endsub`):** While grblHAL's G-code parser recognizes the syntax for defining numeric subroutines directly within the main G-code file, their full execution control (e.g., call stack management, local variables) when called by `O call` is typically a feature handled by the G-code sender software. grblHAL's core focuses on the external file execution for robustness and simplicity.
-
-
-#### Examples
-*   **Calling a named macro file (directly executed by grblHAL):**
-    ```gcode
-    (Main Program)
-    G53 G0 Z0
-    Otool_probe call (grblHAL executes 'tool_probe.macro' from storage)
-    ...
-    ```
-
-    **Example `tool_probe.macro` file content (must be named `tool_probe.macro` and located in the configured path):**
-    ```gcode
-    o sub
-      ( Code for probing here, e.g., )
-      G91 G38.2 Z-20 F100
-      ( ... calculate offset ... )
-    o endsub
-    M2 (Optional: M2 to reset/end the macro file after execution)
-    ```
-
-*   **Calling a numbered macro file (directly executed by grblHAL):**
-    ```gcode
-    (Main Program)
-    G53 G0 Z0
-    O123 call L2 (grblHAL executes 'o123.macro' twice from storage)
-    ...
-    ```
-
-    **Example `o123.macro` file content (must be named `o123.macro` and located in the configured path):**
-    ```gcode
-    o123 sub
-      ( Code for a specific operation, e.g., )
-      G1 X10 Y10 F500
-      G1 Z-2 F100
-    o123 endsub
-    M2
-    ```
-
-#### Tips & Tricks
--   For **external file subroutines** (`O call` or `O call`), the `O sub` and `O endsub` lines within the file are mandatory.
--   An `O return` statement can be used for an early exit from an external subroutine file. When an external macro file finishes (either by `endsub` or `return`, or simply reaching the end of the file), execution returns to the line after the `O call` in the main program.
--   The use of `M2` or `M30` at the end of an external macro file is a common practice, especially for older CAM posts, but `endsub` is the explicit O-code mechanism.
-
-
+Documented [here](06-o-code-and-subroutine_reference.html).
 
 ---
 
@@ -306,8 +245,8 @@ These commands enable the machine to move along complex curves defined by contro
 > ℹ️ **Info**
 > - **Modal:** Part of the Motion Mode group.
 > - **`G5` (Quadratic Spline):** Defines a quadratic spline segment. The path passes through the start point, the specified control point (often `I`, `J`), and the endpoint (`X`, `Y`, `Z`).
-> - **`G5.1` (Cubic Spline):** Defines a cubic spline segment. This provides even greater control over the curve's shape, often using multiple control points.
-> - **Reference:** For more detailed syntax and usage, refer to the [LinuxCNC documentation](http://linuxcnc.org/docs/html/gcode/g-code.html#gcode:g5).
+> - **`G5.1` (Cubic Spline):** Defines a cubic spline segment. TG65his provides even greater control over the curve's shape, often using multiple control points.
+> - **Reference:** For more detailed syntax and usage, refer to the [LinuxCNC documentation](http://linuxcnc.org/docs/html/gcode/g-code.html#gcode:g5).F
 
 
 | Parameter | Description |
@@ -832,15 +771,11 @@ These commands control how the machine handles corners and transitions between s
 
 `G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
-
 > ℹ️ **Info**
-> - **Requires NGC Expressions:** `G65` is supported in grblHAL only if NGC expressions (G-code expressions and flow control) are enabled in the firmware.
-> - **Subprogram Location:**
-> - User-defined `G65` macros are typically stored on an SD card (or in LittleFS) in the root folder, named `P<number>.macro`, where `<number>` is the `P` argument (e.g. `P100.macro`).
-> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (P1-P7).
+> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (currently P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
-> - **Nesting:** Nesting of `G65` macros is not allowed.
-> - **Reference:** For more details on expressions and flow control, refer to the [grblHAL wiki page on Expressions and flow control](https://github.com/grblHAL/core/wiki/Expressions-and-flow-control). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
+> - **Nesting:** Nesting of `G65` macros is allowed.
+> - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference#g65_and_g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
 
 
 | Parameter | Description |

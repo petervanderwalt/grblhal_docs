@@ -23,7 +23,10 @@ The **grblHAL Web Builder** is an online tool that generates pre-compiled firmwa
 ### Step 1: Access the Web Builder
 
 Navigate to the grblHAL Web Builder:
-- **URL:** [https://svn.io-engineering.com:8443/](https://svn.io-engineering.com:8443/)
+- **URL:** [https://webbuilder.grblhal.org/](https://webbuilder.grblhal.org/)
+
+> 💡 **Tip**
+> The link will currently redirect to a build server on a different site, if you want to save the link save the link above since the build server location may change.
 
 ### Step 2: Configure Your Firmware
 
@@ -31,14 +34,15 @@ The Web Builder interface has several configuration sections:
 
 #### **A. Select Driver**
 Choose the driver that matches your board's microcontroller:
-- **ESP32** - For ESP32-based boards (e.g., MKS DLC32, BlackBox X32, xPro V5)
-- **STM32F4xx** - For STM32F4 boards (e.g., BlackPill, Fysetc S6, SuperLongBoard)
-- **STM32H7xx** - For STM32H7 boards (e.g., BTT Octopus, BTT SKR 3)
-- **RP2040** - For Raspberry Pi Pico-based boards (e.g., PicoCNC, BTT SKR Pico)
-- **iMXRT1062** - For Teensy 4.x boards
-- **LPC176x** - For LPC1768/1769 boards (e.g., BTT SKR V1.4 Turbo)
-- **SAM3X8E** - For Arduino Due
-- **Simulator** - For Linux or Windows, run grblHAL without a controller
+- **ESP32** - For [ESP32 and ESP32-S3](https://webbuilder.grblhal.org/?driver=ESP32) based boards (e.g., MKS DLC32, BlackBox X32, xPro V5)
+- **STM32F4xx** - For [STM32F4](https://webbuilder.grblhal.org/?driver=STM32F4xx) boards (e.g., BlackPill, Fysetc S6, SuperLongBoard)
+- **STM32H7xx** - For [STM32H7](https://webbuilder.grblhal.org/?driver=STM32H7xx) boards (e.g., BTT Octopus, BTT SKR 3)
+- **STM32F1xx** - For [STM32F1](https://webbuilder.grblhal.org/?driver=STM32F1xx) boards (e.g., BTT SKR Mini E3, BSMCE04U )
+- **STM32F7xx** - For [STM32F7](https://webbuilder.grblhal.org/?driver=STM32F7xx) boards
+- **RP2040** - For [Raspberry Pi Pico](https://webbuilder.grblhal.org/?driver=ESP32)based boards (e.g., PicoCNC, BTT SKR Pico)
+- **iMXRT1062** - For [Teensy 4.x](https://webbuilder.grblhal.org/?driver=ESP32) boards
+- **SAM3X8E** - For [Arduino Due](https://webbuilder.grblhal.org/?driver=SAM3X8E)
+- **Simulator** - For [Linux or Windows](https://webbuilder.grblhal.org/?driver=Simulator), run grblHAL without a controller
 
 #### **B. Select Board**
 After selecting the driver, choose your specific board from the dropdown. Examples:
@@ -52,23 +56,27 @@ Choose additional features you want to enable:
 **General Plugins:**
 - SD card support
 - Keypad support
-- Bluetooth
+- Bluetooth (native or via HC-05 module)
 - EEPROM/FRAM support
-- Spindle sync
 - Laser coolant
+- Plasma
 - And more...
 
 **Network/WebUI:**
-- Wi-Fi (ESP32 boards)
+- Wi-Fi (ESP32 and Raspberry Pi Pico boards)
 - Ethernet (supported boards)
 - WebUI interface
 - Telnet/FTP support
+- Other protocols
 
 **Advanced Features:**
 - Odometer
 - Fans control
-- Tool length offset
+- Tool table
+- Parameter and expression support
+- Backlash compensation
 - Custom plugins
+- And more...
 
 > ⚠️ **Warning**
 > Some 3rd party plugins may cause compilation failures. If the build fails, try removing recently added plugins.
@@ -80,8 +88,7 @@ Some boards require a bootloader-compatible version for SD card updates or speci
 
 1. Click **"Generate and download firmware"** button
 2. Wait for the build to complete (usually 10-30 seconds)
-3. A `.bin` file will download to your computer
-4. Note the filename - it contains your configuration details
+3. Typically a `.bin` or `.hex` file will download to your computer. 
 
 ---
 
@@ -207,7 +214,7 @@ Some boards support firmware updates via SD card:
 
 ## Method 2: Manual Compilation (Advanced)
 
-For developers or users who need custom modifications:
+For processors not supported by the Web Builder, developers or users who need custom modifications:
 
 ### Prerequisites
 
@@ -317,7 +324,7 @@ Once firmware is successfully flashed:
 ## Additional Resources
 
 - **grblHAL Wiki:** [https://github.com/grblHAL/core/wiki](https://github.com/grblHAL/core/wiki)
-- **Web Builder:** [https://svn.io-engineering.com:8443/](https://svn.io-engineering.com:8443/)
+- **Web Builder:** [https://webbuilder.grblhal.org/](https://webbuilder.grblhal.org/)
 - **Driver Repositories:** [https://github.com/grblHAL](https://github.com/grblHAL)
 - **Community Forum:** [https://github.com/grblHAL/core/discussions](https://github.com/grblHAL/core/discussions)
 
