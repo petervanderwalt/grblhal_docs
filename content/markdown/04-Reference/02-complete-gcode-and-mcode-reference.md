@@ -768,15 +768,14 @@ These commands control how the machine handles corners and transitions between s
 
 **Syntax:**  
 > `G65 P- [L-] [A- B- C- ...]`  
-> `G66 P- [L-] [A- B- C- ...]`
 
-`G65` and `G66` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
+`G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
 > ℹ️ **Info**
-> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (currently P1-P7).
+> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with [built-in subprograms](06-o-code-and-subprogram_reference.html#built-in-G65-subprograms) (currently P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 > - **Nesting:** Nesting of `G65` macros is allowed.
-> - **Reference:** For more details on G65 and G66 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference.html#g65-and_g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
+> - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference.html#g65-and-g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
 
 
 | Parameter | Description |
@@ -788,555 +787,28 @@ These commands control how the machine handles corners and transitions between s
 ### User Macro Example (P100+)
 
 * **Call a custom macro `P100.macro` to drill a hole with a specific depth and feed rate:**  
-  `(Content of P100.macro: )`  
-  `#<depth> = #1 ; A argument (drill depth)`  
-  `#<feed> = #2 ; B argument (feed rate)`  
-  `G91 G1 Z-#<depth> F#<feed>`  
-  `G0 Z#<depth>`  
-  `M99` (Return from subprogram)
 
-  `(Main program G-code: )`  
-  `G0 X10 Y10`  
-  `G65 P100 A5.0 B200` (Call P100.macro, drill 5mm deep at 200mm/min)  
-  `G0 X20 Y20`  
-  `G65 P100 A8.0 B150` (Call P100.macro, drill 8mm deep at 150mm/min)
+Content of P100.macro, stored in a local (controller based) file system:  
+```gcode
+#<depth> = #1 ; A argument (drill depth)
+#<feed> = #2 ; B argument (feed rate)  
+G91 G1 Z-#<depth> F#<feed>
+G0 Z#<depth>
+M99` (Return from subprogram)
+```
+Main program, can be sent from a sender or run from a local file system:  
+```gcode
+G0 X10 Y10`  
+G65 P100 A5.0 B200` (Call P100.macro, drill 5mm deep at 200mm/min)  
+G0 X20 Y20`  
+G65 P100 A8.0 B150` (Call P100.macro, drill 8mm deep at 150mm/min)
+M30
+```
 
 ### Tips & Tricks
 - `G65` is a powerful tool for creating reusable, modular G-code for complex operations.
-- Variables are assigned to arguments based on their letter, e.g., `A` is typically `#1`, `B` is `#2`, `X` is `#24`, etc.
+- Variables are assigned to [numbered parameters](06-o-code-and-subprogram_reference.html#g65-and-g66) based on their letter, e.g., `A` maps to `#1`, `B` to `#2`, `X` to `#24`, etc.
 - **Reserve P1-P99 for built-in macros** - Start your custom macros at P100 or higher.
-
----
-
-## Built-in G65 Macros (P1-P7)
-
-grblHAL provides several [built-in G65 macros](06-o-code-and-subprogram_reference.html#inbuilt-g65-macros) for system-level operations. These are reserved and cannot be overridden by user macros.
-
-> 📝 **Note**
-> Built-in macros will set the `_value_returned` parameter to `1` if the call is successful and a value is returned. The value is then stored in the `_value` parameter.
-
----
-
-### `G65 P1` – Read/Write Settings
-
-**Purpose:** Read or write grblHAL numeric settings.
-
-**Syntax:**
-- `G65 P1 Q` - Read setting value
-- `G65 P1 Q S` - Set setting value (Available from build 20251028)
-
-**Parameters:**
-- `Q` = Setting number (e.g., `Q110` for $110)
-- `S` = New value to set (optional)
-
-**Returns:**
-- `_value` = Current setting value (for read operations)
-- `_value_returned` = 1 if successful
-
-**Examples:**
-```gcode
-; Read current X-axis max rate ($110)
-G65 P1 Q110
-# = _value
-(MSG, X-axis max rate: # mm/min)
-
-; Set X-axis max rate to 5000 mm/min
-G65 P1 Q110 S5000
-```
-
-**Alternative:** The `PRM[]` function can also be used to read settings:
-```gcode
-# = PRM[110]
-```
-
----
-
-### `G65 P2` – Read Tool Offset
-
-**Purpose:** Read tool offset values from the tool table.
-
-**Syntax:**
-- `G65 P2 Q R`
-
-**Parameters:**
-- `Q` = Tool number (e.g., `Q1` for Tool 1)
-- `R` = Axis number (0=X, 1=Y, 2=Z, 3=A, etc.)
-
-**Returns:**
-- `_value` = Tool offset value for the specified axis
-- `_value_returned` = 1 if successful
-
-**Example:**
-```gcode
-; Read Z-axis offset for Tool 3
-G65 P2 Q3 R2
-# = _value
-(MSG, Tool 3 Z offset: # mm)
-
-; Read X-axis offset for Tool 1
-G65 P2 Q1 R0
-# = _value
-```
-
----
-
-### `G65 P3` – Get/Set Parameter
-
-**Purpose:** Read or write parameter values. Useful for simulating arrays since parameter numbers can be expressions.
-
-**Syntax:**
-- `G65 P3 I [S]` - Get parameter value
-- `G65 P3 I Q` - Set parameter value
-
-**Parameters:**
-- `I` = Parameter number to read/write
-- `S` = Optional: Set parameter `` = parameter `` (copy operation)
-- `Q` = Value to set parameter to
-
-**Returns:**
-- `_value` = Parameter value (for read operations without `S`)
-- `_value_returned` = 1 if successful
-
-**Examples:**
-```gcode
-; Read parameter #100
-G65 P3 I100
-# = _value
-
-; Set parameter #100 to 42.5
-G65 P3 I100 Q42.5
-
-; Copy parameter #100 to parameter #200
-G65 P3 I100 S200
-
-; Simulate an array using expressions
-# = 5
-G65 P3 I[1000 + #] Q123.45  ; Set parameter #1005 to 123.45
-```
-
-**Use Case:** The `P3` macro is particularly useful for simulating arrays, as both `I` and `S` can be expressions.
-
----
-
-### `G65 P4` – Get Machine State
-
-**Purpose:** Query the current machine state.
-
-**Syntax:**
-- `G65 P4`
-
-**Returns:**
-- `_value` = Current machine state code
-- `_value_returned` = 1 if successful
-
-**State Codes:**
-
-| State | Description |
-|-------|-------------|
-| 0     | Idle |
-| 2     | Check mode1 |
-| 4     | Cycle (motion ongoing) |
-| 10    | Tool change |
-
-**Example:**
-```gcode
-; Check if machine is idle before starting operation
-G65 P4
-IF [_value NE 0]
-  (MSG, ERROR: Machine not idle!)
-  M0
-ENDIF
-
-; Wait for motion to complete
-G65 P4
-WHILE [_value EQ 4]
-  G4 P0.1  ; Wait 100ms
-  G65 P4
-ENDWHILE
-```
-
-**Available from:** Build 20250107
-
----
-
-### `G65 P5` – Select Probe Input
-
-**Purpose:** Select which probe input to use for probing operations.
-
-**Syntax:**
-- `G65 P5 Q`
-
-**Parameters:**
-- `Q` = Probe ID
-
-**Probe IDs:**
-
-| Probe | Description |
-|-------|-------------|
-| 0     | Primary probe |
-| 1     | Toolsetter |
-| 2     | Secondary probe |
-
-**Example:**
-```gcode
-; Use primary probe for workpiece probing
-G65 P5 Q0
-G38.2 Z-50 F100  ; Probe down
-
-; Switch to toolsetter for tool measurement
-G65 P5 Q1
-G38.2 Z-100 F50  ; Probe tool length
-```
-
-
-> 📝 **Note**
-> Selecting a probe input that is not available will raise an error.
-
-
-**Available from:** Build 20250514
-
----
-
-### `G65 P6` – Disable Spindle Delays
-
-**Purpose:** Disable spindle on/off delays for the next `M3`, `M4`, or `M5` command.
-
-**Syntax:**
-- `G65 P6`
-
-**Use Case:** When you need the spindle to start/stop immediately without waiting for the configured delay times (settings `$392` and `$394`).
-
-**Example:**
-```gcode
-; Normal spindle start with delay
-M3 S10000
-G4 P2  ; Wait for spindle to reach speed
-
-; Quick spindle restart without delay
-M5
-G65 P6  ; Disable delays for next spindle command
-M3 S10000  ; Starts immediately, no delay
-```
-
-**Available from:** Build 20250922
-
----
-
-### `G65 P7` – Send Modbus Message
-
-**Purpose:** Send Modbus RTU/TCP communication from G-code to read/write registers on Modbus-enabled devices such as VFDs (Variable Frequency Drives), PLCs, sensors, and other industrial equipment.
-
-**Syntax:**
-*   `G65 P7 S- F- R- ` (Function codes 1-4: Read operations)
-*   `G65 P7 S- F- R- A-` (Function codes 5 and 6: Write single coil/register)
-*   `G65 P7 S- F-` (Function code 7: Read exception status)
-*   `G65 P7 S- F- R- A-  ` (Function codes 16 and 17: Write multiple registers)
-
-**Parameters:**
-*   `S`: Modbus server (slave) address (1-247).
-*   `F`: Modbus function code (1-7, 16, 17 supported).
-*   `R`: Register base address (0-65535).
-*   `X`: Number of registers to read (1-3, default 1). Only for read operations.
-*   `A`: First value (for writes) or first register value.
-*   `B`: Second value (for multi-register writes).
-*   `C`: Third value (for multi-register writes).
-
-**Returns:**
-*   On exception: `_value_returned` is set to `0`, and `_value` contains the Modbus exception code.
-*   On success: `_value_returned` is set to the number of values received. `_value`, `_value2`, and `_value3` are set accordingly.
-
----
-
-#### Supported Modbus Function Codes
-
-    #### **Function Code 1 (0x01): Read Coils**
-    
-    Reads the ON/OFF status of discrete output coils (digital outputs) from the slave device.
-    
-    **Use Case:** Reading the state of relay outputs, digital I/O pins, or binary flags.
-    
-    **Syntax:** `G65 P7 S F1 R X`
-    
-    **Example:**
-    ```gcode
-    ; Read 8 coils starting from address 100 on slave device 1
-    G65 P7 S1 F1 R100 X8
-    ; _value will contain the coil states as a bitmask
-    ```
-
-    #### **Function Code 2 (0x02): Read Discrete Inputs**
-    
-    Reads the ON/OFF status of discrete input contacts (digital inputs) from the slave device.
-    
-    **Use Case:** Reading the state of limit switches, sensors, or other digital input signals.
-    
-    **Syntax:** `G65 P7 S F2 R X`
-    
-    **Example:**
-    ```gcode
-    ; Read status of 4 discrete inputs starting from address 200 on slave 1
-    G65 P7 S1 F2 R200 X4
-    ; Check if input is active
-    # = [_value AND 1]  ; Check bit 0
-    ```
-
-    #### **Function Code 3 (0x03): Read Holding Registers**
-    
-    Reads the contents of holding registers (read/write registers) from the slave device. This is the most commonly used function for reading configuration, setpoints, and status values.
-    
-    **Use Case:** Reading VFD speed setpoints, temperature values, counters, configuration parameters.
-    
-    **Syntax:** `G65 P7 S F3 R X`
-    
-    **Example:**
-    ```gcode
-    ; Read current spindle speed from VFD at slave address 1, register 1000
-    G65 P7 S1 F3 R1000 X1
-    # = _value
-    
-    ; Read 3 consecutive registers (e.g., X, Y, Z position from a controller)
-    G65 P7 S2 F3 R500 X3
-    # = _value
-    # = _value2
-    # = _value3
-    ```
-
-    #### **Function Code 4 (0x04): Read Input Registers**
-    
-    Reads the contents of input registers (read-only registers) from the slave device. These typically contain sensor readings, measurements, or status information.
-    
-    **Use Case:** Reading analog sensor values, measurement data, device status codes.
-    
-    **Syntax:** `G65 P7 S F4 R X`
-    
-    **Example:**
-    ```gcode
-    ; Read temperature sensor value from register 300 on slave 3
-    G65 P7 S3 F4 R300 X1
-    # = _value
-    
-    ; Read multiple sensor values
-    G65 P7 S3 F4 R400 X3
-    # = _value
-    # = _value2
-    # = _value3
-    ```
-
-    #### **Function Code 5 (0x05): Write Single Coil**
-    
-    Writes (forces) a single coil (digital output) to either ON or OFF.
-    
-    **Use Case:** Controlling relays, solenoids, indicator lights, or digital outputs.
-    
-    **Syntax:** `G65 P7 S F5 R A`
-    
-    **Parameters:**
-    *   `A`: Value to write (0 = OFF, 65280 or 0xFF00 = ON)
-    
-    **Example:**
-    ```gcode
-    ; Turn ON coil at address 50 on slave device 1
-    G65 P7 S1 F5 R50 A65280
-    
-    ; Turn OFF coil at address 50
-    G65 P7 S1 F5 R50 A0
-    
-    ; Practical example: Activate a clamp
-    G65 P7 S1 F5 R100 A65280  ; Clamp ON
-    G4 P0.5                    ; Wait 0.5 seconds
-    ; ... perform machining ...
-    G65 P7 S1 F5 R100 A0       ; Clamp OFF
-    ```
-
-    #### **Function Code 6 (0x06): Write Single Register**
-    
-    Writes a value to a single holding register. This is the most common function for setting parameters, setpoints, and configuration values.
-    
-    **Use Case:** Setting VFD speed, writing configuration parameters, updating setpoints.
-    
-    **Syntax:** `G65 P7 S F6 R A`
-    
-    **Example:**
-    ```gcode
-    ; Set VFD spindle speed to 12000 RPM (register 2000 on slave 1)
-    G65 P7 S1 F6 R2000 A12000
-    
-    ; Set a temperature setpoint to 75°C (register 500 on slave 2)
-    G65 P7 S2 F6 R500 A75
-    
-    ; Practical example: Variable spindle speed based on material
-    # = 1  ; 1=aluminum, 2=steel
-    IF [# EQ 1]
-      # = 18000
-    ELSE
-      # = 12000
-    ENDIF
-    G65 P7 S1 F6 R2000 A#
-    M3  ; Start spindle
-    ```
-
-    #### **Function Code 7 (0x07): Read Exception Status**
-    
-    Reads the exception status (8 coils/bits) from the slave device. This is a specialized diagnostic function.
-    
-    **Use Case:** Reading device error flags, alarm states, or diagnostic information.
-    
-    **Syntax:** `G65 P7 S F7`
-    
-    **Example:**
-    ```gcode
-    ; Read exception status from slave 1
-    G65 P7 S1 F7
-    # = _value
-    
-    ; Check for specific error conditions
-    IF [_value GT 0]
-      (MSG, ERROR: Device exception detected!)
-      M0  ; Stop program
-    ENDIF
-    ```
-
-    #### **Function Code 16 (0x10): Write Multiple Registers**
-    
-    Writes values to multiple consecutive holding registers in a single transaction. More efficient than multiple Function Code 6 calls.
-    
-    **Use Case:** Setting multiple parameters simultaneously, writing coordinate data, bulk configuration updates.
-    
-    **Syntax:** `G65 P7 S F16 R A > >`
-    
-    **Example:**
-    ```gcode
-    ; Write 3 values to consecutive registers starting at 1000 on slave 1
-    G65 P7 S1 F16 R1000 A100 B200 C300
-    ; Register 1000 = 100
-    ; Register 1001 = 200
-    ; Register 1002 = 300
-    
-    ; Practical example: Set XYZ position setpoints
-    # = 150.5
-    # = 200.0
-    # = 50.0
-    G65 P7 S2 F16 R500 A# B# C#
-    ```
-
-    #### **Function Code 17 (0x11): Report Server ID**
-    
-    Reads the identification and additional information from the slave device (serial line only).
-    
-    **Use Case:** Device identification, firmware version checking, diagnostic information retrieval.
-    
-    **Syntax:** `G65 P7 S F17`
-    
-    **Example:**
-    ```gcode
-    ; Get server ID from slave device 1
-    G65 P7 S1 F17
-    ; _value will contain device identification data
-    ```
-
-    ---
-
-    ### Error Handling
-
-    When a Modbus transaction fails or the slave device returns an exception, grblHAL sets:
-    *   `_value_returned = 0`
-    *   `_value` = Modbus exception code
-
-    **Common Modbus Exception Codes:**
-    *   `1`: Illegal Function (function code not supported by device)
-    *   `2`: Illegal Data Address (register address doesn't exist)
-    *   `3`: Illegal Data Value (value out of range)
-    *   `4`: Slave Device Failure (device malfunction)
-    *   `5`: Acknowledge (device accepted but needs time to process)
-    *   `6`: Slave Device Busy (device is processing another request)
-    *   `7`: Negative Acknowledge (device cannot perform the function)
-    *   `8`: Memory Parity Error (data corruption detected)
-
-    **Example Error Handling:**
-    ```gcode
-    ; Attempt to read register with error checking
-    G65 P7 S1 F3 R1000 X1
-    
-    IF [_value_returned EQ 0]
-      (MSG, Modbus Error! Exception Code: #)
-      IF [_value EQ 2]
-        (MSG, ERROR: Invalid register address)
-      ENDIF
-      IF [_value EQ 4]
-        (MSG, ERROR: Device failure)
-      ENDIF
-      M0  ; Stop program on error
-    ELSE
-      # = _value
-      (MSG, Spindle RPM: #)
-    ENDIF
-    ```
-
-    ---
-
-    ### Practical Application Examples
-
-    #### **Example 1: VFD Spindle Control**
-    ```gcode
-    ; Read current VFD frequency
-    G65 P7 S1 F3 R1000 X1
-    # = _value
-    (MSG, Current Frequency: # Hz)
-    
-    ; Set new frequency to 400 Hz (24000 RPM for 2-pole motor)
-    G65 P7 S1 F6 R1000 A400
-    
-    ; Start VFD
-    G65 P7 S1 F5 R100 A65280  ; Write coil to start
-    G4 P2  ; Wait 2 seconds for spindle to spin up
-    ```
-
-    #### **Example 2: Reading Multiple Sensors**
-    ```gcode
-    ; Read 3 temperature sensors from a monitoring device
-    G65 P7 S3 F4 R100 X3
-    # = _value
-    # = _value2
-    # = _value3
-    
-    ; Check for overheating
-    IF [# GT 80]
-      (MSG, WARNING: Spindle temperature high!)
-      M5  ; Stop spindle
-      M0  ; Pause program
-    ENDIF
-    ```
-
-    #### **Example 3: Automated Tool Measurement**
-    ```gcode
-    ; Trigger tool measurement on external probe system
-    G65 P7 S2 F5 R200 A65280  ; Activate measurement
-    G4 P1  ; Wait for measurement
-    
-    ; Read measured tool length
-    G65 P7 S2 F3 R500 X1
-    # = _value
-    
-    ; Apply tool offset
-    G43.1 Z#
-    (MSG, Tool length: # mm)
-    ```
-
-    ---
-
-    :::warning Testing Status
-    This feature has only been tested with a Modbus simulator. Use with caution in production environments and report any issues to the grblHAL development team.
-    :::
-
-    :::tip Configuration
-    Ensure your grblHAL firmware is compiled with Modbus support enabled and that the Modbus communication parameters (baud rate, parity, stop bits) match your slave devices. Modbus settings are typically configured via grblHAL settings `$3xx` range.
-    :::
-
-    :::info Additional Resources
-    - [Modbus Protocol Specification](https://www.modbustools.com/modbus.html)
-    - [Modbus Function Codes Reference](https://www.productinfo.schneider-electric.com/powerpactmodbuscommguide/)
-    - [grblHAL Modbus Plugin Documentation](https://github.com/grblHAL/Plugins_spindle)
-    :::
 
 ---
 
@@ -1348,21 +820,11 @@ M3 S10000  ; Starts immediately, no delay
 
 `G66` acts like `G65` but is **modal**. The specified macro is called after every subsequent motion command (`G0`, `G1`, `G2`, `G3`, etc.) until cancelled by `G67`.
 
-
 > ℹ️ **Info**
 > - **Purpose:** Useful for drilling canned cycles, custom probing cycles, or repeating an operation at multiple locations.
 > - **Cancellation:** `G67` cancels the modal macro state.
 
-
 ---
-
-**Notes:**
-
-1 In check mode, non-built-in `G65` macros will not be run; only file availability will be checked.
-
----
-
-
 ## `G76`, `G81` to `G89` – Canned Cycles
 
 **Syntax:**  
@@ -1377,7 +839,6 @@ M3 S10000  ; Starts immediately, no delay
 
 Canned cycles are powerful shortcuts that combine several distinct movements into a single G-code command, typically for hole-making operations like drilling, boring, and tapping. Instead of programming each feed, retract, and rapid move manually, you define the cycle's parameters once. The cycle then repeats at every new coordinate provided until a `G80` (Cancel Canned Cycle) is issued.
 
-
 > ℹ️ **Info**
 > - **Modal:** Once a canned cycle is active, it remains active. Every new position command for the axes on the active plane (`X` and `Y` in `G17`) will execute the full cycle at that location.
 > - **Parameters:**
@@ -1389,7 +850,6 @@ Canned cycles are powerful shortcuts that combine several distinct movements int
 > - **`L`**: **Optional:** Number of repeats (if supported by plugins).
 > - **Return Behavior:** The return height after the cycle is controlled by `G98` and `G99` (see below).
 > - **`G76` (Threading Cycle) and `G33` (Spindle Synced Motion):** These specialized lathe threading and spindle-synchronized cycles require a **spindle encoder** to synchronize spindle rotation with axis motion. Few grblHAL drivers/boards currently support this hardware requirement.
-
 
 #### Available Cycles in grblHAL
 *   **`G81`**: Simple Drilling Cycle. Rapids to R, feeds to Z, rapids out.
