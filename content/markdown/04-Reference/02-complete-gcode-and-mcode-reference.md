@@ -767,15 +767,16 @@ These commands control how the machine handles corners and transitions between s
 ## `G65` – Subprogram Call with Arguments
 
 **Syntax:**  
-> `G65 P<number> [L] [A- B- C- ...]`  
+> `G65 P- [L-] [A- B- C- ...]`  
+> `G66 P- [L-] [A- B- C- ...]`
 
-`G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
+`G65` and `G66` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
 > ℹ️ **Info**
 > - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with built-in macros (currently P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 > - **Nesting:** Nesting of `G65` macros is allowed.
-> - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference#g65_and_g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
+> - **Reference:** For more details on G65 and G66 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference.html#g65-and_g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
 
 
 | Parameter | Description |
@@ -803,18 +804,16 @@ These commands control how the machine handles corners and transitions between s
 ### Tips & Tricks
 - `G65` is a powerful tool for creating reusable, modular G-code for complex operations.
 - Variables are assigned to arguments based on their letter, e.g., `A` is typically `#1`, `B` is `#2`, `X` is `#24`, etc.
-- **Reserve P1-P7 for built-in macros** - Start your custom macros at P100 or higher.
+- **Reserve P1-P99 for built-in macros** - Start your custom macros at P100 or higher.
 
 ---
 
 ## Built-in G65 Macros (P1-P7)
 
-grblHAL provides several built-in `G65` macros for system-level operations. These are reserved and should not be overridden by user macros.
-
+grblHAL provides several [built-in G65 macros](06-o-code-and-subprogram_reference.html#inbuilt-g65-macros) for system-level operations. These are reserved and cannot be overridden by user macros.
 
 > 📝 **Note**
-> Built-in macros will set the `_value_returned` parameter to `1` if a value is returned. The value is then stored in the `_value` parameter.
-
+> Built-in macros will set the `_value_returned` parameter to `1` if the call is successful and a value is returned. The value is then stored in the `_value` parameter.
 
 ---
 

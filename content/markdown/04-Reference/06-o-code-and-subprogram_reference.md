@@ -1,11 +1,11 @@
-# O-code
+# O-code and Subprograms
 
 grblHAL supports [parameters](https://linuxcnc.org/docs/html/gcode/overview.html#_parameters), [expressions](https://linuxcnc.org/docs/html/gcode/overview.html#gcode:expressions) and
 [flow control](http://www.linuxcnc.org/docs/html/gcode/o-code.html#ocode:looping), LinuxCNC style \(with some limitations\), if enabled
 in the [config file](https://github.com/grblHAL/core/blob/ce7c3592b45fe9b5b1909f22cced15201bc72da6/config.h#L481-L497)
 or in builds made with the [Web Builder](http://svn.io-engineering.com:8080/) when _RS274 NGC expression support_ is enabled in the _Advanced features_ tab.
 
-The `O`-word serves as a label for [flow control statements](flow-control-statements). It is important that the `O`-numbers match at the beginning and end of a control segment and that they are unique within a file.
+The `O`-word serves as a label for [flow control statements](#flow-control-statements). It is important that the `O`-numbers match at the beginning and end of a control segment and that they are unique within a file.
 
 > ℹ️ **Info**
 > - Subprograms and `O`-words can only be used in files stored in a local file system with the exception of `CALL` to named subprograms and the forward branching [flow control statements](flow-control-statements) `IF`, `ELSE`, `ELSEIF`, `ENDIF` in data streamed from a sender (if the sender permits them).
@@ -17,7 +17,7 @@ There are five kinds of subprograms available in grblHAL, callable via `G65`, `G
 > ℹ️ **Info**
 > - External subprograms are stored in files located by searching the following directories in order `/` (root), `/littlefs` and finally `/embedded`.
 
-### G65 and G66
+## G65 and G66
 
 #### Numbered parameters passed as arguments to G65 and G66 subprograms
 
@@ -34,7 +34,7 @@ There are five kinds of subprograms available in grblHAL, callable via `G65`, `G
 > ℹ️ **Info**
 > Parameters not set by the caller are set to 0 by the parser prior to the call.
 
-### G65
+## G65
 
 Syntax: `G65 P- L- [A- B- C- ...]`
 
@@ -46,7 +46,7 @@ Syntax: `G65 P- L- [A- B- C- ...]`
 
 `G65` is non-modal and is executed by running the external subprogram `P<number>.macro` `L` number of times.
 
-### G66
+## G66
 
 `G66 P- [A- B- C- ...]`
 
@@ -57,7 +57,7 @@ Syntax: `G65 P- L- [A- B- C- ...]`
 
 `G66` is modal, it will run `P<number>.macro` for each block _following_ the `G66` block until a `G67` block is encountered. The initial `G66` will only set the local parameters from the arguments passed, and each subsequent execution will run the actual code with the supplied parameter values even if they are changed within the subprogram.
 
-### M98
+## M98
 
 Syntax: `M98 P- [L-]` 
 
