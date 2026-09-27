@@ -1,4 +1,4 @@
-# Complete G-code & M-code Reference
+# G-code & M-code Reference
 
 This page is a comprehensive reference for all known grblHAL G-code and M-code commands. It is designed to be a single source of truth for machine operation and G-code programming.
 
@@ -75,7 +75,7 @@ Pre-selects a tool number for a subsequent `M6` tool change command.
 
 ## `O` – O-Code Labels and Subroutines
 
-Documented [here](06-o-code-and-subroutine_reference.html).
+Documented [here](06-o-code-and-subprogram_reference.html).
 
 ---
 
@@ -556,7 +556,38 @@ Disables cutter radius compensation (`G41`/`G42`). This is the default state.
 
 ---
 
-*Note: Full `G41`/`G42` cutter radius compensation is not present in the grblHAL core but may be available via plugins. The `G40` command is included for compatibility and to ensure a known state.*
+*Note: The `G40` command is included for compatibility and to ensure a known state.*
+
+## `G41, G42` – Cutter Compensation
+
+**Syntax:**  
+> `G41 <D->` (left of programmed path)  
+> `G42 <D->` (right of programmed path)
+
+| Parameter | Description                                                                               |
+|-----------|-------------------------------------------------------------------------------------------|
+| **D**     | Optional tool number, if not provided the radius of the currenly loaded tool will be used |
+
+> ℹ️ **Info**
+> - **Modal:** Part of the Cutter Compensation group.
+> - Require firmware with tool table support enabled.
+> - Currenly [available as a plugin](https://github.com/JasonTitcomb/grblHALCutterComp#readme), made by @JasonTitcomb.
+
+---
+
+## `G41, G42` – Dynamic Cutter Compensation
+
+**Syntax:**  
+> `G41.1 D-` (left of programmed path)  
+> `G42.1 D-` (right of programmed path)
+
+| Parameter | Description     |
+|-----------|-----------------|
+| **D**     | Cutter diameter |
+
+> ℹ️ **Info**
+> - **Modal:** Part of the Cutter Compensation group.
+> - Currenly [available as a plugin](https://github.com/JasonTitcomb/grblHALCutterComp#readme), made by @JasonTitcomb.
 
 ---
 
@@ -772,7 +803,7 @@ These commands control how the machine handles corners and transitions between s
 `G65` allows calling a subprogram (macro) and passing arguments to it. This is a common feature in industrial controllers, enabling highly parameterized and reusable code.
 
 > ℹ️ **Info**
-> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with [built-in subprograms](06-o-code-and-subprogram_reference.html#built-in-G65-subprograms) (currently P1-P7).
+> - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with [built-in subprograms](06-o-code-and-subprogram_reference.html#built-in-g65-subprograms) (currently P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 > - **Nesting:** Nesting of `G65` macros is allowed.
 > - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](06-o-code-and-subprogram_reference.html#g65-and-g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).

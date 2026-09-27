@@ -10,7 +10,7 @@ or in builds made with the [Web Builder](http://svn.io-engineering.com:8080/) wh
 The `O`-word serves as a label for [flow control statements](#flow-control-statements). It is important that the `O`-numbers match at the beginning and end of a control segment and that they are unique within a file.
 
 > ℹ️ **Info**
-> - Subprograms and `O`-words can only be used in files stored in a local file system with the exception of `CALL` to named subprograms and the forward branching [flow control statements](flow-control-statements) `IF`, `ELSE`, `ELSEIF`, `ENDIF` in data streamed from a sender (if the sender permits them).
+> - Subprograms and `O`-words can only be used in files stored in a local file system with the exception of `CALL` to named subprograms and the forward branching [flow control statements](#flow-control-statements) `IF`, `ELSE`, `ELSEIF`, `ENDIF` in data streamed from a sender (if the sender permits them).
 
 ## Subprograms
 
