@@ -13,7 +13,8 @@ They are divided into two categories:
 System commands allow you to view and change settings, control machine modes (like sleep or homing), and read non-volatile data.
 
 > ℹ️ **Info**
-> Most `$` commands are processed by the main protocol loop. Some commands (like `$H` for homing) may block other operations until they complete.
+> Most `$` commands are processed by the main protocol loop. Some commands (like `$H` for homing) may block other operations until they complete.  
+> Plugins may add additional $-commands, send **$help commands** to list all available. 
 
 ## Configuration & Settings
 
@@ -23,8 +24,8 @@ Outputs the current value of all numbered settings.
 **Syntax:** `$$`
 
 > ℹ️ **Info**
-> -   Useful for backing up your configuration.
-> -   See the [Complete Settings Reference](complete-settings-reference.md) for details on each setting ID.
+> - Useful for backing up your configuration.
+> - See the [Complete Settings Reference](complete-settings-reference.md) for details on each setting ID.
 
 ---
 
@@ -68,7 +69,19 @@ Sets the value of a specific setting.
 -   `$1=255` (Set step idle delay to 255/always on)
 
 > ⚠️ **Warning**
-> Settings are stored in non-volatile memory (EEPROM/Flash) and persist after power cycles. Avoid writing settings inside high-frequency loops to prevent wearing out the memory.
+> Settings are stored in non-volatile memory (NVM - EEPROM/FRAM/Flash) and persist after power cycles. Avoid writing settings inside high-frequency loops to prevent wearing out the memory.
+
+**Tip:**  
+To reduce number of writes, and thus the wear and write delay, when updating many settings from a file encapsulate the settings with the `%` character as the first and last line.  
+**Example:**
+```text
+%
+$0=5.0
+$1=25
+...
+$132=200.000
+%
+```
 
 ---
 
@@ -138,6 +151,8 @@ Saves a G-code block to one of the startup lines (typically `$N0` and `$N1`).
 -   `$N0=G54 G20 G17` (Set first startup line)
 -   `$N1=` (Clear second startup line)
 
+Use the `|` (vertical bar) character to separate commands than cannot be put on a single line.
+
 **Common Uses:**
 -   Setting default modes (Absolute `G90`, Metric `G21`, Plane `G17`).
 -   Resetting work offsets (careful!).
@@ -167,12 +182,12 @@ Restores groups of settings to their firmware defaults.
 ### `$J` – Jogging
 Commands the machine to move freely. Jog commands are independent of the G-code parser state and can be canceled immediately by a Feed Hold or Jog Cancel command.
 
-**Syntax:** `$J=X Y ... F`
+**Syntax:** `$J=axes F- ...`
 
 **Requirements:**
 -   Must include at least one axis coordinate.
 -   Must include a Feed Rate (`F`).
--   can include `G20`/`G21` (units) and `G90`/`G91` (distance mode).
+-   Can include `G20`/`G21` (units), `G53` (move in the machine coordinate system) and `G90`/`G91` (distance mode).
 
 **Examples:**
 -   `$J=G91 X10 F500` (Move X +10mm relative at 500mm/min)
@@ -180,7 +195,7 @@ Commands the machine to move freely. Jog commands are independent of the G-code 
 
 > ℹ️ **Info**
 > -   Jogging is "safer" than `G0`/`G1` because it checks soft limits (if enabled) *before* moving and can be smoothly aborted by the user.
-> -   If soft limits (`$20`) are enabled, `G53` (Machine Coordinates) is implied unless `G54`..`G59` is explicitly used (though usually ignored for safety).
+> -   If the machine is homed set [$40=1](./03-complete-settings-reference.html#40-limit-jog-commands-boolean) to automatically limit jog motion to be within machine limits.
 
 ---
 
@@ -196,7 +211,7 @@ Initiates the homing sequence to find the machine origin.
 -   `$HA` ... `$HW` (Home rotary/secondary axes)
 
 > ⚠️ **Warning**
-> Requires limit switches to be installed and configured.
+> Requires limit switches to be installed and configured unless [configured](./03-complete-settings-reference.html#22-homing-options-mask) to allow manually homed axes.
 
 ---
 
@@ -238,30 +253,6 @@ Disables the alarm lock state.
 
 ### `$RW` – Rewind (if supported)
 Rewinds the input stream or program (SD card) context.
-
----
-
-## File System (SD Card)
-
-Commands for managing files on the SD card (if supported).
-
-### `$F` – List Files
-Lists files in the current working directory.
-
-**Syntax:** `$F`
-
-### `$F=` – Change Directory
-Sets the current working directory (CWD) for file operations.
--   `$F=/`: Go to root.
--   `$F=..`: Go up one level.
--   `$F=subfolder`: Go to `subfolder`.
-
-**Syntax:** `$F=/my_folder`
-
-### `$FF` – Format SD Card
-Formats the SD card. **All data will be lost.**
-
-**Syntax:** `$FF=yes`
 
 ---
 
@@ -447,7 +438,7 @@ These commands are specific to manual and semi-automatic tool change modes.
 
 ## Reporting & Enumeration (grblHAL Extensions)
 
-grblHAL provides advanced reporting commands for Senders to query capabilities without hardcoded lists.
+grblHAL provides advanced reporting commands for Senders to query up to date data, there is no need for them to rely on hardcoded lists.
 
 | Command | Description |
 |---------|-------------|
@@ -455,15 +446,56 @@ grblHAL provides advanced reporting commands for Senders to query capabilities w
 | **`$EE`** | **Enumerate Errors.** Lists all supported error codes and descriptions. |
 | **`$ES`** | **Enumerate Settings.** Lists all supported settings with types, ranges, and descriptions. |
 | **`$EG`** | **Enumerate Setting Groups.** Lists the hierarchy of setting groups. |
-| **`$pins`** | **Enumerate Pins.** Lists processor pin mappings. |
-| **`$pinstate`** | **Enumerate Pin States.** Lists current state of auxiliary pins. |
-| **`$ports`** | **Enumerate Serial Ports.** Lists available UART ports. |
+| **`$PINS`** | **Enumerate Pins.** Lists processor pin mappings. |
+| **`$PINSTATE`** | **Enumerate Pin States.** Lists current state of auxiliary pins. |
+| **`$PORTS`** | **Enumerate Serial Ports.** Lists available UART ports. |
 | **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
 
-## File System Commands
-(Updated Build 20260310)
 
-These commands allow navigation and management of the SD card or internal LittleFS file system.
+## Storage Systems in grblHAL
+
+grblHAL utilizes a **Virtual File System (VFS)** layer that allows it to interact with different storage media through a unified set of commands and programming interface.
+
+### SD Card (FatFs)
+The SD card is the primary high-capacity storage for G-code files, typically formatted as **FAT32**.
+- **Mount Point:** Usually mounted at the root (`/`).
+- **Performance:** Ideal for large 3D carving jobs or complex laser engraving.
+- **Hot-Swapping:** Supported on boards with SD detect support.
+
+#### `$FM` – Mount SD card
+Mount the SD card, typically as the root (`/`) file system.
+
+**Syntax:** `$FM`
+
+#### `$FU` – Unmount SD card
+Unmounts the SD card.
+
+**Syntax:** `$FU`
+
+#### `$FF` – Format SD Card
+Formats the SD card. **All data will be lost.**
+
+**Syntax:** `$FF=yes`
+
+### Internal Flash or EEPROM (LittleFS)
+LittleFS is a fail-safe file system designed for microcontrollers, using the controllers internal flash memory or part of large EEPROMs (>= 32K) for storage.
+- **Mount Point:** Often used as a fallback if no SD card is present, typically mounted at `/littlefs`. It may also be mounted as the root (`/`) file system if SD Card is not available.
+- **Use Case:** Best for small macro files, tool tables (`tool.tbl`), and persistent system configuration.
+- **Reliability:** Resistant to power loss during write operations.
+
+### Internal flash (Embedded)
+The Embedded filing system is read only and is added to flash at compile time.
+
+- **Mount Point:** Typically mounted at `/embedded`.
+- **Use Case:** Best for persistent system configurations/data that does not change often. 
+- **Reliability:** Read only, can only be changed by reflashing the firmware.
+
+### RAM
+The RAM filing system uses the heap to store transient data. Typically files are automatically deleted after first read.
+
+### File System Commands
+
+These commands allow navigation and management of the file system.
 
 | Command | Description |
 |---------|-------------|
@@ -477,32 +509,7 @@ These commands allow navigation and management of the SD card or internal Little
 | **`$PWD`** | **Print Working Directory.** Reports the current working directory in the format `[CWD:/path/to/dir]`. |
 | **`$FMD=[path]`** | **Create directory.** |
 | **`$FRD=[path]`** | **Remove directory.** |
-| **`$FM`** | **Mount SD Card.** Manually triggers a mount of the SD card. |
-| **`$FU`** | **Unmount SD Card.** Safely unmounts the SD card. |
 | **`$FI`** | **Mount info.** Outputs information about mounted filing systems. |
-
----
-
-### Storage Systems in grblHAL
-grblHAL utilizes a **Virtual File System (VFS)** layer that allows it to interact with different storage media through a unified set of commands.
-
-#### SD Card (FatFs)
-The SD card is the primary high-capacity storage for G-code files, typically formatted as **FAT32**.
-- **Mount Point:** Usually mounted at the root (`/`).
-- **Performance:** Ideal for large 3D carving jobs or complex laser engraving.
-- **Hot-Swapping:** Supported on boards with SD detect support.
-
-#### Internal Flash or EEPROM (LittleFS)
-LittleFS is a fail-safe file system designed for microcontrollers, using the controllers internal flash memory or part of large EEPROMs (>= 32K) for storage.
-- **Mount Point:** Often used as a fallback if no SD card is present, typically mounted at `/littlefs`. It may also be mouned as the root (`/`) file system if SD Card is not available.
-- **Use Case:** Best for small macro files, tool tables (`tool.tbl`), and persistent system configuration.
-- **Reliability:** Resistant to power loss during write operations.
-
-#### Internal flash (Embedded)
-The Embedded filing system is read only and is added to flash at compile time.
-
-#### RAM
-The RAM filing system uses the heap to store transient data. Typically files are automatically deleted after read.
 
 #### Navigation & Usage
 grblHAL keeps track of a **Current Working Directory (CWD)**. By default, this is the root `/`. When you use `$F` to list files or `$F=` to run one, grblHAL looks inside the CWD. You can navigate into subfolders using `$CWD=foldername` and back up using `$CWD=..`.
@@ -510,37 +517,49 @@ grblHAL keeps track of a **Current Working Directory (CWD)**. By default, this i
 > [!TIP]
 > You can use `$PWD` at any time to verify where you are in the file system. This is particularly useful when managing complex folder structures for different projects.
 
+---
+
+## YModem protocol
+
+TBC
+
+---
+
 ## Advanced System Commands
 
 | Command | Description |
 |---------|-------------|
-| **`$REBOOT`** | **System Reboot.** Hard resets the controller. Connection will be lost. (Build 20251208) |
-| **`$DFU`**    | **Enter Bootloader.** Reboots the controller into DFU/Bootloader mode for firmware flashing. Connection will be lost. |
-| **`$MODBUSCMD`**| **Modbus Command.** Send raw Modbus commands. (Build 20260215) |
-| **`$TTLOAD`** | **Reload Tool Table.** Reloads file based tool table from storage. (Build 20251111) |
+| **`$REBOOT`**     | **System Reboot.** Hard resets the controller. Connection will be lost. (Build 20251208) |
+| **`$DFU`**        | **Enter Bootloader.** Reboots the controller into DFUootloader mode for firmware flashing. Connection will be lost. |
+| **`$BL`**         | **Enter Bootloader.** Reboots the controller into native bootloader mode for firmware flashing. Connection will be lost. |
+| **`$BOOTLOADER`** | **Enter Bootloader.** Reboots the controller into native bootloader mode for firmware flashing. Connection will be lost. |
+| **`$MODBUSCMD`**  | **Modbus Command.** Send raw Modbus commands. (Build 20260215) |
+| **`$TTLOAD`**     | **Reload Tool Table.** Reloads file based tool table from storage. (Build 20251111) |
 
 ---
 
 # Realtime Commands
 
-Realtime commands are single control characters that can be sent to grblHAL at any time. They are intercepted by the serial receive interrupt and executed immediately, often within tens of milliseconds, bypassing the normal G-code planner buffer.
+Realtime commands are single control characters that can be sent to grblHAL at any time. They are intercepted from the input stream and executed immediately, often within tens of milliseconds, bypassing the normal G-code planner buffer.
 
 > ℹ️ **Info**
-> -   **No Newline Needed:** These commands are single bytes. Do not send a `` or `` after them.
-> -   **Immediate Execution:** They work even if the planner buffer is full.
+> -   **No Newline Needed:** These are _single byte/character_ command bytes. Do not send a `CR` or `LF` after them.
+> -   **Immediate Execution:** They work even if the input buffer is full.
 > -   **State Dependent:** Some commands (like `!` Feed Hold) are only valid in certain states (e.g., Run, Jog).
 > -   **Ignored if Invalid:** If a command cannot be executed (e.g., toggling spindle stop while moving), it is silently ignored to prevent unsafe conditions.
 
 ## Basic Control Commands
 
-These are the standard Grbl control characters found in most senders.
+These are the standard Grbl control characters found in most senders. The _Alt._ column contains a grblHAL alternative which are outside the 'printable' ASCII characters range, some senders may not support/use these.
 
-| Char | Hex | Name | Description |
-| :---: | :---: | :--- | :--- |
-| **`?`** | `0x3F` | **Status Report** | Immediately generates and sends a runtime status report (see Realtime Report section below).  - Can be sent at any time, except during critical system alarms. - The content of the report is configured by the `$10` setting. |
-| **`~`** | `0x7E` | **Cycle Start / Resume** | - **In Hold:** Resumes the cycle after a Feed Hold (`!`) or Program Stop (`M0`). - **In Door:** Resumes from a safety door state (if closed). - **Otherwise:** Ignored. |
-| **`!`** | `0x21` | **Feed Hold** | - **In Motion:** Decelerates the machine to a controlled stop and enters a `Hold` state.  - **In Jog:** Cancels the jog and flushes the buffer. - **Spindle/Coolant:** Remain **ON** during a feed hold.  - **Ignored:** In Idle or Alarm states. |
-| **`^x`** | `0x18` | **Soft Reset** | (Ctrl-X) - **Immediate Halt:** Stops all pulse generation, turns off spindle/coolant, and flushes the planner buffer. - **State:** Resets grblHAL to the `Alarm` state (if in motion) or `Idle` state (if stopped). - **Position:** If reset during motion, position is considered lost (requires re-homing). If reset while idle, position is retained. |
+| Char  | Hex   | Alt.  | Name | Description |
+| :---: | :---: | :---: | :--- | :--- |
+| **`?`** | `0x3F` | `0x80` | **Status&nbsp;Report** | Immediately generates and sends a runtime status report (see Realtime Report section below).  - Can be sent at any time, except during critical system alarms. - The content of the report is configured by the `$10` setting. |
+| **`~`** | `0x7E` | `0x81` | **Cycle Start / Resume** | - **In Hold:** Resumes the cycle after a Feed Hold (`!`) or Program Stop (`M0`). - **In Door:** Resumes from a safety door state (if closed). - **Otherwise:** Ignored. |
+| **`!`** | `0x21` | `0x82` | **Feed Hold** | - **In Motion:** Decelerates the machine to a controlled stop and enters a `Hold` state.  - **In Jog:** Cancels the jog and flushes the buffer. - **Spindle/Coolant:** Remain **ON** during a feed hold.  - **Ignored:** In Idle or Alarm states. |
+| **`^x`** | `0x18` |   | **Soft Reset** | (Ctrl-X) - **Immediate Halt:** Stops all pulse generation, turns off spindle/coolant, and flushes the planner buffer. - **State:** Resets grblHAL to the `Alarm` state (if in motion) or `Idle` state (if stopped). - **Position:** If reset during motion, position is considered lost (requires re-homing). If reset while idle, position is retained. |
+| **`^y`** |  | `0x19` | **Stop** | (Ctrl-Y) - **Halt:** Executes a fast hold if in motion, turns off spindle/coolant, and flushes the planner buffer. - **State:** Resets grblHAL to the `Idle` state. - **Position:** Position is _not_ lost. |
+|          |  | `0x9F` | **Soft E-stop** | **E-stop:** Executes a fast hold if in motion, turns off spindle/coolant, and flushes the planner buffer. - **State:** Resets grblHAL to the E-stop `Alarm` state. - **Position:** Position is _not_ lost. This is **not** a safe alternative to a proper hardware based E-stop system. |
 
 ---
 
@@ -573,6 +592,7 @@ Scales the speed of `G0`, `G28`, and `G30` rapid motions.
 | `0x95` | **100%** | Sets rapids to full speed (Max Rate). |
 | `0x96` | **50%** | Sets rapids to 50% of max rate. |
 | `0x97` | **25%** | Sets rapids to 25% of max rate. |
+| `0x98` | **5%** | Sets rapids to 5% of max rate. Available since build 20260831. |
 
 ### Spindle Speed Overrides
 Alters the programmed spindle speed (`S`).
@@ -591,7 +611,7 @@ Alters the programmed spindle speed (`S`).
 ### Spindle Stop Override
 | Hex | Command | Description |
 | :---: | :--- | :--- |
-| `0x9E` | **Toggle Spindle Stop** | - **Only valid in HOLD state.** - Toggles the spindle On/Off while paused. - **Safety:** Ignored during motion to prevent crashing. - **Resume:** When Cycle Start (`~`) is issued, the spindle automatically restores its previous state. The system waits 4.0 seconds (configurable) for the spindle to spin up before resuming motion. |
+| `0x9E` | **Toggle&nbsp;Spindle&nbsp;Stop** | - **Only valid in HOLD state.** - Toggles the spindle On/Off while paused. - **Safety:** Ignored during motion to prevent crashing. - **Resume:** When Cycle Start (`~`) is issued, the spindle automatically restores its previous state. The system waits 4.0 seconds (configurable) for the spindle to spin up before resuming motion. |
 
 ### Coolant Overrides
 Toggles coolant states directly.
@@ -611,9 +631,14 @@ These functionality codes are specific extensions or part of the extended ASCII 
 
 | Hex | Name | Description |
 | :---: | :--- | :--- |
-| `0x84` | **Safety Door** | - Simulates opening the safety door. - **Action:** Enters `Door:0` state. Retracts mode is optional (if enabled). Spindle/Coolant turn off. - **Resume:** Requires closing the door (or re-sending `0x84` in some sims) and sending Cycle Start (`~`). |
-| `0x85` | **Jog Cancel** | - **Only valid in JOG state.** - Immediately keeps the feed hold and flushes the jog buffer. - Effectively brings the machine to a smooth stop during a jog command. |
-| `0x87` | **Report All** | (grblHAL specific) Acts like `?` but ignores the `$10` status mask, returning **all** available data fields. Useful for GUIs to fully synchronize state. |
+| `0x84` | **Safety&nbsp;Door** | - Simulates opening the safety door. - **Action:** Enters `Door:0` state. Retracts mode is optional (if enabled). Spindle/Coolant turn off. - **Resume:** Requires closing the door (or re-sending `0x84` in some sims) and sending Cycle Start (`~`). |
+| `0x85` | **Jog Cancel** | - **Only valid in JOG state.** - Effectively brings the machine to a smooth stop during a jog command. - Flushes the input and planner buffers for any pending jog commands. |
+| `0x87` | **Report All** | (grblHAL specific) Acts like `?` but returs **all** available data fields. Useful for senders to fully synchronize state. |
+| `0x88` | **Optional stop toggle** | (grblHAL specific) Toggles optional stop mode, when enabled `M1` 'pause' commands in the gcode will be ignored. |
+| `0x89` | **Single block toggle** | (grblHAL specific) Toggles single block mode, when enabled grblHAL will enter `Hold` state after each gcode block (line) waiting for a cycle start command to continue. |
+| `0x8A` | **Toggle FAN0 on/off** | (grblHAL specific) Toggles fan 0 on/off, only available when firmware has fan support enabled. |
+| `0x8B` | **Toggle MPG mode** | (grblHAL specific) Switches MPG/pendant in/out of full control, sent by the MPG/pendant and only available when firmware has MPG support enabled. |
+| `0xA3` | **Tool ACK** | (grblHAL specific) Acknowledge tool change state, sent by the sender when `TOOL` state is reported. |
 
 ---
 
@@ -642,8 +667,8 @@ When you send `?`, status reports are streamed back. The format is a structured 
 ## Report Fields
 
 | Field | Description | Format/Details |
-| :--- | :--- | :--- |
-| **Position** | Current axis positions. | `MPos:x,y,z...` (Machine) or `WPos:x,y,z...` (Work). |
+|:------------:| :--- | :--- |
+| **Position** | Current&nbsp;axis&nbsp;positions. | `MPos:x,y,z...` (Machine) or `WPos:x,y,z...` (Work). |
 | **Bf** | Buffer status. | `Bf:,` |
 | **Ln** | Line Number. | `Ln:` |
 | **FS** | Feed and Speed. | `FS:,{,}` |
@@ -657,11 +682,12 @@ When you send `?`, status reports are streamed back. The format is a structured 
 | **P** | Active Probe. | `P:` (0=Primary, 1=Toolsetter, 2=Secondary). Reported when switching probes. |
 | **D** | Diameter Mode. | `D:0` (Radius/G8), `D:1` (Diameter/G7). (Lathe only). |
 | **Sc** | Scaling Status. | `Sc:` (e.g., `Sc:XY`). |
-| **TLR** | Tool Length Reference. | `TLR:1` (Set), `TLR:0` (Not set). |
-| **FW** | Firmware Identity. | `FW:grblHAL` (Full report `0x87` only). |
-| **In** | Input Result (M66). | `In:0`/`In:1` (Digital state), `In:-1` (Error). |
-| **SD** | SD Card Status. | `SD:0` (Unmounted) `SD:1` (Mounted) `SD:2` (Unmounted, auto-detect) `SD:3` (Mounted, auto-detect) `SD:,` (Streaming) `SD:Pending` (Suspended) |
+| **TLR** | Tool Length Reference. | `TLR:offset`, only reported when set. |
+| **TLR@** | Tool Length Reference position. | `TLR@:a,b:tool axis:atG53`, only reported when set. |
+| **FW** | Firmware Identity. | `FW:grblHAL` (Full report `0x87` only, this is the only way to detect which controller firmware when in `Hold` state). |
+| **In** | Input Result (M66). | `In:0`/`In:1` (Digital state), `In:-1` (Error, not requested), `In:value ` (Analog state). |
+| **SD** | SD Card Status. | `SD:0` (Unmounted) `SD:1` (Mounted) `SD:2` (Unmounted, auto-detect) `SD:3` (Mounted, auto-detect) `SD:pct completed,filename` (Streaming) `SD:Pending` (Suspended) |
+| **$C** | Blocking event active. | `$C:1` (Full report `0x87` only). |
 
 > 📝 **Note**
-> The streaming status (`SD:...`) is reported for regular (`?`) requests, but **not** when a full status (`0x87`) is requested.
-
+> When a full status (`0x87`) is requested the `SD:x` mount status is always reported, **not** the streaming state. Plugins may add additional fields to the report.
