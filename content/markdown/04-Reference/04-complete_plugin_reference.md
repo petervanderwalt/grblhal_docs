@@ -8,7 +8,7 @@ Each section includes the repository URL for reference.
 ## SD-Card (File Systems)
 Github Repository: https://github.com/grblHAL/Plugin_SD_card
 
-The SD card plugin repository contains a collection of plugins that offers storage and file handling that integrates with the core based [Virtual File System - VFS](./01-system-commands-reference.html#file-systems).
+The SD card plugin repository contains a collection of plugins that offers storage and file handling that integrates with the core based [Virtual File System - VFS](./01-system-commands-reference.html#file-handling).
 
 ### FS FatFS and FS littlefs
 
@@ -455,7 +455,7 @@ Github Repository: https://github.com/grblHAL/Templates
 
 These plugins are mainly designed to be starting points for custom functionality but often provide useful features out-of-the-box.
 
-Some of these plugins can be added to the firmware by using the [grblHAL Web Builder](https://webbuilder/grblhal.org/), they can found in the _3rd party plugins_ tab.
+Some of these plugins can be added to the firmware by using the [grblHAL Web Builder](https://webbuilder.grblhal.org/), they can found in the _3rd party plugins_ tab.
 
 ### FluidNC WebUI Support (`FluidNC_ESP3D_cmd`)
 Adds support for commands required by the FluidNC WebUI (ESP3D v2 protocol), it is an extension to the [WebUI](#webui) plugin.

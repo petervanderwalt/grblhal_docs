@@ -492,7 +492,6 @@ The Embedded filing system is read only and is added to flash at compile time.
 The RAM filing system uses the heap to store transient data. Typically files are automatically deleted after first read.
 
 ### File System Commands
-
 These commands allow navigation and management of the file system.
 
 | Command           | Description |
