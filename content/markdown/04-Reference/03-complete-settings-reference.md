@@ -1,4 +1,4 @@
-# Complete Settings Reference
+# Settings Reference
 
 This page is a comprehensive reference for all known grblHAL settings. It is designed to be a single source of truth for configuration. Use the table of contents on the right to navigate to a specific section, or use your browser's search function (`Ctrl+F`) to find a specific setting.
 
@@ -5193,11 +5193,11 @@ Controls the behavior of rotary axes, particularly when executing a G28 command,
 > - `G28` sends axes to a pre-defined home position.
 > - This setting can modify how rotary axes handle this move, for example, by always taking the shortest path.
 
-
-
 #### Common Example
-`G91G28A0`  
-`G90`
+```gcode
+G91G28A0
+G90
+```
 Return move should complete in half a rotation or less if enabled by setting `$538=1`
 
 ---
@@ -5759,7 +5759,6 @@ Defines the rectangular safety zone around the tool rack in machine coordinates.
 ---
 
 
-
 ## `$700` – Subroutine Scanning
 Controls how the `M98` command searches for subroutines.
 
@@ -5772,7 +5771,7 @@ Controls how the `M98` command searches for subroutines.
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
 | 0     | External Only | Always looks for an external file `P.macro` on the SD card/filesystem. |
-| 1     | Scan Current | (Default) Scans the current file for `O sub` blocks first. If not found, looks for external file. |
+| 1     | Scan Current | (Default) Precans the current file for matching `O number` blocks first. If not found, looks for external file. |
 
 #### Tips & Tricks
 - Use `$700=1` if you want to use "internal" subroutines defined in the same G-code file.

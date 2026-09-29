@@ -251,11 +251,6 @@ Disables the alarm lock state.
 
 ---
 
-### `$RW` – Rewind (if supported)
-Rewinds the input stream or program (SD card) context.
-
----
-
 ## Diagnostics & Reporting
 
 ### `$G` – View G-code Parser State
@@ -267,7 +262,7 @@ Outputs the currently active G-code modal states.
 -   Shows: Motion mode, WCS, Plane, Units, Distance, Feed mode, Spindle/Coolant state, Tool, Feed rate, RPM.
 
 **grblHAL Extensions:**
--   Can include extended G-codes: `G5`, `G7`, `G8`, `G43`/`G49` (TLO), `G96`/`G97` (Spindle Mode), `G98`/`G99` (Retract), `M50`/`M51`/`M53` (Overrides), `M56` (Parking), `M60` (Pallet).
+-   Includes extended G-codes when available: `G5`, `G7`, `G8`, `G43`/`G49` (TLO), `G96`/`G97` (Spindle Mode), `G98`/`G99` (Retract), `M50`/`M51`/`M53` (Overrides), `M56` (Parking), `M60` (Pallet) etc.
 
 ---
 
@@ -285,8 +280,9 @@ Outputs the stored offsets for work coordinate systems, tool offsets, and pre-de
 **grblHAL Extensions:**
 -   `[G51:]`: if scaling active.
 -   `[HOME::]`: Axis home positions.
--   `[T:,]`: Tool table entry.
+-   `[T:,]`: Tool table entries.
 -   `[TLR:]`: Tool length reference.
+-   `[TLR@:]`: Tool length reference details: where probed, tool axis, probed at G59.3.
 
 ---
 
@@ -452,9 +448,11 @@ grblHAL provides advanced reporting commands for Senders to query up to date dat
 | **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
 
 
-## Storage Systems in grblHAL
+## File handling
 
-grblHAL utilizes a **Virtual File System (VFS)** layer that allows it to interact with different storage media through a unified set of commands and programming interface.
+grblHAL utilizes a **Virtual File System (VFS)** layer that allows it to interact with different storage media through a unified set of commands and programming interfaces.
+It is a [hierarchical file system ](https://en.wikipedia.org/wiki/Hierarchical_file_system) where different media is mounted as directories,
+either as the root directoy (/) or as a subdirectory under it.
 
 ### SD Card (FatFs)
 The SD card is the primary high-capacity storage for G-code files, typically formatted as **FAT32**.
@@ -497,19 +495,19 @@ The RAM filing system uses the heap to store transient data. Typically files are
 
 These commands allow navigation and management of the file system.
 
-| Command | Description |
-|---------|-------------|
-| **`$F`** | **List Files.** Lists CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
-| **`$F+`** | **List All Files.** Lists all files in the current working directory regardless of extension. |
-| **`$F=[file]`** | **Run File.** Starts execution of the specified G-code file. |
-| **`$F<=[file]`** | **Copy file to output.** Copies/streams the specified file to the current output. |
-| **`$FR`** | **Rewind file.** Enables rewind mode for next file to run. When finished it can be rerun by issuing a Cycle Start command |
-| **`$FD=[file]`** | **Delete File.** Permanently removes a file from the storage. |
+| Command           | Description |
+|:-----------------:|:------------|
+| **`$F`**          | **List Files.** Lists CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
+| **`$F+`**         | **List All Files.** Lists all files in the current working directory regardless of extension. |
+| **`$F=[file]`**   | **Run File.** Starts execution of the specified G-code file. |
+| **`$F<=[file]`**  | **Copy file to output.** Copies/streams the specified file to the current output. |
+| **`$FR`**         | **Rewind file.** Enables rewind mode for next file to run. When finished it can be rerun by issuing a Cycle Start command |
+| **`$FD=[file]`**  | **Delete File.** Permanently removes a file from the storage. |
 | **`$CWD=[path]`** | **Change Directory.** Sets the Current Working Directory. Usage: `$CWD=/` (root), `$CWD=..` (up), `$CWD=subdir` (down). If called without arguments, it reports the current path. |
-| **`$PWD`** | **Print Working Directory.** Reports the current working directory in the format `[CWD:/path/to/dir]`. |
+| **`$PWD`**        | **Print Working Directory.** Reports the current working directory in the format `[CWD:/path/to/dir]`. |
 | **`$FMD=[path]`** | **Create directory.** |
 | **`$FRD=[path]`** | **Remove directory.** |
-| **`$FI`** | **Mount info.** Outputs information about mounted filing systems. |
+| **`$FI`**         | **Mount info.** Outputs information about mounted filing systems. |
 
 #### Navigation & Usage
 grblHAL keeps track of a **Current Working Directory (CWD)**. By default, this is the root `/`. When you use `$F` to list files or `$F=` to run one, grblHAL looks inside the CWD. You can navigate into subfolders using `$CWD=foldername` and back up using `$CWD=..`.
@@ -522,6 +520,8 @@ grblHAL keeps track of a **Current Working Directory (CWD)**. By default, this i
 ## YModem protocol
 
 TBC
+
+The YModem protocol is part of the [file system plugins](./04-complete_plugin_reference.html#ymodem).
 
 ---
 

@@ -1,50 +1,130 @@
-# Complete Plugins Reference"
+# Plugins Reference
 
-This guide lists plugin-specific **M-codes**, **G-codes**, and **$-settings** provided by grblHAL’s plugin ecosystem.  
-Each section includes the original repository URL for reference.  
+This guide lists plugin-specific **M-codes**, **G-codes**, **$-commands** and **$-settings** provided by grblHAL’s plugin ecosystem.  
+Each section includes the repository URL for reference.  
 
 ---
 
-## Plugin: Plasma / Torch Height Control (THC)
-Github Repository: https://github.com/grblHAL/Plugin_plasma
+## SD-Card (File Systems)
+Github Repository: https://github.com/grblHAL/Plugin_SD_card
 
-#### $-Settings
+The SD card plugin repository contains a collection of plugins that offers storage and file handling that integrates with the core based [Virtual File System - VFS](./01-system-commands-reference.html#file-systems).
 
-| Setting | Description | Example |
-|---------|-------------|---------|
-| `$350` | Mode of operation | `1` → uses external arc voltage input |
-| `$351` | Arc OK pin | `2` → input pin number |
-| `$352` | Arc Voltage pin | `3` → input pin number |
-| `$353` | Up/Down pin | `4` → output pin number |
-| `$354` | Voltage scale | `1.0` → scaling factor |
-| `$355` | Voltage threshold | `0.5` → threshold value |
-| `$356` | Velocity Anti-Dive threshold (%) | `20` |
+### FS FatFS and FS littlefs
 
-#### M-Codes
+These plugins are integration layers for VFS that provides file access to SD cards via [FatFs](https://elm-chan.org/fsw/ff/) and flash or EEPROM based files via the [littlefs](https://github.com/littlefs-project/littlefs) file systems.
+
+### FS Stream
+
+The FS Stream plugin sits on top of VFS and provides a number of $-commands for file handling:
+
+| Command           | Description |
+|:-----------------:|-------------|
+| **`$F`**          | List CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
+| **`$F+`**         | List all files in the current working directory regardless of extension. |
+| **`$F=[file]`**   | Run G-code file. |
+| **`$CWD=[path]`** | Change Directory. |
+| **`$PWD`**        | Print Working Directory. |
+| **`$FM`**         | Mount SD card. |
+| **`$FU`**         | Unmount SD card. |
+| **`$FD=[file]`**  | Delete file. |
+
+The commands are documented in more detail [here](./01-system-commands-reference.html#file-system-commands).
+
+#### Examples:
+```gcode
+; Mount SD card
+$FM
+
+; List files
+$F+
+
+; Run a file
+$F=myprogram.ngc
+
+; Change directory
+$CWD=subdir
+
+; Print working directory
+$PWD
+```
+
+### Macro
+
+The macro plugin takes care of file handling for the `G65`, `G66` and `M98` subroutine commands and mapping of the tool change commands `T`, `M6` and `M60` to file based macros.
+
+| Command          | Maps to |
+|:----------------:|:--------|
+|`T`               | _ts.macro_ - for selecting the tool, may be used to move a tool carousel in place (optional) |
+|`M6`              | _tc.macro_ - for changing the tool |
+|`M60`             | _ps.macro_ - for pallet shuttle (optional) |
+|`G65, G66 and M98`| _P\<n\>.macro_ where _\<n\>_ is taken from the commands P-word|
+
+The file used for subroutine commands is searched for in the root directory (`\`) then `\littlefs` and finally `\embedded`.  
+The files used for tool change commands are searched for when a file system is mounted and then in the mount directory of that file system.
+When a tool change file is found _all_ tool change files are bound to the same directory.
+
+### YModem
+
+The YModem plugin adds the [YModem protocol](http://wiki.synchro.net/ref:ymodem) to grblHAL and allows file down- and uploading for senders that are compatible.  
+When this plugin is added to the firmware downloading is initiated by the sender by sending a `SOH` (`0x01`) or `STX` (`0x02`) character.
+NOTE: this deviates from the protocol where the receiver is required to start the transfer by sending a `C` character after the sender is set up for the transfer.  
+Uploading (available since build 20260916) is initiated by the `$YUP=filename` system command. The sender starts the transfer, if the command was `ok`'ed, by sending a single `C` character.
+
+> ℹ️ **Info**
+> If the transfer fails the controller may not respond to normal input until the protocol handler times out and returns control back.
+> The protocol itself is fairly robust so this should only occur following a communication loss or from a badly implemented protocol sender side.
+
+---
+
+## Spindle
+Github Repository: https://github.com/grblHAL/Plugins_spindle
 
 | M-Code | Syntax | Description |
 |--------|--------|-------------|
-| `M62` | `M62 P[port]` | Disable THC, synchronized with motion |
-| `M63` | `M63 P[port]` | Enable THC, synchronized with motion |
-| `M64` | `M64 P[port]` | Disable THC, immediate |
-| `M65` | `M65 P[port]` | Enable THC, immediate |
-| `M67` | `M67 E[port] Q[percent]` | Immediate velocity reduction |
-| `M68` | `M68 E[port] Q[percent]` | Velocity reduction synchronized |
+| `M3` | `M3 S[rpm]` | Spindle on clockwise |
+| `M4` | `M4 S[rpm]` | Spindle on counterclockwise |
+| `M5` | `M5` | Spindle off |
+| `M104` | `M104 P[n]` | Select spindle |
+| `M51` | `M51 [options]` | Enable spindle features |
 
 #### Example
 ```gcode
-; Plasma THC example
-$350=2          ; THC mode: arc ok + up/down
-$356=20         ; VAD threshold 20%
-$361=1.5        ; Voltage scaling factor
-$682=80         ; Z feed factor
+; Turn on spindle clockwise at 1200 RPM
+M3 S1200
 
-M190 P3         ; Select material #3
-M63 P0          ; Enable THC synced
-G1 X100 Y0 F2000
-G1 X100 Y100 F2000
-M67 E0 Q50      ; Immediate feed reduction to 50%
-M64 P0          ; Disable THC after cut
+; Select spindle 1
+M104 P1
+
+; Turn off spindle
+M5
+```
+
+---
+
+## Motor (Trinamic)
+Github Repository: https://github.com/grblHAL/Plugins_motor
+
+| M-Code | Syntax | Description |
+|--------|--------|-------------|
+| `M122` | `M122 [axes]` | Driver report/debug |
+| `M569` | `M569 [axis] S[0|1]` | Set driver mode: StealthChop / SpreadCycle |
+| `M906` | `M906 [axes] S[current]` | Set RMS current |
+| `M911` | `M911` | Report prewarn flags |
+| `M912` | `M912` | Clear prewarn flags |
+| `M913` | `M913 [axes]` | Hybrid threshold |
+| `M914` | `M914 [axes]` | Homing sensitivity |
+
+#### Example
+```gcode
+; Check driver status on X/Y
+M122 XY
+
+; Set StealthChop mode for X axis
+M569 X S1
+
+; Set RMS current for all axes
+M906 X100 Y100 Z100
 ```
 
 ---
@@ -158,101 +238,8 @@ M204 PXY S500
 
 ---
 
-## Plugin: SD-Card / File System (`Plugin_SD_card`)
-Github Repository: https://github.com/grblHAL/Plugin_SD_card
 
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| **`$F`** | `$F` | List CNC-compatible files (`.nc`, `.gcode`, etc.) in the current working directory. |
-| **`$F+`** | `$F+` | List all files in the current working directory regardless of extension. |
-| **`$F=[file]`** | `$F=[file]` | Run G-code file. |
-| **`$CWD=[path]`** | `$CWD=[path]` | Change Directory. Usage: `$CWD=/` (root), `$CWD=..` (up), `$CWD=subdir` (down). If called without arguments, it reports the current path. |
-| **`$PWD`** | `$PWD` | Print Working Directory. Reports the current working directory in the format `[CWD:/path/to/dir]`. |
-| **`$FM`** | `$FM` | Mount SD card. |
-| **`$FU`** | `$FU` | Unmount SD card. |
-| **`$FD=[file]`** | `$FD=[file]` | Delete file. |
 
-#### Example
-```gcode
-; Mount SD card
-$FM
-
-; List files
-$F+
-
-; Run a file
-$F=myprogram.ngc
-
-; Change directory
-$CWD=subdir
-
-; Print working directory
-$PWD
-```
-
----
-
-### Storage Systems in grblHAL
-grblHAL utilizes a **Virtual File System (VFS)** layer for unified storage access across multiple platforms.
-
-- **SD Card (FatFs):** High-capacity storage for G-code files, typically formatted as **FAT32**. Mounted at `/`.
-- **Internal Storage (LittleFS):** Fail-safe internal storage for macros and tool tables. Supported on **ESP32**, **Teensy 4.1**, **RP2040**, **MSP432**, and others. Often mounted at `/flash`, `/littlefs`, or as the root (`/`) if no SD card is present.
-
-**Navigation:** grblHAL tracks a **Current Working Directory (CWD)**. Use `$CWD=foldername` to enter subfolders and `$CWD=..` to go back up. You can verify your location with `$PWD`.
-
----
-
-## Plugin: Motor / Trinamic (`Plugins_motor`)
-Github Repository: https://github.com/grblHAL/Plugins_motor
-
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M122` | `M122 [axes]` | Driver report/debug |
-| `M569` | `M569 [axis] S[0|1]` | Set driver mode: StealthChop / SpreadCycle |
-| `M906` | `M906 [axes] S[current]` | Set RMS current |
-| `M911` | `M911` | Report prewarn flags |
-| `M912` | `M912` | Clear prewarn flags |
-| `M913` | `M913 [axes]` | Hybrid threshold |
-| `M914` | `M914 [axes]` | Homing sensitivity |
-
-#### Example
-```gcode
-; Check driver status on X/Y
-M122 XY
-
-; Set StealthChop mode for X axis
-M569 X S1
-
-; Set RMS current for all axes
-M906 X100 Y100 Z100
-```
-
----
-
-## Plugin: Spindle (`Plugins_spindle`)
-Github Repository: https://github.com/grblHAL/Plugins_spindle
-
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M3` | `M3 S[rpm]` | Spindle on clockwise |
-| `M4` | `M4 S[rpm]` | Spindle on counterclockwise |
-| `M5` | `M5` | Spindle off |
-| `M104` | `M104 P[n]` | Select spindle |
-| `M51` | `M51 [options]` | Enable spindle features |
-
-#### Example
-```gcode
-; Turn on spindle clockwise at 1200 RPM
-M3 S1200
-
-; Select spindle 1
-M104 P1
-
-; Turn off spindle
-M5
-```
-
----
 
 ## Plugin: Laser (`Plugins_laser`)
 Github Repository: https://github.com/grblHAL/Plugins_laser
@@ -288,21 +275,6 @@ M114
 
 ---
 
-## Plugin: EEPROM (`Plugin_EEPROM`)
-Github Repository: https://github.com/grblHAL/Plugin_EEPROM
-
-| Feature | Description |
-|---------|-------------|
-| Storage | Extended EEPROM for custom variables |
-
-#### Example
-```gcode
-; Read/write custom EEPROM values (plugin-specific)
-; Example depends on machine configuration
-```
-
----
-
 ## Plugin: WebUI (`Plugin_WebUI`)
 Github Repository: https://github.com/grblHAL/Plugin_WebUI
 
@@ -313,6 +285,50 @@ Github Repository: https://github.com/grblHAL/Plugin_WebUI
 #### Example
 ```gcode
 ; No new M-codes; use M3/M4/M5 via WebUI API
+```
+
+---
+
+## Plasma / Torch Height Control (THC)
+Github Repository: https://github.com/grblHAL/Plugin_plasma
+
+#### $-Settings
+
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `$350` | Mode of operation | `1` → uses external arc voltage input |
+| `$351` | Arc OK pin | `2` → input pin number |
+| `$352` | Arc Voltage pin | `3` → input pin number |
+| `$353` | Up/Down pin | `4` → output pin number |
+| `$354` | Voltage scale | `1.0` → scaling factor |
+| `$355` | Voltage threshold | `0.5` → threshold value |
+| `$356` | Velocity Anti-Dive threshold (%) | `20` |
+
+#### M-Codes
+
+| M-Code | Syntax | Description |
+|--------|--------|-------------|
+| `M62` | `M62 P[port]` | Disable THC, synchronized with motion |
+| `M63` | `M63 P[port]` | Enable THC, synchronized with motion |
+| `M64` | `M64 P[port]` | Disable THC, immediate |
+| `M65` | `M65 P[port]` | Enable THC, immediate |
+| `M67` | `M67 E[port] Q[percent]` | Immediate velocity reduction |
+| `M68` | `M68 E[port] Q[percent]` | Velocity reduction synchronized |
+
+#### Example
+```gcode
+; Plasma THC example
+$350=2          ; THC mode: arc ok + up/down
+$356=20         ; VAD threshold 20%
+$361=1.5        ; Voltage scaling factor
+$682=80         ; Z feed factor
+
+M190 P3         ; Select material #3
+M63 P0          ; Enable THC synced
+G1 X100 Y0 F2000
+G1 X100 Y100 F2000
+M67 E0 Q50      ; Immediate feed reduction to 50%
+M64 P0          ; Disable THC after cut
 ```
 
 ---
@@ -423,12 +439,26 @@ G65 P5 Q0
 
 ---
 
-## Template Plugins
-These plugins are available as templates in the **[grblHAL Web Builder](http://svn.io-engineering.com:8080/)** under `3rd party plugins`. They are designed to be starting points for custom functionality but often provide useful features out-of-the-box.
+## EEPROM
+Github Repository: https://github.com/grblHAL/Plugin_EEPROM
+
+The EEPROM plugin provides Non Volatile Storage (NVS) for configuration data such as $-settings, offsets and tool tables.
+EEPROM, or compatible FRAM that can also be used, is faster and more wear resistant than flash based storage and is the preferred option for storing configuration data.
+
+> ℹ️ **Info**
+> Large EEPROMs (>= 32K bytes) can be partitioned to host a [littlefs](#fs-fatfs-and-fs-littlefs) based file system.
+
+---
+
+## Templates
 Github Repository: https://github.com/grblHAL/Templates
 
+These plugins are mainly designed to be starting points for custom functionality but often provide useful features out-of-the-box.
+
+Some of these plugins can be added to the firmware by using the [grblHAL Web Builder](https://webbuilder/grblhal.org/), they can found in the _3rd party plugins_ tab.
+
 ### FluidNC WebUI Support (`FluidNC_ESP3D_cmd`)
-Adds support for extended commands required by the FluidNC WebUI (ESP3D v2 protocol).
+Adds support for commands required by the FluidNC WebUI (ESP3D v2 protocol), it is an extension to the [WebUI](#webui) plugin.
 *   **Repo:** `my_plugin/FluidNC_ESP3D_cmd`
 *   **Function:** Enables `[ESP:...]` command handling, allowing the FluidNC generic WebUI to function with grblHAL.
 
