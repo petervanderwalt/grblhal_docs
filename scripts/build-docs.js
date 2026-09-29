@@ -153,6 +153,12 @@ function renderToc(headings) {
   return html;
 }
 
+function wrapTables(html) {
+  return html
+    .replace(/<table\b[^>]*>/g, table => `<div class="table-scroll">${table}`)
+    .replace(/<\/table>/g, '</table></div>');
+}
+
 function slugify(text) {
   return normalizeHeadingText(text).toLowerCase().trim()
     .replace(/&/g, '-and-')
@@ -391,8 +397,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .main pre{background:var(--code-bg);border-radius:6px;padding:1rem;overflow:auto;margin-bottom:1rem;font-size:0.9rem;line-height:1.5;-webkit-overflow-scrolling:touch}
 .main code{background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.9em}
 .main pre code{background:none;padding:0;border-radius:0}
-.main table{width:100%;border-collapse:collapse;margin-bottom:1rem;table-layout:auto}
+.table-scroll{max-width:100%;overflow-x:auto;margin-bottom:1rem;-webkit-overflow-scrolling:touch}
+.main table{width:100%;border-collapse:collapse;margin-bottom:0;table-layout:auto}
 .main th,.main td{padding:8px 12px;border:1px solid var(--border);text-align:left;overflow-wrap:normal;word-break:normal}
+.main th:not(:last-child),.main td:not(:last-child){white-space:nowrap}
 .main th{background:var(--bg-alt);font-weight:600}
 .main hr{margin:2rem 0;border:none;border-top:1px solid var(--border)}
 .main blockquote{border-left:4px solid var(--accent);padding:0.5rem 1rem;margin-bottom:1rem;background:var(--bg-alt);border-radius:0 6px 6px 0}
@@ -455,7 +463,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
   .main h1{font-size:1.7rem;line-height:1.15}
   .main h2{font-size:1.2rem}
   .main pre{font-size:0.82rem;padding:0.85rem}
-  .main table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:0.92rem}
+  .main table{font-size:0.92rem}
 }
 `;
 
@@ -632,7 +640,7 @@ function generateSite() {
       const markdown = prefixContentImageUrls(parsed.content);
       const toc = extractToc(markdown);
       const tocHtml = renderToc(toc);
-      const htmlContent = marked.parse(markdown, { renderer: tocRenderer });
+      const htmlContent = wrapTables(marked.parse(markdown, { renderer: tocRenderer }));
       const htmlPath = file.path.replace(/\.md$/, '.html');
       const outPath = path.join(BUILD, htmlPath);
       ensureDir(path.dirname(outPath));
