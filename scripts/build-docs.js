@@ -134,7 +134,8 @@ function extractToc(md) {
   let m;
   while ((m = regex.exec(md)) !== null) {
     const level = m[1].length;
-    if (level !== 2) continue;
+    const explicitlyIncluded = /<!--\s*toc\s*-->/i.test(m[2]);
+    if (level !== 2 && !(level === 3 && explicitlyIncluded)) continue;
     const text = m[2].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[#*`]/g, '').trim();
     const textPlain = normalizeHeadingText(text);
     const id = slugify(textPlain);

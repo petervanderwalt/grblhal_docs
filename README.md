@@ -18,6 +18,14 @@ File and folder names are ordered by their numeric prefix:
   02-grbl-vs-grblhal.md
 ```
 
+The page index automatically includes `##` headings. To include a specific `###` heading as well, add a hidden marker at the end of the heading:
+
+```md
+### Advanced configuration <!-- toc -->
+```
+
+The marker is an HTML comment, so it is ignored by standard Markdown renderers.
+
 ## Build and publish
 
 The GitHub Actions workflow builds the HTML site from committed Markdown and publishes it to [grblhal.org/docs](https://grblhal.org/docs) whenever a change is merged into `main`.
