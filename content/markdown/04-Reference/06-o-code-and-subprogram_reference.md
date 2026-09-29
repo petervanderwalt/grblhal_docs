@@ -5,7 +5,7 @@
 grblHAL supports [parameters](https://linuxcnc.org/docs/html/gcode/overview.html#_parameters), [expressions](https://linuxcnc.org/docs/html/gcode/overview.html#gcode:expressions) and
 [flow control](http://www.linuxcnc.org/docs/html/gcode/o-code.html#ocode:looping), LinuxCNC style \(with some limitations\), if enabled
 in the [config file](https://github.com/grblHAL/core/blob/ce7c3592b45fe9b5b1909f22cced15201bc72da6/config.h#L481-L497)
-or in builds made with the [Web Builder](http://svn.io-engineering.com:8080/) when _RS274 NGC expression support_ is enabled in the _Advanced features_ tab.
+or in builds made with the [Web Builder](https://webbuilder.grblhal.org/) when _RS274 NGC expression support_ is enabled in the _Advanced features_ tab.
 
 The `O`-word serves as a label for [flow control statements](#flow-control-statements). It is important that the `O`-numbers match at the beginning and end of a control segment and that they are unique within a file.
 

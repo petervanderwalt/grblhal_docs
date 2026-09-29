@@ -38,6 +38,38 @@ marked.setOptions({
   }
 });
 
+const calloutExtension = {
+  name: 'callout',
+  level: 'block',
+  start(src) { return src.match(/^> \[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/m)?.index; },
+  tokenizer(src) {
+    const match = /^> \[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][^\n]*(?:\n>.*)*/.exec(src);
+    if (!match) return;
+
+    const kind = match[1].toLowerCase();
+    const text = match[0]
+      .split('\n')
+      .slice(1)
+      .map(line => line.replace(/^>\s?/, ''))
+      .join('\n')
+      .trim();
+
+    return { type: 'callout', raw: match[0], kind, text };
+  },
+  renderer(token) {
+    const titles = {
+      note: 'Note',
+      tip: 'Tip',
+      important: 'Important',
+      warning: 'Warning',
+      caution: 'Caution'
+    };
+    const icons = { note: '📝', tip: '💡', important: '❗', warning: '⚠️', caution: '🔥' };
+    const bodyHtml = marked.parse(token.text);
+    return `<div class="callout callout-${token.kind}"><p class="callout-title">${icons[token.kind]} ${titles[token.kind]}</p>${bodyHtml}</div>\n`;
+  }
+};
+
 const admonitionExtension = {
   name: 'admonition',
   level: 'block',
@@ -87,7 +119,7 @@ const wikiLinkExtension = {
     return `<a class="wiki-broken" href="#">${token.text}</a>`;
   }
 };
-marked.use({ extensions: [admonitionExtension, wikiLinkExtension] });
+marked.use({ extensions: [calloutExtension, admonitionExtension, wikiLinkExtension] });
 
 const tocRenderer = new marked.Renderer();
 
@@ -349,7 +381,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .main p{margin-bottom:1rem}
 .main ul,.main ol{margin-bottom:1rem;padding-left:1.5rem}
 .main li{margin-bottom:0.25rem}
-.main h1,.main h2,.main h3,.main h4,.main h5,.main h6,.main p,.main li,.main td,.main th{overflow-wrap:anywhere}
+.main h1,.main h2,.main h3,.main h4,.main h5,.main h6,.main p,.main li{overflow-wrap:anywhere}
 .main a{color:var(--accent);text-decoration:none}
 .main a:hover{text-decoration:underline}
 .main a.wiki-broken{color:#e63946;text-decoration:underline dashed #e63946}
@@ -359,12 +391,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .main pre{background:var(--code-bg);border-radius:6px;padding:1rem;overflow:auto;margin-bottom:1rem;font-size:0.9rem;line-height:1.5;-webkit-overflow-scrolling:touch}
 .main code{background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.9em}
 .main pre code{background:none;padding:0;border-radius:0}
-.main table{width:100%;border-collapse:collapse;margin-bottom:1rem}
-.main th,.main td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+.main table{width:100%;border-collapse:collapse;margin-bottom:1rem;table-layout:auto}
+.main th,.main td{padding:8px 12px;border:1px solid var(--border);text-align:left;overflow-wrap:normal;word-break:normal}
 .main th{background:var(--bg-alt);font-weight:600}
 .main hr{margin:2rem 0;border:none;border-top:1px solid var(--border)}
 .main blockquote{border-left:4px solid var(--accent);padding:0.5rem 1rem;margin-bottom:1rem;background:var(--bg-alt);border-radius:0 6px 6px 0}
 .main blockquote p{margin-bottom:0}
+.callout{margin:1rem 0;padding:0 1rem;border-left:4px solid}
+.callout-title{margin:0 0 0.6rem;font-weight:600}
+.callout p:last-child{margin-bottom:0}
+.callout-note{border-color:#0969da}.callout-note .callout-title{color:#0969da}
+.callout-tip{border-color:#1a7f37}.callout-tip .callout-title{color:#1a7f37}
+.callout-important{border-color:#8250df}.callout-important .callout-title{color:#8250df}
+.callout-warning{border-color:#9a6700}.callout-warning .callout-title{color:#9a6700}
+.callout-caution{border-color:#cf222e}.callout-caution .callout-title{color:#cf222e}
 .admonition{margin-bottom:1rem;border-radius:8px;overflow:hidden;border-left:5px solid;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .admonition-heading{padding:10px 16px;font-weight:700;font-size:0.85rem;letter-spacing:0.2px}
 .admonition-body{padding:12px 16px 14px;background:#fcfcfc}
