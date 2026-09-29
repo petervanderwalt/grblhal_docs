@@ -30,3 +30,15 @@ npm run build
 ```
 
 The build preserves the existing navigation, search, Markdown rendering, syntax highlighting, wiki links, admonitions, table of contents, and responsive styling. Do not edit `docs/` directly.
+
+## Local preview
+
+Edit Markdown and assets under `content/` in any editor or tool you prefer. The development server is only a local preview; it does not edit or publish documentation.
+
+Start the preview in a terminal:
+
+```bash
+npm run dev
+```
+
+It rebuilds the site with the same production command (`scripts/build-docs.js --prefix=/docs`) whenever files under `content/` change. Open the URL printed in the terminal. The browser refreshes only after a successful rebuild and restores the current scroll position. To use another port, run `npm run dev -- --port=3104`.

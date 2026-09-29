@@ -4,7 +4,8 @@
   "private": true,
   "description": "grblHAL documentation site generator",
   "scripts": {
-    "build": "node scripts/build-docs.js --prefix=/docs"
+    "build": "node scripts/build-docs.js --prefix=/docs",
+    "dev": "node scripts/dev-server.js"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
