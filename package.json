@@ -4,9 +4,11 @@
   "private": true,
   "description": "grblHAL documentation site generator",
   "scripts": {
-    "build": "node scripts/build-docs.js --prefix=/docs"
+    "build": "node scripts/build-docs.js --prefix=/docs",
+    "dev": "node scripts/dev-server.js"
   },
   "dependencies": {
+    "chokidar": "^3.6.0",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.10.0",
     "marked": "^12.0.2"
