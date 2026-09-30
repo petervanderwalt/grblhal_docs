@@ -124,8 +124,8 @@ marked.use({ extensions: [calloutExtension, admonitionExtension, wikiLinkExtensi
 const tocRenderer = new marked.Renderer();
 
 tocRenderer.heading = function(text, level) {
-  const id = slugify(normalizeHeadingText(text));
-  return `<h${level} id="${id}"><a class="anchor" href="#${id}" aria-hidden="true"></a>${text}</h${level}>`;
+  const heading = getHeadingDetails(text);
+  return `<h${level} id="${heading.id}"><a class="anchor" href="#${heading.id}" aria-hidden="true"></a>${heading.text}</h${level}>`;
 };
 
 function extractToc(md) {
@@ -136,10 +136,8 @@ function extractToc(md) {
     const level = m[1].length;
     const explicitlyIncluded = /<!--\s*toc\s*-->/i.test(m[2]);
     if (level !== 2 && !(level === 3 && explicitlyIncluded)) continue;
-    const text = m[2].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[#*`]/g, '').trim();
-    const textPlain = normalizeHeadingText(text);
-    const id = slugify(textPlain);
-    headings.push({ text: textPlain, level, id });
+    const heading = getHeadingDetails(m[2]);
+    headings.push({ text: normalizeHeadingText(heading.text), level, id: heading.id });
   }
   return headings;
 }
@@ -169,6 +167,18 @@ function slugify(text) {
     .replace(/\-\-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
+}
+
+function getHeadingDetails(text) {
+  // Extended Markdown heading IDs: ## Heading text {#custom-id}
+  // Restrict IDs to safe HTML-fragment characters so they can be used directly
+  // in both the rendered id attribute and its matching fragment link.
+  const match = text.toString().match(/\s*\{#([A-Za-z0-9][A-Za-z0-9_:-]*)\}\s*$/);
+  const headingText = match ? text.toString().slice(0, match.index).trimEnd() : text;
+  return {
+    text: headingText,
+    id: match ? match[1] : slugify(normalizeHeadingText(headingText))
+  };
 }
 
 function normalizeHeadingText(text) {
