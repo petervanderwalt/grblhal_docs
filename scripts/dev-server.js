@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const chokidar = require('chokidar');
 
 const ROOT = path.resolve(__dirname, '..');
 const CONTENT = path.join(ROOT, 'content');
@@ -174,17 +175,17 @@ async function start() {
   });
   server.listen(port);
 
-  try {
-    fs.watch(CONTENT, { recursive: true }, (_event, filename) => {
-      if (filename) {
-        console.log(`Detected change: ${filename}`);
-        scheduleRebuild();
-      }
-    });
-  } catch (error) {
+  const watcher = chokidar.watch(CONTENT, {
+    awaitWriteFinish: { stabilityThreshold: 500, pollInterval: 100 },
+    ignoreInitial: true
+  });
+  watcher.on('all', (_event, filePath) => {
+    console.log(`Detected change: ${path.relative(CONTENT, filePath)}`);
+    scheduleRebuild();
+  });
+  watcher.on('error', error => {
     console.error(`Unable to watch ${CONTENT}: ${error.message}`);
-    process.exitCode = 1;
-  }
+  });
 }
 
 start();
