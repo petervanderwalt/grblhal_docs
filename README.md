@@ -66,10 +66,25 @@ order: 10
 ---
 ```
 
-Use the short public URL for internal links. The build validates that the page and heading exist:
+### Slug links
+
+Choose a slug that describes the page's place in the documentation, using lowercase letters, numbers, hyphens, and `/`. Do not include `/docs` in the front matter. Slugs are public addresses, so keep them stable after publishing unless you deliberately want to replace an old link.
 
 ```md
+slug: reference/plugins
+```
+
+Link to a page with `/docs/` followed by its slug. Link to a section by adding its heading ID. The build checks both the page and heading ID, so `npm run build` fails if an internal slug link is incorrect.
+
+```md
+[Plugins](/docs/reference/plugins)
 [Plugin reference](/docs/reference/plugins#sienciatc)
+```
+
+Give sections that will be linked often a short, stable custom ID. Automatically generated IDs are fine for one-off links, but change when the heading text changes.
+
+```md
+## Sienci ATCi (Automatic Tool Changer Interface) {#sienciatc}
 ```
 
 ### Headings and links to sections
