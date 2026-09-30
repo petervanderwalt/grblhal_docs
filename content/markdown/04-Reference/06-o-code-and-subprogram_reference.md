@@ -9,7 +9,7 @@ or in builds made with the [Web Builder](https://webbuilder.grblhal.org/) when _
 
 The `O`-word serves as a label for [flow control statements](#flow-control-statements). It is important that the `O`-numbers match at the beginning and end of a control segment and that they are unique within a file.
 
-> ℹ️ **Info**
+> [!IMPORTANT]
 > - Subprograms and `O`-words can only be used in files stored in a local file system with the exception of `CALL` to named subprograms and the forward branching [flow control statements](#flow-control-statements) `IF`, `ELSE`, `ELSEIF`, `ENDIF` in data streamed from a sender (if the sender permits them).
 
 ## Subprograms
@@ -38,12 +38,12 @@ There are five kinds of subprograms available in grblHAL, callable via `G65`, `G
 
 ## G65
 
-Syntax: `G65 P- L- [A- B- C- ...]`
+Syntax: `G65 P- [L-] [A- B- C- ...]`
 
 | Parameter | Description |
 |-----------|-------------|
 | **P** | The number of the subprogram (e.g., `P100` runs the `P100.macro`). |
-| **L** | **Optional:** Repeat count, default `1`. The macro will be run `L` times. (Available from build 20260125). |
+| **L** | **Optional:** Repeat count, default `1`. The macro will be run `L` times. (Available since build 20260125). |
 | **A, B, C, X, Y, Z...** | Values to be passed to the subprogram. These become local variables inside the macro. |
 
 `G65` is non-modal and is executed by running the external subprogram `P<number>.macro` `L` number of times.
@@ -74,6 +74,29 @@ Syntax: `M98 P- [L-]`
 > - When configured for running an embedded routine `M98` can only be used in programs stored in a local file system.
 
 <sup>1</sup> In check mode non-inbuilt `G65` macros will not be run, only file availability will be checked.
+
+## `M99` – Return from Subprogram
+
+**Syntax:**  
+> `M99 `
+
+Marks the end of a subprogram and returns execution to the main program or the calling subprogram.
+
+
+> ℹ️ **Info**
+> - **Purpose:** This command is essential for controlling program flow when using subprograms.
+> - **`G65` Calls:** `M99` is used to return from a `G65` subprogram call, restoring the modal state and returning to the line immediately after the `G65` call.
+> - **`tc.macro`:** If your tool change (`M6`) logic is implemented as a macro (e.g., `tc.macro` or `P200.macro` for RapidChange ATC), `M99` is used at the end of that macro to return control to the main G-code program.
+> - **Optional `P` word:** The optional `P` word is typically used to specify the line number within the calling program to return to, but its specific implementation can vary.
+
+
+#### Example
+* **Returning from a tool change macro:**  
+  `(Inside tc.macro or P200.macro)`  
+  `...`  
+  `G53 G0 X-50 Y-50 Z-5` (Move to tool change position)  
+  `M99` (Return to main program after tool change)
+
 
 ## O CALL
 

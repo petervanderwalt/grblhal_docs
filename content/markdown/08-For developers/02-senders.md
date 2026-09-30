@@ -30,7 +30,7 @@ Some alarm states, hold, door and tool change state blocks regular commands, if 
 
 If alarm state is reported then the alarm code is added as a substate to `Alarm`, e.g. `Alarm:1`. If alarm code 1, 2 and 10 \(new - estop\) is detected then the controller is in locked state \(due to a critical event\) and not able to respond to anything but real time report requests. A soft reset should be then attempted\(?\).
 
-Other alarm substates and states allows at least `$`-commands and the sender can proceed to configure itself, typically by requesting an [extended $I report](Report-extensions#controller-information-extensions) with `$I+` to determine what the controller is capable of.
+Other alarm substates and states allows at least `$`-commands and the sender can proceed to configure itself, typically by requesting an [extended $I report](https://github.com/grblHAL/core/wiki/Report-extensions#controller-information-extensions) with `$I+` to determine what the controller is capable of.
 
 #### Legacy protocol
 
@@ -46,7 +46,7 @@ For discussion:
 
 #### Protocol extensions
 
-[grblHAL extensions](Report-extensions) to the protocol follows the same structure as [the original](https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface) and if parsing is done in the right way current and future extensions should not cause a sender to crash.
+[grblHAL extensions](https://github.com/grblHAL/core/wiki/Report-extensions) to the protocol follows the same structure as [the original](https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface) and if parsing is done in the right way current and future extensions should not cause a sender to crash.
 
 * do not assume tag values/elements are in any particular order.
 
@@ -64,7 +64,7 @@ For improved error/alarm/settings code handling:
 
 ### Real time report
 
-The [real time report](Report-extensions#realtime-report) to has been expanded with several new elements.
+The [real time report](https://github.com/grblHAL/core/wiki/Report-extensions#realtime-report) too has been expanded with several new elements.
 
 ### Single character real-time commands.
 
@@ -89,13 +89,14 @@ Additional command characters:
 * `0x8B` can be used to toggle MPG mode on/off, available when the [keypad plugin](https://github.com/grblHAL/Plugin_keypad) is installed in UART mode.
 * `0x8C` can be used to toggle auto real time report mode on/off, available when the auto real time report is enabled.
 * `0xA2` can be used to request a PID report when spindle sync is available \(currently debug mode only\).
-* `0xA3` is used to acknowledge a [tool change request](Manual-tool-change-protocol).
+* `0xA3` is used to acknowledge a [tool change request](https://github.com/grblHAL/core/wiki/Manual-tool-change-protocol).
 * `0xA4` can be used to toggle the virtual optional probe connected switch, available when a physical switch is not available. NOTE: not yet functional!
 
-Support for these characters is indicated by the presence of `RT+` or `RT-` in the `NEWOPT` tag in the `$I` [response](Report-extensions#controller-information-extensions).
+Support for these characters is indicated by the presence of `RT+` or `RT-` in the `NEWOPT` tag in the `$I` [response](https://github.com/grblHAL/core/wiki/Report-extensions#controller-information-extensions).
 
 Some drivers support a two character sequence that will hard reset the controller, this is `0x1B` followed by `0x14` \(\<ESC\>\<CTRL T\> on the keyboard\).  
-__NOTE:__ controllers connected to via native USB<sup>1</sup> or network \(telnet or websocket\) will drop the connection on a hard reset. 
+> ℹ️ **Info**
+> controllers connected to via native USB<sup>1</sup> or network \(telnet or websocket\) will drop the connection on a hard reset. 
 
 ### Line terminator handling \(EOL\)
 
@@ -106,7 +107,7 @@ and to keep its use consistent throughout the application.
 
 ### Parser state
 
-The [parser state response](Report-extensions#parser-state-report-extensions) to the `$G` command has been expanded with the new G- and M-codes grblHAL supports as well as some missing from the original.
+The [parser state response](https://github.com/grblHAL/core/wiki/Report-extensions#parser-state-report-extensions) to the `$G` command has been expanded with the new G- and M-codes grblHAL supports as well as some missing from the original.
 
 ### Push messages
 
@@ -143,3 +144,8 @@ When the sender sends the acknowledge it has to suspend sending new commands fro
 When the tool change acknowledge is received by grblHAL it will make a copy of the current input stream buffer, flush it and accept new commands.
 Motion commands except jogging is not allowed and will return error 40 as long as the tool change is pending.
 When the tool change is completed a cycle start command is issued by the sender \(or via the cycle start control signal\) upon which the saved buffer will be reinstated and normal processing restored.
+
+## MPG/Pendants
+
+TBC
+

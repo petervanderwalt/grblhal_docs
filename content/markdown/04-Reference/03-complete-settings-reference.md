@@ -1875,38 +1875,8 @@ Configures a multi-point calibration curve to correct a non-linear speed respons
 
 ---
 
-## `$70` – Enable Services (mask)
-The master switch for enabling or disabling network-related services (daemons).
-
-
-> ℹ️ **Info**
-> - This is a **critical** setting for any network-enabled board. Even if you configure all the IP address and WiFi settings (`$300+`), the services **will not run** unless they are enabled here.
-> - This is a **bitmask**: add together the values of the services you want to enable.
-
-
-| Bit | Value | Service to Enable | Description |
-|:---:|:-----:|:------------------|:------------|
-| 0   | 1     | Telnet | A raw data stream used by some G-code senders. |
-| 1   | 2     | FTP | Allows network file transfer to/from the SD card. |
-| 2   | 4     | HTTP | The standard web server (often used with WebSockets). |
-| 3   | 8     | WebSocket | A modern, efficient protocol for web-based GUIs. |
-| 4   | 16    | mDNS (Bonjour) | Broadcasts the controller's name on the network (e.g., `grblHAL.local`). |
-| 5   | 32    | WebDAV | An alternative to FTP for network file access. |
-
-#### Common Examples
-*   **All Services Disabled (Default):**
-    *   `$70=0`
-*   **Enable Common Services for a GUI:**
-    *   Most modern senders use Telnet or WebSockets, and FTP is needed for file transfers. mDNS is for easy discovery.
-    *   `1` (Telnet) + `2` (FTP) + `8` (WebSocket) + `16` (mDNS) → `$70=27`
-*   **Enable All Services:**
-    *   `1+2+4+8+16+32` → `$70=63`
-
-#### Tips & Tricks
-- If you have configured your network settings but still cannot connect to the controller, this is the **first setting you should check**.
-- For security and to save memory on the controller, only enable the services you actually plan to use.
-- Use `$NETIF` to see which services are running (listening) as well as the Network interface's MAC address and IP address.
-
+## `$70` – Enable Network Services
+The master switch for enabling or disabling network-related services (daemons), it is provided by the [networking plugin](./04-complete_plugin_reference.html#network-settings).
 
 ---
 
@@ -2776,218 +2746,8 @@ This range is reserved for driver or plugin-specific axis settings beyond the co
 
 ---
 
-
-## `$300` – Hostname
-Sets the machine's name on the network.
-
-
-> ℹ️ **Info**
-> - This is the name your controller will announce on the network.
-> - It can be used to connect via mDNS (e.g., `grblHAL.local`) if `$70` has mDNS enabled.
-> - It also helps identify the device in your router's client list.
-
-
-| Value | Meaning |
-|:------|:--------|
-| String| A string of characters. |
-
-#### Common Examples
-*   **Default Hostname:**
-    *   `$300=grblHAL`
-*   **Custom Hostname for a specific machine:**
-    *   `$300=MyCNC`or `$300=Laser` (mDNS respectively mycnc.local or laser.local)
-
-#### Tips & Tricks
-- For maximum compatibility, use a simple name without spaces or special characters.
-- A reboot of the controller is often required for a new hostname to be broadcast on the network.
-
----
-
-## `$301` – Ethernet IP Mode
-Selects the method the controller uses to obtain an IP address for the **wired Ethernet** connection.
-
-
-> ℹ️ **Info**
-> - **Static** is useful if the controlling computer has a dedicated ethernet port for the controller. A dedicated network interface for the controller is preferred - no collisions or competition for bandwidth, or for networks where DHCP is not available.
-> - **DHCP** is the standard for most networks, where your router automatically assigns an address.
-
-
-| Value | Meaning | Description |
-|:-----:|:--------|:------------|
-| 0     | Static | You must manually set the IP (`$302`), Gateway (`$303`), and Netmask (`$304`). |
-| 1     | DHCP   | The controller asks your router for an IP address. (Recommended) |
-| 2     | AutoIP | A fallback where the controller picks a random address if DHCP fails. |
-
-#### Common Examples
-*   **Home/Office Network with a Router:**
-    *   This is the easiest option.
-    *   `$301=1`
-*   **Direct Connection to a PC (no router):**
-    *   You must assign a permanent, non-conflicting address.
-    *   `$301=0`
-
-#### Tips & Tricks
-- If you select Static mode, you are responsible for providing correct and non-conflicting network information.
-
----
-
-## `$302` – Ethernet IP Address
-Manually sets the static IP address for the controller.
-
-
-> ℹ️ **Info**
-> - This setting is **only** used if `$301=0` (Static IP Mode).
-> - The IP address must be unique on your network.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| String| The IP address in dot-decimal notation, e.g., "192.168.1.200". |
-
-#### Common Examples
-*   **Typical Static IP on a Home Network:**
-    *   Make sure this address is outside your router's DHCP assignment range.
-    *   `$302=192.168.1.200`
-
-#### Tips & Tricks
-- If you set an IP that is already in use by another device, you will have an "IP conflict" and neither device may work correctly.
-- The IP address must be in the same subnet as the Gateway and your computer (as defined by the Netmask).
-
----
-
-## `$303` – Ethernet Gateway
-Manually sets the Gateway (router) IP address.
-
-
-> ℹ️ **Info**
-> - This setting is **only** used if `$301=0` (Static IP Mode).
-> - The Gateway is the address of the device that connects your local network to the internet (usually your router).
-> - It is required for features like NTP time synchronization to work.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| String| Your router's IP address, e.g., "192.168.1.1". |
-
-#### Common Examples
-*   **Typical Home Router Address:**
-    *   `$303=192.168.1.1`
-
-#### Tips & Tricks
-- If you can't connect to your controller from another network segment or if NTP fails, an incorrect Gateway address is a likely cause.
-
----
-
-## `$304` – Ethernet Netmask
-Manually sets the Subnet Mask for the controller.
-
-
-> ℹ️ **Info**
-> - This setting is **only** used if `$301=0` (Static IP Mode).
-> - The Netmask defines the size of your local network.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| String| The Subnet Mask, e.g., "255.255.255.0". |
-
-#### Common Examples
-*   **Standard Home/Office Network:**
-    *   This value is correct for the vast majority of local networks.
-    *   `$304=255.255.255.0`
-
-#### Tips & Tricks
-- An incorrect Netmask can prevent the controller from communicating with other devices, even on the local network. When in doubt, use DHCP (`$301=1`).
-
----
-
-## `$305` – Telnet Port
-Configures the network port for the Telnet service.
-
-
-> ℹ️ **Info**
-> - The Telnet service provides a raw, text-based data stream to and from the grblHAL controller.
-> - It is used by some G-code senders and for direct, low-level communication.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| Port #| A valid TCP port number. |
-
-#### Common Examples
-*   **Default Telnet Port:**
-    *   `$305=23`
-
-#### Tips & Tricks
-- Usually there is no need to change this port unless you have a specific reason
-- You will need this port number to configure your G-code sender if it uses Telnet.
-
----
-
-## `$306` – HTTP Port
-Configures the network port for the HTTP service.
-
-
-> ℹ️ **Info**
-> - The HTTP service provides a web server running on the controller, for loading the WebUI.
-> - Modern web interfaces for grblHAL typically also use the WebSocket service (`$307`) for communication.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| Port #| A valid TCP port number. |
-
-#### Common Examples
-*   **Default HTTP Port:**
-    *   `$306=80`
-
-#### Tips & Tricks
-  - This port is often used for the WebUI. For example, you might connect by typing `http://:` into a browser.
-
----
-
-## `$307` – WebSocket Port
-Configures the network port for the WebSocket service.
-
-
-> ℹ️ **Info**
-> - The WebSocket service provides a fast, modern, and efficient way for web-based user interfaces to communicate with the controller.
-> - This, (along with Telnet `$305`) are the key services for most modern network-based G-code senders.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| Port #| A valid TCP port number. |
-
-#### Common Examples
-*   **Default WebSocket Port:**
-    *   `$307=81`
-
-#### Tips & Tricks
-- This port is often used for the WebUI as well.
-
----
-
-## `$308` – FTP Port
-Configures the network port for the FTP (File Transfer Protocol) service.
-
-
-> ℹ️ **Info**
-> - The FTP service allows you to transfer G-code files to and from the controller's SD card over the network.
-> - This is extremely convenient for sending job files to the machine without needing to physically move the SD card.
-
-
-| Value | Meaning | Description |
-|:------|:--------|:------------|
-| Port #| A valid TCP port number. |
-
-#### Common Examples
-*   **Default FTP Port:**
-    *   `$308=21`
-
-#### Tips & Tricks
-- Use a standard FTP client application (like FileZilla or WinSCP) to connect to the controller's IP address on this port.
-- You will need the `admin` or `user` credentials (`$330`, `$331`) to log in.
+## `$300` - `$308` – Ethernet settings
+These are settings for ethernet, they are provided by the [ethernet plugin](./04-complete_plugin_reference.html#ethernet-settings).
 
 ---
 
@@ -3764,6 +3524,7 @@ The master switch and mode selector for the Torch Height Control system.
 ## `$351` – THC Delay
 Sets a delay after the "Arc OK" signal is received before THC becomes active.
 
+These settings are provided by the [Plasma plugin](./04-complete_plugin_reference.html#plasma-settings).
 
 > ℹ️ **Info**
 > - This is the "pierce delay." It allows the torch to pierce the material completely before height control begins, preventing the torch from diving into molten metal.
@@ -5670,7 +5431,6 @@ Sets a delay (in milliseconds) after the stepper motors are enabled before any m
 
 ---
 
-
 ## `$681` – Modbus Serial Format
 Configures the data bit and parity settings for Modbus RTU serial communication.
 
@@ -5710,63 +5470,19 @@ Sets a factor to adjust the Z-axis feed rate for THC correction moves.
 
 ---
 
-## `$683` – ATCi Configuration (mask)
-Configures the operating modes for the Sienci Automatic Tool Changer Interface plugin.
-
-
-> ℹ️ **Info**
-> - This is a **bitmask**: add together the values of the options you want to enable.
-> - **Rack Monitor:** Uses `AUXINPUT7` to detect if the rack is physically mounted. If the rack is removed, the Keepout zone is automatically disabled.
-> - **TC Macro Monitor:** Automatically disables the Keepout zone while a Tool Change macro is running to allow tool fetching.
-
-
-| Bit | Value | Option | Description |
-|:---:|:-----:|:-------|:------------|
-| 0   | 1     | **Enable Plugin** | Master switch to enable the Keepout Zone logic on startup. |
-| 1   | 2     | **Monitor Rack Presence** | Only enforce Keepout if the rack sensor (`AUXINPUT7`) is triggered. |
-| 2   | 4     | **Monitor TC Macro** | Automatically disable Keepout when a tool change macro is active. |
-
-#### Common Examples
-*   **Enable Basic Keepout:**
-    *   `$683=1`
-*   **Enable Full Automation (Rack Sensor + Macro Awareness):**
-    *   `$683=7` (1+2+4)
-
----
-
-## `$684` – `$687` – ATCi Keepout Zone Boundaries
+## `$683` – `$687` – Sienci ATCi Keepout Zone Configuration
 Defines the rectangular safety zone around the tool rack in machine coordinates.
 
-
-> ℹ️ **Info**
-> - These settings define the X and Y limits of the area where the spindle is forbidden to enter during normal operation (jogging/G-code).
-> - Entering this zone is only allowed if `M810 P0` is sent, or if the "Monitor TC Macro" option is enabled and a macro is running.
-> - **Note:** The plugin includes a "jog-out" feature allowing you to escape the zone if trapped, but prevents jogging deeper in.
-
-
-| Setting | Description | Units |
-|:--------|:------------|:------|
-| `$684`  | **X Min:** Left boundary of the zone. | mm |
-| `$685`  | **Y Min:** Front boundary of the zone. | mm |
-| `$686`  | **X Max:** Right boundary of the zone. | mm |
-| `$687`  | **Y Max:** Back boundary of the zone. | mm |
-
-#### Tips & Tricks
-- Move your machine to the front-left corner of your rack area and note the machine coordinates for `$684`/`$685`.
-- Move to the back-right corner and note coordinates for `$686`/`$687`.
-- Add a small buffer (e.g., 5mm) to these values to ensure safety.
+These settings are provided by the [Sienci ATCi plugin](./04-complete_plugin_reference.html#sienci-atci-settings).
 
 ---
-
 
 ## `$700` – Subroutine Scanning
 Controls how the `M98` command searches for subroutines.
 
-
 > ℹ️ **Info**
 > - Determines whether the controller looks for subroutines within the current file before looking for external macro files.
 > - Useful for keeping subroutines and main program in a single file.
-
 
 | Value | Meaning | Description |
 |:-----:|:--------|:------------|
@@ -5781,7 +5497,6 @@ Controls how the `M98` command searches for subroutines.
 ## `$709` – PWM Spindle Options (Secondary)
 
 Functions the same as `$9`, but applies to the **secondary PWM spindle** if available (spindle type 15 or 16).  
-
 
 > ℹ️ **Info**
 > - Only applies if a **secondary PWM spindle** is configured.

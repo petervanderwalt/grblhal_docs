@@ -245,7 +245,7 @@ These commands enable the machine to move along complex curves defined by contro
 > ℹ️ **Info**
 > - **Modal:** Part of the Motion Mode group.
 > - **`G5` (Quadratic Spline):** Defines a quadratic spline segment. The path passes through the start point, the specified control point (often `I`, `J`), and the endpoint (`X`, `Y`, `Z`).
-> - **`G5.1` (Cubic Spline):** Defines a cubic spline segment. TG65his provides even greater control over the curve's shape, often using multiple control points.
+> - **`G5.1` (Cubic Spline):** Defines a cubic spline segment. This provides even greater control over the curve's shape, often using multiple control points.
 > - **Reference:** For more detailed syntax and usage, refer to the [LinuxCNC documentation](http://linuxcnc.org/docs/html/gcode/g-code.html#gcode:g5).F
 
 
@@ -1462,9 +1462,10 @@ These are advanced commands for controlling digital output pins, either synchron
   `M63 P1` (Queue "Laser OFF")  
   `G0 X30` (Laser turns off at the start of this rapid move)
 
+> [!IMPORTANT]
+> The plasma plugin may shadow some outputs when its [virtual outputs](./04-complete_plugin_reference.html#virtual-ports) are enabled.
+
 ---
-
-
 
 ## `M66` – Wait for Input Signal
 
@@ -1504,7 +1505,6 @@ This command pauses program execution until a specified digital input pin change
 
 These commands control analog output pins, either synchronized with motion or immediately. They are supported if analog outputs are available and configured.
 
-
 > ℹ️ **Info**
 > - **Non-Modal:** Executed when encountered.
 > - **Requires Analog Output:** These commands are only functional if your grblHAL setup has auxiliary analog outputs available and configured.
@@ -1526,6 +1526,9 @@ These commands control analog output pins, either synchronized with motion or im
   `G1 X20 F500` (Laser power sets to 150 at the start of this move)  
   `M67 P0 Q0` (Queue "Laser Power OFF")  
   `G0 X30` (Laser turns off at the start of this rapid move)
+
+> [!IMPORTANT]
+> The plasma plugin may shadow some outputs when its [virtual outputs](./04-complete_plugin_reference.html#virtual-ports) are enabled.
 
 ---
 
@@ -1563,23 +1566,12 @@ Imagine you have a macro to find the center of a hole. This macro needs to use `
 
 ---
 
-## `M98` – Subroutine Call
+## `M98` – Subprogram Call
 
 **Syntax:**
-> `M98 P [L]`
+> `M98 P- [L-]`
 
-Calls a subroutine.
-
-
-> ℹ️ **Info**
-> - **Internal vs External:** Behavior depends on setting `$700`.
-> -   `$700=1` (Default): Scans the current file for `O sub` blocks. If found, executes internal subroutine. If not found, looks for external file `P.macro` (or named macro).
-> -   `$700=0`: Always looks for external file `P.macro`.
-> -   **Execution:**
-> -   **Internal:** The program logic may perform a "check mode" pass to locate subroutines before running.
-> -   **External:** Executes the file from the SD card/local file system.
-> -   **Return:** Use `M99` to return from the subroutine.
-
+Call a [subprogram](./06-o-code-and-subprogram_reference.html#m98).
 
 ---
 
@@ -1588,15 +1580,7 @@ Calls a subroutine.
 **Syntax:**  
 > `M99 `
 
-Marks the end of a subprogram and returns execution to the main program or the calling subroutine.
-
-
-> ℹ️ **Info**
-> - **Purpose:** This command is essential for controlling program flow when using subprograms.
-> - **`G65` Calls:** `M99` is used to return from a `G65` subprogram call, restoring the modal state and returning to the line immediately after the `G65` call.
-> - **`tc.macro`:** If your tool change (`M6`) logic is implemented as a macro (e.g., `tc.macro` or `P200.macro` for RapidChange ATC), `M99` is used at the end of that macro to return control to the main G-code program.
-> - **Optional `P` word:** The optional `P` word is typically used to specify the line number within the calling program to return to, but its specific implementation can vary.
-
+Marks the [end of a subprogram](./06-o-code-and-subprogram_reference.html#m99) and returns execution to the main program or the calling subprogram.
 
 #### Example
 * **Returning from a tool change macro:**  
@@ -1607,11 +1591,11 @@ Marks the end of a subprogram and returns execution to the main program or the c
 
 ---
 
-# Plugin-Specific G-codes & M-codes
+# Plugin Specific G-codes & M-codes
 
 This section provides a comprehensive list of G-code and M-code commands introduced or specifically extended by grblHAL's official plugins. These commands augment the core G-code and M-code functionality, enabling specialized features for various hardware and applications.
 
-Also see [grblhal_docs/Reference/complete_plugin_reference](complete_plugin_reference)
+Also see the grblHAL [plugin reference](./04-complete_plugin_reference.html).
 
 ---
 
@@ -1629,111 +1613,27 @@ Repo: `https://github.com/grblHAL/Plugin_plasma`
 
 ---
 
-## Plugin: Fan Control (`Plugin_fans`)
-Repo: `https://github.com/grblHAL/Plugin_fans`
+## `M106` and `M107` – Fan Control
 
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M106` | `M106 P[fan] S[speed]` | Turn fan ON, set PWM speed (0–255) |
-| `M107` | `M107 P[fan]` | Turn fan OFF |
+These commands are provided by the [fan plugin](./04-complete_plugin_reference.html#fan-mcodes).
 
 ---
 
-## Plugin: RGB LED Strip - `Plugins_misc`
-Repo: `https://github.com/grblHAL/Plugins_misc`
+## `M150` - RGB LED Strip Control
 
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| `M150` | `M150 [B] [I] [K] [P] [R] [S] [U] [W]` | Set LED color/brightness for a strip or individual LED. |
-
-#### Parameters
-
-*   **`B`**: Blue component intensity (0-255).
-*   **`I`**: LED index for individual control (0-255). Available if the number of LEDs in the strip is > 1.
-*   **`K`**: Keep unspecified values, meaning only the provided color/brightness components will be changed, others will retain their previous state.
-*   **`P`**: Brightness (0-255).
-*   **`R`**: Red component intensity (0-255).
-*   **`S`**: Strip index (0 or 1). Default is 0.
-*   **`U`**: Green component intensity (0-255).
-*   **`W`**: White component intensity (0-255).
-
-#### Example
-```gcode
-; Set strip 1 to bright red
-M150 R255 U0 B0 S1
-
-; Set strip 1 to purple
-M150 R128 B128 S1
-
-; Set strip 0 to 50% brightness (P127) for all LEDs
-M150 P127 S0
-
-; Set the third LED (index 2) on strip 0 to blue, keeping other colors
-M150 I2 B255 K S0
-
-; Turn all LEDs off
-M150 R0 U0 B0 S1
-```
+This command is provided by the [RGB LED plugin](./04-complete_plugin_reference.html#rgb-led-mcode).
 
 ---
 
-## Plugin: Feed Override (`Plugins_misc`)
-Repo: `https://github.com/grblHAL/Plugins_misc`
+## `M220` - Feed Override
 
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M220` | `M220 [B] [R] [S[percent]]` | Feed override: B=backup, R=restore, S=set % |
-
-## `M220` – Set Feed Rate Override Percentage
-
-**Syntax:**  
-> `M220 S-`
-
-Allows setting the feed rate override value programmatically from within G-code.
-
-
-> ℹ️ **Info**
-> - **Origin:** Marlin firmware.
-> - This command provides a way to control the feed rate override slider/knob via code. `S` is typically used for the percentage value.
-
-
-| Parameter | Description |
-|-----------|-------------|
-| **`S`** | The feed rate override percentage (e.g., `S100` for 100%, `S50` for 50%). |
-
-#### Example
-* **Slow down the next section of a program to 50% of the programmed feed rate:**  
-  `M220 S50`  
-  `(G-code for a detailed or difficult section)`
-  `M220 S100` (Return to 100% feed rate)
+This command is provided by the [Feed override plugin](./04-complete_plugin_reference.html#feed-override-mcode).
 
 ---
 
-## Plugin: Servo Control (`Plugins_misc`)
-Repo: `https://github.com/grblHAL/Plugins_misc`
+## `M280` – Set Servo Position
 
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M280` | `M280 P[servo] S[position]` | Control analog/PWM servo: P=index, S=angle 0–180° |
-
-### `M280` – Set Servo Position
-
-**Syntax:**  
-> `M280 P- S-`
-
-Commands a servo motor connected to a specific output pin to move to a given position. This is often used for controlling auxiliary machine components like tool probes, dust shoes, or material clamps.
-
-
-> ℹ️ **Info**
-> - **Origin:** Marlin firmware.
-> - Requires a servo plugin to be active in grblHAL.
-> - The `P` word specifies the servo index (which pin it's connected to), and the `S` word specifies the position, typically in microseconds (e.g., 1000-2000µs) or degrees (0-180).
-
-
-| Parameter | Description |
-|-----------|-------------|
-| **`P`** | The servo number/pin index to command. |
-| **`S`** | The target position for the servo. |
+This command is provided by the [PWM servo plugin](./04-complete_plugin_reference.html#pwm-servo-mcode).
 
 #### Example
 * **Deploy a touch probe connected to servo #0:**  
@@ -1778,6 +1678,9 @@ Waits for all moves in the planner buffer to complete before processing the next
 
 ---
 
+## `M401` and `M402` – BLTouch Probe Control
+
+These commands are provided by the [BLTouch probe plugin](./04-complete_plugin_reference.html#bltouch-mcodes).
 
 ---
 
@@ -1815,10 +1718,8 @@ Repo: `https://github.com/grblHAL/Plugin_encoder`
 
 ---
 
-## Plugin: Sienci ATCi
+## `M960` - Keepout Zone Control
 
-| M-Code | Syntax | Description |
-|--------|--------|-------------|
-| `M810` | `M810 P[0\|1]` | Runtime toggle for ATCi Keepout Zone enforcement. `P1` enables protection, `P0` disables it. |
+This command is provided by the [Sienci ATCi plugin](./04-complete_plugin_reference.html#sienci-atci-mcode).
 
 ---
