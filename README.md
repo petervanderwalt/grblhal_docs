@@ -56,13 +56,20 @@ Pages use [GitHub Flavored Markdown](https://github.github.com/gfm/) (GFM), plus
 
 ### Page metadata
 
-Optional YAML front matter sets a page title and its position within a folder. The title is used in the navigation and browser title; `order` overrides filename ordering.
+Every page needs a short, stable `slug`. It defines the public address: `slug: reference/plugins` publishes at `/docs/reference/plugins`. The optional title is used in the navigation and browser title; `order` overrides filename ordering.
 
 ```md
 ---
+slug: getting-started/connecting
 title: Connecting a controller
 order: 10
 ---
+```
+
+Use the short public URL for internal links. The build validates that the page and heading exist:
+
+```md
+[Plugin reference](/docs/reference/plugins#sienciatc)
 ```
 
 ### Headings and links to sections
