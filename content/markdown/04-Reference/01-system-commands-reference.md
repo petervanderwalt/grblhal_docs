@@ -12,7 +12,79 @@ They are divided into two categories:
 
 ---
 
-# `$` System Commands
+## `$` System Commands - overview
+
+System commands are special start with `$`. They are used to configure, control, and query the machine state.
+
+### Basic Commands <!--toc-->
+
+| Command | Description |
+|---------|-------------|
+| **`$HELP`** | List help topics. |
+| [`$$`](#settings-list) | View current settings. |
+| [`$$=<n>`](#setting-help) | View help for setting `<n>`. |
+| **`$#`** | View G-code parameters (WCS offsets, probe positions, tool offsets). |
+| **`$G`** | View G-code parser state (active modes like G54, G17, G90, etc.). |
+| [`$I`](#firmware-info) | View firmware information. |
+| **`$N`** | View startup blocks. |
+| **`$X`** | **Kill Alarm Lock.** Unlocks the machine from an alarm state (e.g., hard limit). Use with caution! |
+| **`$H`** | **Run Homing Cycle.** Homes all axes specified in `$23`. |
+| **`$HX`** | **Home Individual Axis.** Homes only the X axis (replace X with Y, Z, etc.). |
+| **`$J=...`** | **Jogging.** Execute a jogging motion. |
+| **`$SLP`** | **Sleep.** Put the machine to sleep. |
+
+### Additional Commands <!--toc-->
+
+Extended functionality for machine control and debugging found in the source.
+
+| Command | Description |
+| :--- | :--- |
+| **`$B`** | Toggle **Block Delete** switch. |
+| **`$S`** | Toggle **Single Block** mode. |
+| **`$O`** | Toggle **Optional Stop** switch. |
+| **`$HX`..`$HW`** | Home individual axes (`X`, `Y`, `Z`, `A`, `B`, `C`, `U`, `V`, `W`). |
+| **`$HSS`** | Report **Homing Switch Status**. |
+| **`$TPW`** | **Tool Probe Workpiece**. Probes the tool plate. |
+| **`$TLR`** | **Set Tool Length Reference**. Sets the current tool offset reference. |
+| **`$LEV`** | Output **Last Signals Event**. Useful for debugging input glitches. |
+| **`$LIM`** | Output **Current Limit State**. Shows which limit pins are currently active. |
+| **`$SD`** | Report **Spindle Data**. |
+| **`$SR`** | Reset **Spindle Data**. |
+| **`$SDS`** | Report **Stepper Status**. |
+| **`$REBOOT`** | **Reboot System**. Soft reboots the controller. |
+| **`$RTC`** | **Real Time Clock** action. |
+| **`$DWNGRD`** | Toggle **Downgrade** setting flags. |
+| **`$TTLOAD`** | **Reload Tool Table**. Reloads tool data from `tooltable.tbl` (if file-based tool table is active). |
+| **`$MODBUSSTATS`** | **Modbus Statistics**. Returns communication stats (sent/retries). Use `$MODBUSSTATS=R` to reset. |
+| **`$BL`** | Enter **Bootloader**. Jumps to the bootloader (e.g., Teensy Loader) if supported by the driver. |
+
+---
+
+### Tool Change Extensions <!--toc-->
+
+These commands are specific to manual and semi-automatic tool change modes.
+
+| Command | Description |
+|---------|-------------|
+| **`$TLR`** | **Set Tool Length Reference.** Sets the current tool length offset as the reference. Used after a successful probe for the first tool in a job. |
+| **`$TPW`** | **Tool Probe Workpiece.** Initiates a probing sequence to set the dynamic tool offset for a new tool. Only available in Tool Change Modes 1 and 2. |
+
+### Reporting & Enumeration (grblHAL Extensions) <!--toc-->
+
+grblHAL provides advanced reporting commands for Senders to query up to date data, there is no need for them to rely on hardcoded lists.
+
+| Command | Description |
+|---------|-------------|
+| **`$EA`** | **Enumerate Alarms.** Lists all supported alarm codes and descriptions. |
+| **`$EE`** | **Enumerate Errors.** Lists all supported error codes and descriptions. |
+| **`$ES`** | **Enumerate Settings.** Lists all supported settings with types, ranges, and descriptions. |
+| **`$EG`** | **Enumerate Setting Groups.** Lists the hierarchy of setting groups. |
+| **`$PINS`** | **Enumerate Pins.** Lists processor pin mappings. |
+| **`$PINSTATE`** | **Enumerate Pin States.** Lists current state of auxiliary pins. |
+| **`$PORTS`** | **Enumerate Serial Ports.** Lists available UART ports. |
+| **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
+
+## System Commands ($) - reference
 
 System commands allow you to view and change settings, control machine modes (like sleep or homing), and read non-volatile data.
 
@@ -22,7 +94,7 @@ System commands allow you to view and change settings, control machine modes (li
 
 ## Configuration & Settings
 
-### `$$` – View All Settings
+### `$$` – View All Settings {#settings-list}
 Outputs the current value of all numbered settings.
 
 **Syntax:** `$$`
@@ -33,33 +105,59 @@ Outputs the current value of all numbered settings.
 
 ---
 
-### `$$=` – View Setting Help
-Outputs the description, units, and range for a specific setting.
+### `$$=` – View Setting Help {#setting-help}
+Outputs the description and details such as units and allowed range for a specific setting.
 
-**Syntax:** `$$=`
+**Syntax:**  
+`$$=`
 
-**Example:**
--   `$$=100` returns `Travel resolution in steps per millimeter.`
--   `$$=10` Breakdown:
+**Examples**
+* _Output info for travel resolution in steps per millimeter fox X-axis:_
+	```gcode
+	$$=100
+	```
+	outputs
     ```text
-    0 - Position in machine coordinate (1)
-    1 - Buffer state (2)
-    2 - Line numbers (4)
-    3 - Feed & speed (8)
-    4 - Pin state (16)
-    5 - Work coordinate offset (32)
-    6 - Overrides (64)
-    7 - Probe coordinates (128)
-    8 - Buffer sync on WCO change (256)
-    9 - Parser state (512)
-    10 - Alarm substatus (1024)
-    11 - Run substatus (2048)
-    12 - Enable when homing (4096)
-    13 - Distance-to-go (8192)
-    Specifies optional data included in status reports and if report is sent when homing.
-    If Run substatus is enabled it may be used for simple probe protection.
-    NOTE: Parser state will be sent separately after the status report and only on changes.
+	$100: X-axis travel resolution in step/mm
+
+	Travel resolution in steps per millimeter.
+	ok
+	```
+* _Output info for status report options:_
+	```gcode
+	$$=10
+	```
+	outputs
+    ```text
+	$10: Status report options as bitfield:
+		0 - Position in machine coordinate (1)
+		1 - Buffer state (2)
+		2 - Line numbers (4)
+		3 - Feed & speed (8)
+		4 - Pin state (16)
+		5 - Work coordinate offset (32)
+		6 - Overrides (64)
+		7 - Probe coordinates (128)
+		8 - Buffer sync on WCO change (256)
+		9 - Parser state (512)
+		10 - Alarm substatus (1024)
+		11 - Run substatus (2048)
+		12 - Enable when homing (4096)
+		13 - Distance-to-go (8192)
+		14 - Extended (16384)
+
+	Specifies optional data included in status reports and if report is sent when homing.
+	If Run substatus is enabled it may be used for simple probe protection.
+
+	NOTE: Parser state will be sent separately after the status report and only on changes.
+	ok
     ```
+
+> [!TIP]
+> Bitfield settings like `$10` in the example above are special: to enable _one_ option set the setting to the value enclosed in  parentheses for the option, to enable more than one sum the values for each option.
+
+> [!NOTE]
+> The output is plain text, not "Grbl" formatted, some senders may not tolerate it. Use a terminal program, like puTTY, when using this command to be on the safe side.
 
 ---
 
@@ -72,12 +170,11 @@ Sets the value of a specific setting.
 -   `$100=250.5` (Set X-axis steps/mm to 250.5)
 -   `$1=255` (Set step idle delay to 255/always on)
 
-> ⚠️ **Warning**
-> Settings are stored in non-volatile memory (NVM - EEPROM/FRAM/Flash) and persist after power cycles. Avoid writing settings inside high-frequency loops to prevent wearing out the memory.
+> [!WARNING]
+> Settings are stored in non-volatile storage (NVS - EEPROM/FRAM/Flash) and persist after power cycles. Avoid writing settings inside high-frequency loops to prevent wearing out the memory.
 
-**Tip:**  
-To reduce number of writes, and thus the wear and write delay, when updating many settings from a file encapsulate the settings with the `%` character as the first and last line.  
-**Example:**
+> [!TIP]
+> To reduce number of writes, and thus the wear and write delay, when updating many settings from a file encapsulate the settings with the `%` character as the first and last line. An example:
 ```text
 %
 $0=5.0
@@ -102,25 +199,49 @@ Outputs the value of a specific setting.
     ```
 ---
 
-> ℹ️ **Info**
-> Outputs the build info string and version.
+### `$I` - Output Firmware Infomation {#firmware-info}
+Outputs firmware information, including version, build date, axis configuration, firmware options, and driver details.
 
 **Syntax:** `$I`
 
-**Output Example:** `[VER:1.1f.20210101:]`
-
-> ℹ️ **Info**
-> Outputs extended build information, including axis configuration, firmware options, and driver details.
-
-**Syntax:** `$I+`
-
 **Output Details:**
--   `[AXS::]`: Number of axes and their letter designations (e.g., `XYZ`, `XYZABC`).
--   `[NEWOPT:...]`: Comma-separated list of enabled compile-time options (e.g., `ATC`, `WIFI`, `SD`, `ETH`).
+-   `[VER..:]` - Dot separated major version, minor version and build date in YYYYMMDD format followed by semicolon and optional build string.
+-   `[AXS::]` - Number of axes and their letter designations (e.g., `XYZ`, `XYZABC`).
+-   `[NEWOPT:,,,...]` - Comma-separated list of enabled compile-time options (e.g., `ATC`, `WIFI`, `SD`, `ETH`).
 -   `[FIRMWARE:grblHAL]`
--   `[SIGNALS:]`: List of enabled input signals (same codes as realtime report).
--   `[AUX IO:...]`: Counts of digital/analog inputs/outputs.
--   `[DRIVER:...]` and `[PLUGIN:...]`: Driver and plugin specific info.
+-   `[SIGNALS:]` - List of enabled input signals (same codes as realtime report).
+-   `[DRIVER:@]` - Driver name followed by a `@` and MCU clock frequency.
+-   `[DRIVER VERSION:]` - Date in YYMMDD format.
+-   `[BOARD:]` - Driver name followed by a `@` and MCU clock frequency.
+-   `[AUX IO:,,,]` - Comma separated list with number of digital/analog inputs/outputs.
+-   `[PLUGIN:]`: - Plugin name and version, one line for each installed.
+
+**Example**
+
+```text
+[VER:1.1f.20261008:My machine]
+[OPT:VNMSL,100,1024,4,10]
+[AXS:4:XYZA]
+[NEWOPT:ENUMS,RT+,RF,ES,REBOOT,EXPR,TC,SED,RTC,YM,SD]
+[FIRMWARE:grblHAL]
+[SIGNALS:HSEP]
+[NVS STORAGE:*FLASH 16K]
+[FREE MEMORY:84K]
+[DRIVER:STM32F446@180MHz]
+[DRIVER VERSION:261006]
+[BOARD:Nucleo-64 CNC Breakout]
+[AUX IO:12,10,0,0]
+[PLUGIN:FS stream v1.16]
+[PLUGIN:FS macro plugin v0.25]
+[PLUGIN:MODBUS v0.25]
+[PLUGIN:HUANYANG VFD v0.20]
+[PLUGIN:SDCARD v1.29]
+[SPINDLE:PWM]
+ok
+```
+
+> [!TIP]
+> When reporting issues the build date, driver name and board name are the most important to add.
 
 ---
 
@@ -183,7 +304,7 @@ Restores groups of settings to their firmware defaults.
 
 ## Machine Control
 
-### `$J` – Jogging
+### `$J` – Jogging <!-- toc --> {#jog} 
 Commands the machine to move freely. Jog commands are independent of the G-code parser state and can be canceled immediately by a Feed Hold or Jog Cancel command.
 
 **Syntax:** `$J=axes F- ...`
@@ -257,7 +378,7 @@ Disables the alarm lock state.
 
 ## Diagnostics & Reporting
 
-### `$G` – View G-code Parser State
+### `$G` – View G-code Parser State <!-- toc --> {#parser_state} 
 Outputs the currently active G-code modal states.
 
 **Syntax:** `$G`
@@ -270,7 +391,7 @@ Outputs the currently active G-code modal states.
 
 ---
 
-### `$#` – View Parameters
+### `$#` – View Parameters <!-- toc --> {#hash}
 Outputs the stored offsets for work coordinate systems, tool offsets, and pre-defined positions.
 
 **Syntax:** `$#`
@@ -287,6 +408,28 @@ Outputs the stored offsets for work coordinate systems, tool offsets, and pre-de
 -   `[T:,]`: Tool table entries.
 -   `[TLR:]`: Tool length reference.
 -   `[TLR@:]`: Tool length reference details: where probed, tool axis, probed at G59.3.
+
+**Syntax:** `$#=`  
+Output value of [numbered](./parameters#numbered) or [named](./parameters#named) parameter.
+
+**Examples**
+* _Output current coordinate system, 1 = G54, 2 = G55, ... :_
+	```gcode
+	$#=5220
+	```
+	outputs 
+	```text
+	[PARAM:5220=1]
+	```
+* _Output homed status, 0 = not homed, 1 = homed:_
+	```gcode
+	$#=_homed_state
+	```
+	outputs 
+	```text
+	[PARAM:_homed_state=0]
+	```
+
 
 ---
 
@@ -362,95 +505,6 @@ Lists available spindles.
     ```
 
 ---
-
-## Help & Enumeration
-
-System commands to discover capabilities.
-
-| Command | Description |
-| :--- | :--- |
-| **`$HELP`** | List help topics. |
-| **`$EA`** | Enumerate all alarms. Returns `[ALARMCODE:val|message|description]`. |
-| **`$EAG`** | Enumerate alarms in Grbl CSV format (for senders). |
-| **`$EE`** | Enumerate all error codes. Returns `[ERRORCODE:val|message|description]`. |
-| **`$EEG`** | Enumerate errors in Grbl CSV format. |
-| **`$ES`** | Enumerate settings. Returns `[SETTING:id|group|name|unit|type|format|min|max...]`. |
-| **`$ESG`** | Enumerate settings in Grbl CSV format. |
-| **`$ESH`** | Enumerate settings in grblHAL tab-separated format. |
-| **`$EG`** | Enumerate setting groups. Returns `[SETTINGGROUP:id|parent|name]`. |
-
----
-
-## Additional Commands
-
-Extended functionality for machine control and debugging found in the source.
-
-| Command | Description |
-| :--- | :--- |
-| **`$B`** | Toggle **Block Delete** switch. |
-| **`$S`** | Toggle **Single Block** mode. |
-| **`$O`** | Toggle **Optional Stop** switch. |
-| **`$HX`..`$HW`** | Home individual axes (`X`, `Y`, `Z`, `A`, `B`, `C`, `U`, `V`, `W`). |
-| **`$HSS`** | Report **Homing Switch Status**. |
-| **`$TPW`** | **Tool Probe Workpiece**. Probes the tool plate. |
-| **`$TLR`** | **Set Tool Length Reference**. Sets the current tool offset reference. |
-| **`$LEV`** | Output **Last Signals Event**. Useful for debugging input glitches. |
-| **`$LIM`** | Output **Current Limit State**. Shows which limit pins are currently active. |
-| **`$SD`** | Report **Spindle Data**. |
-| **`$SR`** | Reset **Spindle Data**. |
-| **`$SDS`** | Report **Stepper Status**. |
-| **`$REBOOT`** | **Reboot System**. Soft reboots the controller. |
-| **`$RTC`** | **Real Time Clock** action. |
-| **`$DWNGRD`** | Toggle **Downgrade** setting flags. |
-| **`$TTLOAD`** | **Reload Tool Table**. Reloads tool data from `tooltable.tbl` (if file-based tool table is active). |
-| **`$MODBUSSTATS`** | **Modbus Statistics**. Returns communication stats (sent/retries). Use `$MODBUSSTATS=R` to reset. |
-| **`$BL`** | Enter **Bootloader**. Jumps to the bootloader (e.g., Teensy Loader) if supported by the driver. |
-
----
-
-# System Commands ($)
-
-System commands are special real-time or near-real-time commands that start with `$`. They are used to configure, control, and query the machine state.
-
-## Core Commands
-
-| Command | Description |
-|---------|-------------|
-| **`$$`** | View current settings. |
-| **`$#`** | View G-code parameters (WCS offsets, probe positions, tool offsets). |
-| **`$G`** | View G-code parser state (active modes like G54, G17, G90, etc.). |
-| **`$I`** | View build info string. |
-| **`$N`** | View startup blocks. |
-| **`$X`** | **Kill Alarm Lock.** Unlocks the machine from an alarm state (e.g., hard limit). Use with caution! |
-| **`$H`** | **Run Homing Cycle.** Homes all axes specified in `$23`. |
-| **`$HX`** | **Home Individual Axis.** Homes only the X axis (replace X with Y, Z, etc.). |
-| **`$J=...`** | **Jogging.** Execute a jogging motion. |
-| **`$SLP`** | **Sleep.** Put the machine to sleep. |
-
-## Tool Change Extensions
-
-These commands are specific to manual and semi-automatic tool change modes.
-
-| Command | Description |
-|---------|-------------|
-| **`$TLR`** | **Set Tool Length Reference.** Sets the current tool length offset as the reference. Used after a successful probe for the first tool in a job. |
-| **`$TPW`** | **Tool Probe Workpiece.** Initiates a probing sequence to set the dynamic tool offset for a new tool. Only available in Tool Change Modes 1 and 2. |
-
-## Reporting & Enumeration (grblHAL Extensions)
-
-grblHAL provides advanced reporting commands for Senders to query up to date data, there is no need for them to rely on hardcoded lists.
-
-| Command | Description |
-|---------|-------------|
-| **`$EA`** | **Enumerate Alarms.** Lists all supported alarm codes and descriptions. |
-| **`$EE`** | **Enumerate Errors.** Lists all supported error codes and descriptions. |
-| **`$ES`** | **Enumerate Settings.** Lists all supported settings with types, ranges, and descriptions. |
-| **`$EG`** | **Enumerate Setting Groups.** Lists the hierarchy of setting groups. |
-| **`$PINS`** | **Enumerate Pins.** Lists processor pin mappings. |
-| **`$PINSTATE`** | **Enumerate Pin States.** Lists current state of auxiliary pins. |
-| **`$PORTS`** | **Enumerate Serial Ports.** Lists available UART ports. |
-| **`$SPINDLES`** | **Enumerate Spindles.** Lists available spindles. |
-
 
 ## File handling
 
@@ -541,7 +595,7 @@ The YModem protocol is part of the [file system plugins](/docs/reference/plugins
 
 ---
 
-# Realtime Commands
+## For developers and integrators
 
 Realtime commands are single control characters that can be sent to grblHAL at any time. They are intercepted from the input stream and executed immediately, often within tens of milliseconds, bypassing the normal G-code planner buffer.
 
@@ -551,7 +605,7 @@ Realtime commands are single control characters that can be sent to grblHAL at a
 > -   **State Dependent:** Some commands (like `!` Feed Hold) are only valid in certain states (e.g., Run, Jog).
 > -   **Ignored if Invalid:** If a command cannot be executed (e.g., toggling spindle stop while moving), it is silently ignored to prevent unsafe conditions.
 
-## Basic Control Commands
+### Basic Control Commands <!--toc-->
 
 These are the standard Grbl control characters found in most senders. The _Alt._ column contains a grblHAL alternative which are outside the 'printable' ASCII characters range, some senders may not support/use these.
 
@@ -566,11 +620,11 @@ These are the standard Grbl control characters found in most senders. The _Alt._
 
 ---
 
-## Overrides
+### Overrides <!--toc-->
 
 Overrides allow you to fine-tune the machine's operation in real-time.
 
-### Feed Rate Overrides
+### Feed Rate Overrides <!--toc-->
 Alters the programmed feed rate (`F`) for `G1`, `G2`, `G3` moves.
 -   **Range:** 10% to 200%.
 -   **Limits:** Commands that would push the value outside this range are ignored.
@@ -585,7 +639,7 @@ Alters the programmed feed rate (`F`) for `G1`, `G2`, `G3` moves.
 | `0x93` | **+1%** | Increases feed override by 1%. |
 | `0x94` | **-1%** | Decreases feed override by 1%. |
 
-### Rapid Rate Overrides
+### Rapid Rate Overrides <!--toc-->
 Scales the speed of `G0`, `G28`, and `G30` rapid motions.
 -   **Scope:** Affects rapid motions only. Does not affect cutting moves (`G1`, etc.).
 -   **State:** Can be changed at any time.
@@ -597,7 +651,7 @@ Scales the speed of `G0`, `G28`, and `G30` rapid motions.
 | `0x97` | **25%** | Sets rapids to 25% of max rate. |
 | `0x98` | **5%** | Sets rapids to 5% of max rate. Available since build 20260831. |
 
-### Spindle Speed Overrides
+### Spindle Speed Overrides <!--toc-->
 Alters the programmed spindle speed (`S`).
 -   **Range:** 10% to 200%.
 -   **Limits:** Commands that would push the value outside this range are ignored.
@@ -628,7 +682,7 @@ Toggles coolant states directly.
 
 ---
 
-## Extended Commands
+### Extended Commands <!--toc-->
 
 These functionality codes are specific extensions or part of the extended ASCII set.
 
@@ -645,7 +699,7 @@ These functionality codes are specific extensions or part of the extended ASCII 
 
 ---
 
-# Realtime Report
+### Realtime Report <!--toc-->
 
 When you send `?`, status reports are streamed back. The format is a structured text string enclosed in ``, with fields separated by pipe `|` characters.
 
@@ -659,7 +713,7 @@ When you send `?`, status reports are streamed back. The format is a structured 
 > - `` indicates variables or constants.
 > - `|` separates literal values.
 
-## Core States
+#### Core States
 
 `Idle`, `Run`, `Hold`, `Jog`, `Alarm`, `Door`, `Check`, `Home`, `Sleep`
 -   **New in grblHAL:** `Tool` (for [Tool Change Protocol](https://github.com/grblHAL/core/wiki/Manual-tool-change-protocol)).
@@ -667,7 +721,7 @@ When you send `?`, status reports are streamed back. The format is a structured 
     -   `Run:`: `1`=Feed hold pending, `2`=Probing.
     -   `Alarm:`: Current alarm code (always added for `0x87` report).
 
-## Report Fields {#status-report-fields}
+#### Report Fields {#status-report-fields}
 
 | Field | Description | Format/Details |
 |:------------:| :--- | :--- |

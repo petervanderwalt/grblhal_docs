@@ -34,7 +34,7 @@ Non-global named parameters and numbered parameters in the range 1-31 defined wi
 Uninitialized numbered parameters returns 0, uninitialized named parameters an error.  
 Presence of named parameters can be checked for by the `EXIST[]` [function](/docs/reference/o-code#functions).
 
-## Predefined Numbered Parameters
+## Predefined Numbered Parameters {#numbered}
 
 | Parameters  | Usage                                                    | Persistent              |
 |-------------|----------------------------------------------------------|-------------------------|
@@ -60,7 +60,7 @@ Presence of named parameters can be checked for by the `EXIST[]` [function](/doc
 | 5420 - 5427 | Current position including all offsets \(X, Y, Z, ...\). | No                      |
 | 5599        | Debug output, 1 if enabled else 0.                       | Yes                     |
 
-## Predefined Named Parameters
+## Predefined Named Parameters {#named}
 
 | Name                 | Usage                                                              | Comment                   |
 |----------------------|--------------------------------------------------------------------|---------------------------|
@@ -129,6 +129,9 @@ Presence of named parameters can be checked for by the `EXIST[]` [function](/doc
 | _homed_axes          | Homed axes as bitfield, X = bit0, Y = bit1, ...<sup>2</sup>        | Available from 20250618.  |
 | _tool_table_size     | Tool table size, 0 if not enabled.<sup>2</sup>                     | Available from 20250731.  |
 | _free_memory         | Free memory in KBytes, -1 if not available.<sup>2</sup>            | Available from 20251102.  |
+
+> [!TIP]
+> Use the [$#=](./commands#hash) command to output the value of a parameter.
 
 ## Comments with Parameter Substitution
 
