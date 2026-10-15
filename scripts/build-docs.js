@@ -164,6 +164,24 @@ function resolveInternalLink(href, page) {
   }
 
   if (href.startsWith('/')) return href;
+
+  const shorthandMatch = href.match(/^((?:\.{1,2}\/)[^?#]*)([?#].*)?$/);
+  if (shorthandMatch) {
+    const targetSlug = path.posix.normalize(path.posix.join(path.posix.dirname(page.slug), shorthandMatch[1])).replace(/\/+$/, '');
+    const target = pageInfoBySlug[targetSlug];
+    if (target) {
+      const fragment = shorthandMatch[2] || '';
+      if (fragment.startsWith('#')) {
+        const id = decodeURIComponent(fragment.slice(1));
+        if (!target.headingIds.has(id)) {
+          unresolvedInternalLinks.add(`${page.sourcePath}: ${href} (missing heading #${id})`);
+        }
+      }
+
+      return `${rel('/' + target.slug)}${fragment}`;
+    }
+  }
+
   const match = href.match(/^([^?#]+)\.(?:md|html)([?#].*)?$/i);
   if (!match) return href;
 
