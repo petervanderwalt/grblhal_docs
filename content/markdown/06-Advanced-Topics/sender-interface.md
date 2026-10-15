@@ -34,6 +34,7 @@ The status report format is extended. Senders **must** parse these robustly by:
   - `P` (Probe), `D` (Door), `H` (Hold), `S` (Start), `R` (Reset).
   - `E` (E-Stop), `O` (Probe Disconnected), `M`/`F` (Motor Fault).
   - Limit Switches: `X`, `Y`, `Z`, `A`, `B`, `C`, `U`, `V`, `W`.
+  - Build 20261015 adds `I`/`i` (primary probe), `J`/`j` (toolsetter), and `K`/`k` (secondary probe). Uppercase means triggered and lowercase means not triggered. Parse these only for the applicable request: `0x87` reports triggered probes as uppercase; `0x80` reports a state change when `$10` **Extended** is enabled; legacy `?` does not add them. See [Extended probe states](/docs/04-Reference/01-system-commands-reference.html#extended-probe-states).
 - **`|A:`**: Accessory states (`S`=CW, `C`=CCW, `F`=Flood, `M`=Mist, `T`=Tool Change Pending).
 - **`|WCS:`**: Reports active coordinate system (e.g., `G54`).
 - **`|MPG:`**: `1` = Pendant has control (Sender should verify UI lock). `0` = Pendant released.

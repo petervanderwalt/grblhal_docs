@@ -688,5 +688,19 @@ When you send `?`, status reports are streamed back. The format is a structured 
 | **SD** | SD Card Status. | `SD:0` (Unmounted) `SD:1` (Mounted) `SD:2` (Unmounted, auto-detect) `SD:3` (Mounted, auto-detect) `SD:pct completed,filename` (Streaming) `SD:Pending` (Suspended) |
 | **$C** | Blocking event active. | `$C:1` (Full report `0x87` only). |
 
+### Extended probe states in `Pn:` {#extended-probe-states}
+
+Build 20261015 adds status codes for each available probe input:
+
+| Code | Probe | State |
+| :---: | :--- | :--- |
+| `I` / `i` | Primary probe | Uppercase is triggered; lowercase is not triggered. |
+| `J` / `j` | Toolsetter | Uppercase is triggered; lowercase is not triggered. |
+| `K` / `k` | Secondary probe | Uppercase is triggered; lowercase is not triggered. |
+
+- A full status report (`0x87`) includes an uppercase code only while its related probe is triggered. An untriggered probe has no `I`, `J`, or `K` code in this report.
+- An alternate status request (`0x80`) includes the applicable uppercase or lowercase code when a probe state changes and the `$10` **Extended** option is enabled.
+- The legacy `?` status request does not include these additional probe-state codes.
+
 > 📝 **Note**
 > When a full status (`0x87`) is requested the `SD:x` mount status is always reported, **not** the streaming state. Plugins may add additional fields to the report.
