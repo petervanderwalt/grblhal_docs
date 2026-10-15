@@ -26,12 +26,17 @@ System commands are special start with `$`. They are used to configure, control,
 | **`$#`** | View G-code parameters (WCS offsets, probe positions, tool offsets). |
 | **`$G`** | View G-code parser state (active modes like G54, G17, G90, etc.). |
 | [`$I`](#firmware-info) | View firmware information. |
-| **`$N`** | View startup blocks. |
+| [`$I=`](#set-build-string) | Set custom build string. |
+| [`$N`](#startup-blocks) | View startup blocks. |
+| [`$N<n>=`](#set-startup-block) | Set startup block. |
 | **`$X`** | **Kill Alarm Lock.** Unlocks the machine from an alarm state (e.g., hard limit). Use with caution! |
 | **`$H`** | **Run Homing Cycle.** Homes all axes specified in `$23`. |
 | **`$HX`** | **Home Individual Axis.** Homes only the X axis (replace X with Y, Z, etc.). |
 | **`$J=...`** | **Jogging.** Execute a jogging motion. |
+| [`$RST=`](#restore-settings) | Restore settings. |
 | **`$SLP`** | **Sleep.** Put the machine to sleep. |
+| [`$SD`](#spindle-data) | Output spindle encoder data. |
+| [`$SR`](#spindle-data-reset) | Reset spindle encoder data. |
 
 ### Additional Commands <!--toc-->
 
@@ -245,15 +250,19 @@ ok
 
 ---
 
-> ℹ️ **Info**
-> Sets a custom string in the build info. This can be used to store machine specific information and is added after the colon in the version string.
+### `$I=` - Set Build String {#set-build-string}
+Sets a custom string in the [firmware information](#firmware-info) version info. This can be used to store machine specific information and is added after the colon in the version string.
 
-**Syntax:** `$I=MyMachine_v1.0`  
+**Syntax:** `$I=<string>`  
 
-**Output Example:** `[VER:1.1f.20210101:MyMachine_v1.0]`
+**Example**
+* _Set build string to "My machine":_
+	```gcode
+	I=My machine
+	```
 
-> ℹ️ **Info**
-> Vendors supplying pre-compiled firmware can set and also disable modification of this string by changing
+> [!NOTE]
+>  Vendors supplying pre-compiled firmware can set and also disable modification of this string by changing
 the symbols `BUILD_INFO` and/or `DISABLE_BUILD_INFO_WRITE_COMMAND` in _grbl/config.h_ or on the compiler command line.
 
 **Example:**
@@ -262,36 +271,39 @@ the symbols `BUILD_INFO` and/or `DISABLE_BUILD_INFO_WRITE_COMMAND` in _grbl/conf
 
 ---
 
-### `$N` – View Startup Lines
+### `$N` – View Startup Lines {#startup-blocks}
 Outputs the currently stored startup G-code blocks. These lines run automatically every time grblHAL powers up or resets.
 
-**Syntax:** `$N`
+**Syntax:**
+`$N`
 
 ---
 
-### `$N=` – Set Startup Line
+### `$N=` – Set Startup Line {#set-startup-block}
 Saves a G-code block to one of the startup lines (typically `$N0` and `$N1`).
 
-**Syntax:**
--   `$N0=G54 G20 G17` (Set first startup line)
--   `$N1=` (Clear second startup line)
+**Syntax:**  
+`$N0=<string>` (Set first startup line)  
+`$N1=<string>` (Set second startup line)
 
 Use the `|` (vertical bar) character to separate commands than cannot be put on a single line.
 
-**Common Uses:**
--   Setting default modes (Absolute `G90`, Metric `G21`, Plane `G17`).
--   Resetting work offsets (careful!).
+**Example**
+* _Set startup mode to absolute, metric and XY plane:_
+	```gcode
+	$N0=G90G21G17
+	```
 
-> 🔥 **Danger**
+> [!WARNING]]
 > Do not place motion commands (`G0`, `G1`, `G2`, `G3`) or tool changes (`M6`) in startup lines. This can be dangerous if the machine moves unexpectedly upon connection.
 > On setting a startup line the code will be run to validate it before it is stored.
 
 ---
 
-### `$RST` – Restore Settings
+### `$RST` – Restore Settings {#restore-settings}
 Restores groups of settings to their firmware defaults.
 
-**Syntax:** `$RST=`
+**Syntax:** `$RST=<flag>`
 
 | Flag | Effect |
 | :--- | :--- |
@@ -299,6 +311,41 @@ Restores groups of settings to their firmware defaults.
 | **`&`** | Restores all driver and plugin defined `$$` numbered settings to defaults. |
 | **`#`** | Restores all G-code parameters (`G54`-`G59`, `G28`, `G30`) to zero. |
 | **`*`** | Restores **ALL** settings and parameters to defaults. |
+
+**Example**
+* _Reset all settings to default:_
+	```gcode
+	$RST=*
+	```
+
+---
+
+### `$SD` – Output Spindle Encoder Data {#spindle-data}
+When a spindle encoder is installed data from the encoder can be output with this command.  
+
+**Syntax:** `$SD`
+
+Output format: `[SPINDLEENCODER:<index count>,<pulse count>, <error count>,<angular position>]`
+
+| Element | Description |
+| :--- | :--- |
+| **`<index count>`** | Number of full revolutions since the last reset. |
+| **`<pulse count>`** | Number of encoder pulses since the last reset. |
+| **`<error count>`** | Number of full revolutions where the pulse count differed from the configured [pulses per revolutions](./settings/#38) (PPR). |
+| **`<angular position>`** | The number of revolutions since last reset in decimal representation. |
+
+**Example**
+* _Send `$SD` to get the current spindle encoder data, PPR setting is 200:_
+	```text
+	[SPINDLEENCODER:1,300,0,1.5]
+	```
+> [!TIP]
+> The current RPM calculated from the encoder data is added to the real time report when an encoder is installed. Some senders, like [ioSender](https://github.com/terjeio/ioSender#readme), may display the live spindle RPM in its UI.
+
+### `$SR` – Reset Spindle Encoder Data {#spindle-data-reset}
+Resets spindle encoder data.
+
+**Syntax:** `$SR`
 
 ---
 
@@ -315,11 +362,11 @@ Commands the machine to move freely. Jog commands are independent of the G-code 
 -   Can include `G20`/`G21` (units), `G53` (move in the machine coordinate system) and `G90`/`G91` (distance mode).
 
 **Examples:**
--   `$J=G91 X10 F500` (Move X +10mm relative at 500mm/min)
--   `$J=G90 Z5 F100` (Move Z to absolute 5mm at 100mm/min)
+-   `$J=G91 G21 X10 F500` (Move X +10mm relative at 500mm/min)
+-   `$J=G90 Z5 F100` (Move Z to absolute 5 units at 100units/min - uses the current units mode - metric/imperial)
 
-> ℹ️ **Info**
-> -   Jogging is "safer" than `G0`/`G1` because it checks soft limits (if enabled) *before* moving and can be smoothly aborted by the user.
+> [!TIP]
+>  -   Jogging is "safer" than `G0`/`G1` because it checks soft limits (if enabled) *before* moving and can be smoothly aborted by the user.
 > -   If the machine is homed set [$40=1](/docs/reference/settings#40) to automatically limit jog motion to be within machine limits.
 
 ---
