@@ -632,7 +632,7 @@ Performs a straight probing operation. The machine moves along a specified path 
 
 > [!TIP]
 > - Upon successful probing, grblHAL reports the trigger position, it can also be accessed via the `$#` system command.
-> - Probing result and coordinates is also stored in [parameters](./parameters/#predefined-numbered-parameters) `5070` and `5060 - 5069`.
+> - Probing result and coordinates is also stored in [parameters](./parameters/#numbered) `5070` and `5060 - 5069`.
 > - Use a slow feed rate (`F`) for probing to get accurate results and prevent damage to the probe tip. A common practice is to perform a fast probe to find the surface, back off slightly, then perform a second, much slower probe for high accuracy.
 > - `G38.3` is useful for checking if a tool is present or finding the edge of a part when you don't know exactly where it is.
 
@@ -921,7 +921,7 @@ These commands control how the machine handles corners and transitions between s
 > - **User-provided macros should generally start with a `P` word value of 100 or greater** to avoid conflicts with [built-in subprograms](/docs/reference/o-code#built-in-g65-subprograms) (currently P1-P7).
 > - **Argument Passing:** Arguments (e.g., `A`, `B`, `C`, `X`, `Y`, `Z`, etc.) passed with `G65` are assigned to named variables within the called subprogram.
 > - **Nesting:** Nesting of `G65` macros is allowed.
-> - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](./o-code#g65-and-g66). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
+> - **Reference:** For more details on G65 macros, refer to the [G65 and G66 documentation](./o-code#g65-and-g66-arguments). Also, a reference for G65 in other systems: [cnczone.com](https://www.cnczone.com/forums/attachments/2/0/6/1/9/22462.attach).
 
 #### Subprogram Example (P100+)
 
@@ -945,7 +945,7 @@ Content of P100.macro, stored in a local (controller based) file system:
 
 > [!TIP]
 > - `G65` is a powerful tool for creating reusable, modular G-code for complex operations.
-> - Variables are assigned to [numbered parameters](./o-code#g65-and-g66) based on their letter, e.g., `A` maps to `#1`, `B` to `#2`, `X` to `#24`, etc.
+> - Variables are assigned to [numbered parameters](./o-code#g65-and-g66-arguments) based on their letter, e.g., `A` maps to `#1`, `B` to `#2`, `X` to `#24`, etc.
 > - **Reserve P1-P99 for built-in macros** - Start your custom macros at P100 or higher.
 
 ---
@@ -958,7 +958,7 @@ Content of P100.macro, stored in a local (controller based) file system:
 
 `G66` acts like `G65` but is **modal**. The specified macro is called after every subsequent motion command (`G0`, `G1`, `G2`, `G3`, etc.) until cancelled by `G67`.
 
-See [Subprograms](./o-code#g65-and-g66).
+See [Subprograms](./o-code#g65-and-g66-arguments).
 
 ---
 ## `G76`, `G81` to `G89` – Canned Cycles {#canned-cycles}
@@ -1535,7 +1535,7 @@ These are advanced commands for controlling digital output pins, either synchron
 > `M66 E- <L->`  
 > `M66 P- L- <Q->`  
 
-This command pauses program execution until a specified input pin changes state, or a timeout occurs. It is supported if auxiliary inputs (analog or digital) are available and configured. The value read is stored in parameter [5399](./parameters/#predefined-numbered-parameters) and output in the next [status report](./commands#status-report-fields) in the `In:` field. If the read failed the value is set to `-1`.
+This command pauses program execution until a specified input pin changes state, or a timeout occurs. It is supported if auxiliary inputs (analog or digital) are available and configured. The value read is stored in parameter [5399](./parameters/#numbered) and output in the next [status report](./commands#status-report-fields) in the `In:` field. If the read failed the value is set to `-1`.
 
 > ℹ️ **Info**
 > - **Non-Modal:** Executed when encountered.
