@@ -81,6 +81,12 @@ Link to a page with `/docs/` followed by its slug. Link to a section by adding i
 [Plugin reference](/docs/reference/plugins#sienciatc)
 ```
 
+Within the same slug folder, `./` may be used as a concise sibling link. For example, from `reference/gcode`, this is equivalent to `/docs/reference/settings#486`:
+
+```md
+[Offset lock](./settings/#486)
+```
+
 Give sections that will be linked often a short, stable custom ID. Automatically generated IDs are fine for one-off links, but change when the heading text changes.
 
 ```md
