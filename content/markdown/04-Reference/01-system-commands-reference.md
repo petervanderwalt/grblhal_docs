@@ -331,7 +331,7 @@ Output format: `[SPINDLEENCODER:<index count>,<pulse count>, <error count>,<angu
 | :--- | :--- |
 | **`<index count>`** | Number of full revolutions since the last reset. |
 | **`<pulse count>`** | Number of encoder pulses since the last reset. |
-| **`<error count>`** | Number of full revolutions where the pulse count differed from the configured [pulses per revolutions](./settings/#38) (PPR). |
+| **`<error count>`** | Number of full revolutions where the pulse count differed from the configured [pulses per revolutions](./settings#38) (PPR). |
 | **`<angular position>`** | The number of revolutions since last reset in decimal representation. |
 
 **Example**
